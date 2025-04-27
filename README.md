@@ -6,7 +6,9 @@
 
 ## Swagger 
 
-after running the service on the dev mode or prd mode go to `http://localhost:3000:api-doc`
+after running the service on the dev mode or prd mode go to
+
+> `http://localhost:3000:api-doc`
 
 
 
