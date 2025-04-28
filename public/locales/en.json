@@ -1,6 +1,14 @@
 {
   "i18n": {
     "header": "Application supports i18n",
-    "footer": "You can select a different language from the dropdown menu."
+    "footer": "You can select a different language from the dropdown menu.",
+    "action": {
+      "copyRefLink": "Copy reflink"
+    },
+    "balance": "Balance",
+    "balanceAmount": "{amount} TON",
+    "withdraw": "Withdraw",
+    "levelNumber": "Levels: {level}",
+    "purchase": "Purchase"
   }
 }
