@@ -1,16 +1,17 @@
-'use client';
+/* eslint-disable jsx-a11y/alt-text */
+"use client";
 
-import { Section, Cell, Image, List } from '@telegram-apps/telegram-ui';
-import { useTranslations } from 'next-intl';
+import { Section, Cell, Image, List } from "@telegram-apps/telegram-ui";
+import { useTranslations } from "next-intl";
 
-import { Link } from '@/components/Link/Link';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher/LocaleSwitcher';
-import { Page } from '@/components/Page';
+import { Link } from "@/components/Link/Link";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher/LocaleSwitcher";
+import { Page } from "@/components/Page";
 
-import tonSvg from './_assets/ton.svg';
+import tonSvg from "./_assets/ton.svg";
 
 export default function Home() {
-  const t = useTranslations('i18n');
+  const t = useTranslations("i18n");
 
   return (
     <Page back={false}>
@@ -24,7 +25,7 @@ export default function Home() {
               before={
                 <Image
                   src={tonSvg.src}
-                  style={{ backgroundColor: '#007AFF' }}
+                  style={{ backgroundColor: "#007AFF" }}
                 />
               }
               subtitle="Connect your TON wallet"
@@ -53,8 +54,8 @@ export default function Home() {
             </Cell>
           </Link>
         </Section>
-        <Section header={t('header')} footer={t('footer')}>
-          <LocaleSwitcher/>
+        <Section header={t("header")} footer={t("footer")}>
+          <LocaleSwitcher />
         </Section>
       </List>
     </Page>

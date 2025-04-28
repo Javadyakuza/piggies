@@ -1,0 +1,40 @@
+.main-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  padding: 0.5rem;
+
+  .profile-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 3rem);
+    padding-bottom: 0.4rem;
+    .avatar-container {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .avatar {
+        font-size: 18px;
+        border-radius: 50%;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+      }
+      .full-name {
+        margin: 0;
+      }
+    }
+  }
+  hr {
+    margin: 0;
+    width: 100%;
+  }
+}

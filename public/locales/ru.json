@@ -1,6 +1,14 @@
 {
   "i18n": {
     "header": "Поддержка i18n",
-    "footer": "Вы можете выбрать другой язык в выпадающем меню."
+    "footer": "Вы можете выбрать другой язык в выпадающем меню.",
+    "action": {
+      "copyRefLink": "Скопировать рефлекс"
+    },
+    "balance": "Баланс",
+    "balanceAmount": "{amount} TON",
+    "withdraw": "Вывод",
+    "levelNumber": "Уровни: {level}",
+    "purchase": "Купить"
   }
 }
