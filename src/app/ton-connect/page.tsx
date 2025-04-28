@@ -23,7 +23,7 @@ export default function TONConnectPage() {
 
   if (!wallet) {
     return (
-      <Page>
+      <Page headerAndFooter={false}>
         <Placeholder
           className="ton-connect-page__placeholder"
           header="TON Connect"

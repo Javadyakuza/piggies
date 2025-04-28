@@ -10,12 +10,18 @@ import Toolbar from "./Toolbar/Toolbar";
 export function Page({
   children,
   back = true,
+  headerAndFooter = true,
 }: PropsWithChildren<{
   /**
    * True if it is allowed to go back from this page.
    * @default true
    */
   back?: boolean;
+  /**
+   * True if it is allowed to show the header and footer.
+   * @default true
+   */
+  headerAndFooter?: boolean;
 }>) {
   const router = useRouter();
 
@@ -35,9 +41,9 @@ export function Page({
 
   return (
     <WalletGuard>
-      <Header />
+      {headerAndFooter && <Header />}
       {children}
-      <Toolbar />
+      {headerAndFooter && <Toolbar />}
     </WalletGuard>
   );
 }
