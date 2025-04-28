@@ -11,9 +11,7 @@
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.49.4",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@telegram-apps/sdk-react": "^2.0.22",
     "@telegram-apps/telegram-ui": "^2.1.5",
     "@tonconnect/ui-react": "^2.0.5",
