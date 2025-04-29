@@ -3,6 +3,7 @@ body,
 .main-container {
   height: 100%;
   position: relative;
+  color: #fff !important;
 }
 
 body {
@@ -55,4 +56,16 @@ body .s-enter-active button {
 
 #eruda {
   display: none !important;
+}
+
+body {
+  overflow: hidden;
+}
+.page-content {
+  overflow: scroll;
+  height: calc(100vh - 70px - 80px);
+}
+
+.s-enter-active > div > div:first-child {
+  background-color: transparent;
 }

@@ -37,14 +37,16 @@
           opacity: 0.8;
           margin-bottom: 0.6rem;
         }
+        &.--disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+
         .badge {
           width: 70%;
           background-color: #cccccc8a;
           height: 2px;
           margin: auto;
-        }
-        &:hover {
-          opacity: 0.8;
         }
       }
     }
