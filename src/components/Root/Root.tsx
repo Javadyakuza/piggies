@@ -46,7 +46,7 @@ function RootInner({ children }: PropsWithChildren) {
   }, [initDataUser]);
 
   return (
-    <TonConnectUIProvider manifestUrl="http://localhost:3000/tonconnect-manifest.json">
+    <TonConnectUIProvider manifestUrl="https://dbno-erp.storage.iran.liara.space/tonconnect-manifest.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=342080d4-c2d1-45a3-a670-00ed1438736c%2F20250429%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250429T104838Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7fdd1bcdd40c66b5807e2a50abb32b82a65ef0cf6efbf2d85709c83e0cc9f026">
       <AppRoot
         appearance={isDark ? "dark" : "light"}
         platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}

@@ -42,7 +42,7 @@ export function Page({
   return (
     <WalletGuard>
       {headerAndFooter && <Header />}
-      {children}
+      <div className="page-content">{children}</div>
       {headerAndFooter && <Toolbar />}
     </WalletGuard>
   );
