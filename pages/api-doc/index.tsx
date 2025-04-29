@@ -46,7 +46,7 @@ export default function IndexPage() {
 
   return (
     <section className="container">
-      <h1>Pig Referral API Documentation</h1>
+      <h1>Piggies API Documentation</h1>
       <ReactSwagger spec={spec} />
     </section>
   );
