@@ -3,6 +3,7 @@
 import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { Spinner } from "@telegram-apps/telegram-ui";
 
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const wallet = useTonWallet();
@@ -35,7 +36,11 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   }, [initialized, wallet, pathname, router]);
 
   if (!initialized) {
-    return <div>Loading...</div>;
+    return (
+      <div className="root__loading">
+        <Spinner size="l" />
+      </div>
+    );
   }
 
   return <>{children}</>;

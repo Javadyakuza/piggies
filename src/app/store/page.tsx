@@ -4,6 +4,10 @@ import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import "./styles.css";
+import { Button, Card } from "@telegram-apps/telegram-ui";
+import { CardCell } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardCell/CardCell";
+import { CardChip } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip";
+import React from "react";
 
 export default function StorePage() {
   const t = useTranslations("i18n");
@@ -51,9 +55,9 @@ export default function StorePage() {
           <div className="balance-container">
             <h3>{t("balance")}</h3>
             <h4>{t("balanceAmount", { amount: balance })}</h4>
-            <button className="withdraw-btn primary-btn">
+            <Button className="withdraw-btn primary-btn">
               {t("withdraw")}
-            </button>
+            </Button>
           </div>
           <div className="preview-container">
             <img

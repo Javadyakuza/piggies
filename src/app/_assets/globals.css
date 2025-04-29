@@ -65,3 +65,7 @@ body {
   overflow: scroll;
   height: calc(100vh - 70px - 80px);
 }
+
+.s-enter-active > div > div:first-child {
+  background-color: transparent;
+}

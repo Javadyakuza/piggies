@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import "./styles.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "@telegram-apps/telegram-ui";
 
 export default function StorePage() {
   const t = useTranslations("i18n");
@@ -13,10 +14,10 @@ export default function StorePage() {
     <Page>
       <div className="profile-container">
         <div className="ref-link">
-          <button className="copy-ref-link-button primary-btn">
+          <Button className="copy-ref-link-Button primary-btn">
             <span>{t("action.copyRefLink")}</span>{" "}
             <FontAwesomeIcon icon={faCopy} size="lg" />
-          </button>
+          </Button>
         </div>
       </div>
     </Page>
