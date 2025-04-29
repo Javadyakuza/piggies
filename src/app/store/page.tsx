@@ -9,14 +9,29 @@ import { CardCell } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card
 import { CardChip } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip";
 import React from "react";
 import { useTonWallet } from "@tonconnect/ui-react";
+import axios from 'axios';
 
 type PigData = {
   pig_levels: number;
   buyable_pigs: number;
 };
+
+
+async function getTonBalance(address: string): Promise<string> {
+  const response = await axios.get(`https://toncenter.com/api/v2/getAddressBalance`, {
+    params: {
+      address,
+    }
+  });
+
+  const rawBalance = response.data.result;
+  const tonBalance = Number(rawBalance) / 1e9;
+  return tonBalance.toFixed(2);
+}
+
 export default function StorePage() {
   const t = useTranslations("i18n");
-  const balance = 4000;
+  const [balance, setBalance] = useState(0);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
@@ -34,7 +49,11 @@ export default function StorePage() {
   }, [wallet]);
 
   useEffect(() => {
+    if (balance == 0 && wallet) {
+      getTonBalance(wallet?.account.address).then(res => setBalance(res)); 
+    }
     setSelectedItemIndex(pigsData?.buyable_pigs || 0);
+
   }, [pigsData]);
 
   const items = [
@@ -44,6 +63,7 @@ export default function StorePage() {
       price: 500,
       levels: 4,
       coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
+      purchase: t("purchase"),
     },
     {
       title: "Silver Pig",
@@ -51,6 +71,7 @@ export default function StorePage() {
       price: 1000,
       levels: 6,
       coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
+      purchase: t("upgradeSilver"),
     },
     {
       title: "Gold Pig",
@@ -58,6 +79,7 @@ export default function StorePage() {
       price: 1500,
       levels: 8,
       coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
+      purchase: t("upgradeGold"),
     },
     {
       title: "Diamond Pig",
@@ -65,9 +87,22 @@ export default function StorePage() {
       price: 2000,
       levels: 10,
       coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
+      purchase: t("upgradeDiamond"),
     },
   ];
 
+  const getTonBalance = async (address: string): Promise<number> => {
+    const response = await axios.get(`https://toncenter.com/api/v2/getAddressBalance`, {
+      params: {
+        address,
+      }
+    });
+  
+    const rawBalance = response.data.result; 
+    const tonBalance = Number(rawBalance) / 1e9; 
+  
+    return Number(tonBalance.toFixed(2));
+  }
   const handleSelectItem = (index: number) => {
     setSelectedItemIndex(index);
   };

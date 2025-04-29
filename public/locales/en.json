@@ -9,6 +9,9 @@
     "balanceAmount": "{amount} TON",
     "withdraw": "Withdraw",
     "levelNumber": "Levels: {level}",
-    "purchase": "Purchase"
+    "purchase": "Purchase",
+    "upgradeSilver": "Upgrade to Silver",
+    "upgradeGold": "Upgrade to Gold",
+    "upgradeDiamond": "Upgrade to Diamond"
   }
 }
