@@ -144,7 +144,13 @@ more details.
 
 after running the service on the dev mode or prd mode go to
 
-> `http://localhost:3000/api-doc`
+### Requirements
+
+- > next-js >= v14
+- > node >= v20
+
+- url after running the service on the dev mode or prd mode go to:
+- __http://localhost:3000/api-doc__
 
 
 

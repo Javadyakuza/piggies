@@ -9,7 +9,7 @@ export const getApiDocs = async () => {
         info: {
           title: "Piggies Referral API",
           version: "1.0.0",
-          description: "API for Pig Referral App with Telegram and TON Connect integration",
+          description: "API for Piggies Telegram mini app with TON Connect integration",
         },
         components: {
           securitySchemes: {
