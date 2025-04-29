@@ -43,28 +43,28 @@ export default function StorePage() {
       code: 0,
       price: 500,
       levels: 4,
-      coverUrl: "http://localhost:3000/sample-image.png",
+      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
     },
     {
       title: "Silver Pig",
       code: 1,
       price: 1000,
       levels: 6,
-      coverUrl: "http://localhost:3000/sample-image.png",
+      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
     },
     {
       title: "Gold Pig",
       code: 2,
       price: 1500,
       levels: 8,
-      coverUrl: "http://localhost:3000/sample-image.png",
+      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
     },
     {
       title: "Diamond Pig",
       code: 3,
       price: 2000,
       levels: 10,
-      coverUrl: "http://localhost:3000/sample-image.png",
+      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
     },
   ];
 
@@ -88,8 +88,8 @@ export default function StorePage() {
           </div>
           <div className="preview-container">
             <img
-              src="http://localhost:3000/sample-image.png"
-              alt="sample"
+              src="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png"
+              alt="owned"
               className="main-cover"
             />
           </div>
