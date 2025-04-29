@@ -2,39 +2,66 @@
 "use client";
 import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./styles.css";
 import { Button, Card } from "@telegram-apps/telegram-ui";
 import { CardCell } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardCell/CardCell";
 import { CardChip } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip";
 import React from "react";
+import { useTonWallet } from "@tonconnect/ui-react";
 
+type PigData = {
+  pig_levels: number;
+  buyable_pigs: number;
+};
 export default function StorePage() {
   const t = useTranslations("i18n");
   const balance = 4000;
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+  const [pigsData, setPigsData] = useState<PigData>();
+  const wallet = useTonWallet();
+
+  useEffect(() => {
+    if (!wallet) return;
+    const fetchPigsData = async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/pigs/${wallet?.account.address}`
+      );
+      const data = await response.json();
+      setPigsData(data);
+    };
+    fetchPigsData();
+  }, [wallet]);
+
+  useEffect(() => {
+    setSelectedItemIndex(pigsData?.buyable_pigs || 0);
+  }, [pigsData]);
 
   const items = [
     {
       title: "Bronze Pig",
+      code: 0,
       price: 500,
       levels: 4,
       coverUrl: "http://localhost:3000/sample-image.png",
     },
     {
       title: "Silver Pig",
+      code: 1,
       price: 1000,
       levels: 6,
       coverUrl: "http://localhost:3000/sample-image.png",
     },
     {
       title: "Gold Pig",
+      code: 2,
       price: 1500,
       levels: 8,
       coverUrl: "http://localhost:3000/sample-image.png",
     },
     {
       title: "Diamond Pig",
+      code: 3,
       price: 2000,
       levels: 10,
       coverUrl: "http://localhost:3000/sample-image.png",
@@ -71,12 +98,18 @@ export default function StorePage() {
           <div className="item-slides-container">
             {items.map((item, index) => (
               <div
-                onClick={() => handleSelectItem(index)}
+                onClick={() => {
+                  if (index !== selectedItemIndex) return;
+                  handleSelectItem(index);
+                }}
                 className={`item-slide ${
-                  index === selectedItemIndex && "--selected"
+                  (index === selectedItemIndex && "--selected") || "--disabled"
                 }`}
                 key={`item-slide-${index}`}
               >
+                {/* <div className="mask"> */}
+                {/* {item.code === pigsData?.pig_levels ? "Owned" : ""} */}
+                {/* </div> */}
                 <img
                   src={item.coverUrl}
                   alt="cover"
