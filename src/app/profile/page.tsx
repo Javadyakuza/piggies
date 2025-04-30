@@ -6,8 +6,10 @@ import "./styles.css";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "@telegram-apps/telegram-ui";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
-export default function StorePage() {
+export default function ProfilePage() {
   const t = useTranslations("i18n");
 
   return (

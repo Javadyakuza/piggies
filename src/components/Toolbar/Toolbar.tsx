@@ -9,7 +9,7 @@ export default function Toolbar() {
   const router = useRouter();
 
   const buttonsMap = [
-    { path: "/profile", icon: faUser },
+    { path: "/profile", altPath: "/", icon: faUser },
     { path: "/store", icon: faStore },
   ];
 
@@ -22,7 +22,10 @@ export default function Toolbar() {
       <div className="main-toolbar">
         {buttonsMap.map((button) => (
           <button
-            className={`toolbar-btn ${pathname === button.path && "--active"}`}
+            className={`toolbar-btn ${
+              [button.path, button.altPath].includes(pathname || "") &&
+              "--active"
+            }`}
             key={button.path}
             onClick={() => handleNavigate(button.path)}
           >
