@@ -63,9 +63,14 @@ body {
 }
 .page-content {
   overflow: scroll;
-  height: calc(100vh - 70px - 80px);
+  height: calc(100vh - 78px);
 }
 
 .s-enter-active > div > div:first-child {
   background-color: transparent;
+}
+
+* {
+  --tgui--bg_color: var(--tg-theme-bg-color, #17171742) !important;
+  --tgui--tertiary_bg_color: #2a2a2a57 !important;
 }

@@ -12,6 +12,10 @@ import {
  */
 export function useTelegramMock(): void {
   useClientOnce(() => {
+    // if (sessionStorage.getItem("env-mocked") && isTMA("simple")) {
+    //   return;
+    // }
+
     // Determine which launch params should be applied. We could already
     // apply them previously, or they may be specified on purpose using the
     // default launch parameters transmission method.

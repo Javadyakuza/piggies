@@ -9,6 +9,14 @@
     "balanceAmount": "{amount} TON",
     "withdraw": "Вывод",
     "levelNumber": "Уровни: {level}",
-    "purchase": "Купить"
+    "purchase": "Купить",
+    "upgradeSilver": "Улучшить до Серебра",
+    "upgradeGold": "Улучшить до Золота",
+    "upgradeDiamond": "Улучшить до Алмаза",
+    "refLinkCopied": "Ссылка скопирована!",
+    "wallet": "Кошелек",
+    "pleaseConnectWallet": "Пожалуйста, подключите свой кошелек",
+    "address": "Адрес",
+    "referrals": "Рефералы"
   }
 }

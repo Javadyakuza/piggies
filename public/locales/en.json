@@ -12,6 +12,14 @@
     "purchase": "Purchase",
     "upgradeSilver": "Upgrade to Silver",
     "upgradeGold": "Upgrade to Gold",
-    "upgradeDiamond": "Upgrade to Diamond"
+    "upgradeDiamond": "Upgrade to Diamond",
+    "refLinkCopied": "Reflink copied!",
+    "wallet": "Wallet",
+    "pleaseConnectWallet": "Please connect your wallet",
+    "address": "Address",
+    "referrals": "Referrals",
+    "levelReferrals": "Level {level} Referrals",
+    "disconnectWallet": "Disconnect wallet",
+    "areYouSure": "Are you sure?"
   }
 }
