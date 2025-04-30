@@ -20,26 +20,27 @@ import { init } from "@/core/init";
 
 import "./styles.css";
 
-export function Root({ children }: PropsWithChildren) {
+function RootInner({ children }: PropsWithChildren) {
   const isDev = process.env.NODE_ENV === "development";
 
-  // Only mock in dev mode
+  // Mock Telegram environment in development mode if needed.
   if (isDev) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useTelegramMock();
   }
 
-  const didMount = useDidMount();
   const lp = useLaunchParams();
-  const isDark = useSignal(miniApp.isDark);
   const debug = isDev || lp.startParam === "debug";
 
+  // Initialize the library.
   useClientOnce(() => {
     init(debug);
   });
 
+  const isDark = useSignal(miniApp.isDark);
   const initDataUser = useSignal(initData.user);
 
+  // Set the user locale.
   useEffect(() => {
     initDataUser && setLocale(initDataUser.languageCode);
   }, [initDataUser]);
@@ -50,16 +51,29 @@ export function Root({ children }: PropsWithChildren) {
         appearance={isDark ? "dark" : "light"}
         platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
       >
-        <ErrorBoundary fallback={ErrorPage}>
-          {didMount ? (
-            children
-          ) : (
-            <div className="root__loading">
-              <Spinner size="l" />
-            </div>
-          )}
-        </ErrorBoundary>
+        {children}
       </AppRoot>
     </TonConnectUIProvider>
+  );
+}
+
+export function Root(props: PropsWithChildren) {
+  const didMount = useDidMount();
+  const lp = useLaunchParams();
+  const isDark = useSignal(miniApp.isDark);
+
+  return didMount ? (
+    <ErrorBoundary fallback={ErrorPage}>
+      <RootInner {...props} />
+    </ErrorBoundary>
+  ) : (
+    <div className="root__loading">
+      <AppRoot
+        appearance={isDark ? "dark" : "light"}
+        platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+      >
+        <Spinner size="l" />
+      </AppRoot>
+    </div>
   );
 }
