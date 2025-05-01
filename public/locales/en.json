@@ -20,6 +20,11 @@
     "referrals": "Referrals",
     "levelReferrals": "Level {level} Referrals",
     "disconnectWallet": "Disconnect wallet",
-    "areYouSure": "Are you sure?"
+    "areYouSure": "Are you sure?",
+    "pleaseJoinViaReferralLink": "Please join via invitation link.",
+    "canNotRegisterWithoutReferral": "You can not register without invitation!",
+    "welcome": "Welcome to Piggies!",
+    "register": "Complete Registration",
+    "pleaseWait": "Please wait..."
   }
 }

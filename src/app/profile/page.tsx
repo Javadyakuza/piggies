@@ -14,6 +14,7 @@ import {
 } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
@@ -26,6 +27,8 @@ export default function ProfilePage() {
   const [isDisconnectConfirmVisible, setIsDisconnectConfirmVisible] =
     useState(false);
   const [tonConnectUI] = useTonConnectUI();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
@@ -33,6 +36,11 @@ export default function ProfilePage() {
       setIsDisconnectConfirmVisible(true);
     }
   };
+
+  useEffect(() => {
+    if (pathname === "/profile") return;
+    router.push("/profile");
+  }, [pathname, router]);
 
   useEffect(() => {
     if (isDisconnectConfirmVisible) {

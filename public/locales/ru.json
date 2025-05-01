@@ -17,6 +17,14 @@
     "wallet": "Кошелек",
     "pleaseConnectWallet": "Пожалуйста, подключите свой кошелек",
     "address": "Адрес",
-    "referrals": "Рефералы"
+    "referrals": "Рефералы",
+    "levelReferrals": "Уровни {level} Рефералов",
+    "disconnectWallet": "Отключить кошелек",
+    "areYouSure": "Вы уверены?",
+    "pleaseJoinViaReferralLink": "Пожалуйста, присоединитесь через ссылку приглашения.",
+    "canNotRegisterWithoutReferral": "Вы не можете зарегистрироваться без приглашения!",
+    "welcome": "Добро пожаловать в Piggies!",
+    "register": "Завершить регистрацию",
+    "pleaseWait": "Пожалуйста, подождите..."
   }
 }

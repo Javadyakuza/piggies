@@ -20,9 +20,11 @@ import { init } from "@/core/init";
 
 import "./styles.css";
 
-function RootInner({ children }: PropsWithChildren) {
-  const isDev = process.env.NODE_ENV === "development";
+const isDev =
+  // false;
+  process.env.NODE_ENV === "development";
 
+function RootInner({ children }: PropsWithChildren) {
   // Mock Telegram environment in development mode if needed.
   if (isDev) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -58,15 +60,12 @@ function RootInner({ children }: PropsWithChildren) {
 }
 
 export function Root(props: PropsWithChildren) {
-  const isDev = process.env.NODE_ENV === "development";
-
   // Mock Telegram environment in development mode if needed.
   if (isDev) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useTelegramMock();
   }
 
-  
   const didMount = useDidMount();
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
