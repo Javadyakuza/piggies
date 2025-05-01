@@ -58,6 +58,15 @@ function RootInner({ children }: PropsWithChildren) {
 }
 
 export function Root(props: PropsWithChildren) {
+  const isDev = process.env.NODE_ENV === "development";
+
+  // Mock Telegram environment in development mode if needed.
+  if (isDev) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useTelegramMock();
+  }
+
+  
   const didMount = useDidMount();
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
