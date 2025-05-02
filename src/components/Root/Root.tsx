@@ -28,11 +28,11 @@ const isDev =
 function RootInner({ children }: PropsWithChildren) {
   const router = useRouter();
   const query = useSearchParams();
-  const startApp = query?.get("startApp");
+  const startapp = query?.get("startApp");
 
   useEffect(() => {
-    if (startApp) {
-      router.push(startApp);
+    if (startapp) {
+      router.push(startapp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startApp]);
