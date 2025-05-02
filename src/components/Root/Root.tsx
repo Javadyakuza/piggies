@@ -19,12 +19,24 @@ import { setLocale } from "@/core/i18n/locale";
 import { init } from "@/core/init";
 
 import "./styles.css";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const isDev =
   // false;
   process.env.NODE_ENV === "development";
 
 function RootInner({ children }: PropsWithChildren) {
+  const router = useRouter();
+  const query = useSearchParams();
+  const startApp = query?.get("startApp");
+
+  useEffect(() => {
+    if (startApp) {
+      router.push(startApp);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startApp]);
+
   // Mock Telegram environment in development mode if needed.
   if (isDev) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
