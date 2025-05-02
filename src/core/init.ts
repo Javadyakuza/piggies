@@ -6,13 +6,17 @@ import {
   initData,
   $debug,
   init as initSDK,
-} from '@telegram-apps/sdk-react';
+} from "@telegram-apps/sdk-react";
+
+let _isInitialized = false;
 
 /**
  * Initializes the application and configures its dependencies.
  */
 export function init(debug: boolean): void {
-  // Set @telegram-apps/sdk-react debug mode.
+  if (_isInitialized) return;
+  _isInitialized = true;
+
   $debug.set(debug);
 
   // Initialize special event handlers for Telegram Desktop, Android, iOS, etc.
@@ -24,18 +28,19 @@ export function init(debug: boolean): void {
   miniApp.mount();
   themeParams.mount();
   initData.restore();
-  void viewport.mount().then(() => {
-    viewport.bindCssVars();
-  }).catch(e => {
-    console.error('Something went wrong mounting the viewport', e);
-  });
 
-  // Define components-related CSS variables.
+  void viewport
+    .mount()
+    .then(() => {
+      viewport.bindCssVars();
+    })
+    .catch((e) => {
+      console.error("Something went wrong mounting the viewport", e);
+    });
+
   miniApp.bindCssVars();
   themeParams.bindCssVars();
 
-  // Add Eruda if needed.
-  debug && import('eruda')
-    .then((lib) => lib.default.init())
-    .catch(console.error);
+  debug &&
+    import("eruda").then((lib) => lib.default.init()).catch(console.error);
 }
