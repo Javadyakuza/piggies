@@ -20,9 +20,11 @@ import { init } from "@/core/init";
 
 import "./styles.css";
 
-function RootInner({ children }: PropsWithChildren) {
-  const isDev = process.env.NODE_ENV === "development";
+const isDev =
+  // false;
+  process.env.NODE_ENV === "development";
 
+function RootInner({ children }: PropsWithChildren) {
   // Mock Telegram environment in development mode if needed.
   if (isDev) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -46,21 +48,24 @@ function RootInner({ children }: PropsWithChildren) {
   }, [initDataUser]);
 
   return (
-    <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/tonconnect-manifest.json">
-      <AppRoot
-        appearance={isDark ? "dark" : "light"}
-        platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
-      >
+    <AppRoot
+      appearance={isDark ? "dark" : "light"}
+      platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+    >
+      <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/tonconnect-manifest.json">
         {children}
-      </AppRoot>
-    </TonConnectUIProvider>
+      </TonConnectUIProvider>
+    </AppRoot>
   );
 }
 
 export function Root(props: PropsWithChildren) {
-  // Unfortunately, Telegram Mini Apps does not allow us to use all features of
-  // the Server Side Rendering. That's why we are showing loader on the server
-  // side.
+  // Mock Telegram environment in development mode if needed.
+  if (isDev) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useTelegramMock();
+  }
+
   const didMount = useDidMount();
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);

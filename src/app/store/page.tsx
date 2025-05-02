@@ -9,35 +9,25 @@ import { CardCell } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card
 import { CardChip } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip";
 import React from "react";
 import { useTonWallet } from "@tonconnect/ui-react";
-import axios from 'axios';
+import axios from "axios";
 
 type PigData = {
   pig_levels: number;
   buyable_pigs: number;
 };
 
-
-async function getTonBalance(address: string): Promise<string> {
-  const response = await axios.get(`https://toncenter.com/api/v2/getAddressBalance`, {
-    params: {
-      address,
-    }
-  });
-
-  const rawBalance = response.data.result;
-  const tonBalance = Number(rawBalance) / 1e9;
-  return tonBalance.toFixed(2);
-}
-
 export default function StorePage() {
   const t = useTranslations("i18n");
   const [balance, setBalance] = useState(0);
+  const [isBalanceSet, setIsBalanceSet] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
 
   useEffect(() => {
     if (!wallet) return;
+    setIsBalanceSet(false);
+
     const fetchPigsData = async () => {
       const response = await fetch(
         `http://localhost:3000/api/pigs/${wallet?.account.address}`
@@ -49,12 +39,13 @@ export default function StorePage() {
   }, [wallet]);
 
   useEffect(() => {
+    if (isBalanceSet) return;
     if (balance == 0 && wallet) {
-      getTonBalance(wallet?.account.address).then(res => setBalance(res)); 
+      getTonBalance(wallet?.account.address).then((res) => setBalance(res));
     }
     setSelectedItemIndex(pigsData?.buyable_pigs || 0);
-
-  }, [pigsData]);
+    setIsBalanceSet(true);
+  }, [pigsData, wallet, balance, isBalanceSet]);
 
   const items = [
     {
@@ -62,7 +53,8 @@ export default function StorePage() {
       code: 0,
       price: 500,
       levels: 4,
-      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
+      coverUrl:
+        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
       purchase: t("purchase"),
     },
     {
@@ -70,7 +62,8 @@ export default function StorePage() {
       code: 1,
       price: 1000,
       levels: 6,
-      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
+      coverUrl:
+        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
       purchase: t("upgradeSilver"),
     },
     {
@@ -78,7 +71,8 @@ export default function StorePage() {
       code: 2,
       price: 1500,
       levels: 8,
-      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
+      coverUrl:
+        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
       purchase: t("upgradeGold"),
     },
     {
@@ -86,23 +80,27 @@ export default function StorePage() {
       code: 3,
       price: 2000,
       levels: 10,
-      coverUrl: "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
+      coverUrl:
+        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
       purchase: t("upgradeDiamond"),
     },
   ];
 
   const getTonBalance = async (address: string): Promise<number> => {
-    const response = await axios.get(`https://toncenter.com/api/v2/getAddressBalance`, {
-      params: {
-        address,
+    const response = await axios.get(
+      `https://toncenter.com/api/v2/getAddressBalance`,
+      {
+        params: {
+          address,
+        },
       }
-    });
-  
-    const rawBalance = response.data.result; 
-    const tonBalance = Number(rawBalance) / 1e9; 
-  
+    );
+
+    const rawBalance = response.data.result;
+    const tonBalance = Number(rawBalance) / 1e9;
+
     return Number(tonBalance.toFixed(2));
-  }
+  };
   const handleSelectItem = (index: number) => {
     setSelectedItemIndex(index);
   };

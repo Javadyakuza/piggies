@@ -84,18 +84,19 @@ export default async function handler(
     const { data, error } = await supabase
       .from("users")
       .select()
-      .eq("telegram_id", telegramId)
-      .single();
+      .eq("telegram_id", telegramId);
+
+    const [userData] = data || [];
 
     if (error) {
       throw new Error(error.message);
     }
 
-    if (!data) {
+    if (!userData) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    return res.status(200).json(data);
+    return res.status(200).json(userData);
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ error: "Internal server error" });
