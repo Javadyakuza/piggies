@@ -28,7 +28,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
           const response: AxiosResponse<{
             referral_id: string;
           }> = await axios.get(
-            `http://localhost:3000/api/user-tree/${userTelegramId}`
+            `/api/user-tree/${userTelegramId}`
           );
 
           if (response.data.referral_id) {

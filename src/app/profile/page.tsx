@@ -82,7 +82,7 @@ export default function ProfilePage() {
         const telegramId = "admin";
         const referrals = 8;
         const response = await fetch(
-          `http://localhost:3000/api/user-tree/${telegramId}/${referrals}`
+          `/api/user-tree/${telegramId}/${referrals}`
         );
         const data = await response.json();
         setReferrals(data);

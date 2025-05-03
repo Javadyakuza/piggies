@@ -1,9 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
 
+
+type User = {
+  telegram_id: string;
+  wallet_address: string;
+  current_pig: number;
+  fullname: string;
+} 
 interface ReferralLevel {
   count: number;
   total: number;
+  users: User[];
 }
 
 interface ReferralResponse {
@@ -23,14 +31,24 @@ const countReferralsByLevel = async (
 ): Promise<ReferralLevel[]> => {
   const { data: allUsers, error } = await supabase
     .from("users")
-    .select("id, parent_id");
+    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname");
 
   if (error || !allUsers) {
     throw new Error("Failed to fetch users: " + error?.message);
   }
 
   const referralMap: { [key: string]: string[] } = {};
-  allUsers.forEach((user: { id: string; parent_id: string | null }) => {
+  const userMap: { [key: string]: User } = {};
+
+  allUsers.forEach((user) => {
+    if (user.id && user.telegram_id) {
+      userMap[user.id] = {
+        telegram_id: user.telegram_id,
+        wallet_address: user.wallet_address || "",
+        current_pig: user.current_pig ?? 0,
+        fullname: user.fullname || "",
+      };
+    }
     const parent = user.parent_id;
     if (parent) {
       if (!referralMap[parent]) {
@@ -39,6 +57,7 @@ const countReferralsByLevel = async (
       referralMap[parent].push(user.id);
     }
   });
+  
 
   const levels: string[][] = [[], []];
   const queue: { userId: string; level: number }[] = [{ userId, level: 0 }];
@@ -62,13 +81,19 @@ const countReferralsByLevel = async (
 
   const result: ReferralLevel[] = [];
   for (let i = 1; i <= 7; i++) {
-    const count = levels[i]?.length || 0;
+    const idsAtLevel = levels[i] || [];
+    const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
-    result.push({ count, total });
+    const users = idsAtLevel
+      .map((id) => userMap[id])
+      .filter(Boolean) as User[];
+
+    result.push({ count, total, users });
   }
 
   return result;
 };
+
 /**
  * @swagger
  * /api/user-tree/{telegramId}/{referrals}:
@@ -217,6 +242,7 @@ export default async function handler(
         response[`level_${index + 1}`] = {
           count: level.count,
           total: level.total,
+          users: level.users,
         };
       });
       return res.status(200).json(response);
@@ -225,6 +251,7 @@ export default async function handler(
       return res.status(200).json({
         count: level.count,
         total: level.total,
+        users: level.users,
       });
     }
   } catch (error) {

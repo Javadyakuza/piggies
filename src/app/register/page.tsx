@@ -12,20 +12,22 @@ import { useState } from "react";
 
 export default function RegisterPage() {
   const t = useTranslations("i18n");
-  const query = useSearchParams();
-  const refId = query?.get("refId");
+  const initDataState = useSignal(initData.state);
+  const startParam = initDataState?.startParam;
+  const refId = startParam?.startsWith("register_") ? startParam.split("_")[1] : null;
+  
 
   const router = useRouter();
 
   const [isButtonClicked, setIsButtonClicked] = useState(false);
-  const initDataState = useSignal(initData.state);
+  // const initDataState = useSignal(initData.state);
   const userTelegramId = initDataState?.user?.id;
 
   const handleRegister = async () => {
     try {
       setIsButtonClicked(true);
       if (!userTelegramId) throw new Error("Telegram ID not found");
-      const response = await axios.post(`http://localhost:3000/api/register`, {
+      const response = await axios.post(`/api/register`, {
         telegram_id: userTelegramId,
         referral_id: refId,
       });

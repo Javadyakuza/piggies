@@ -47,7 +47,7 @@ export default function Header() {
         const response: AxiosResponse<{
           referral_id: string;
         }> = await axios.get(
-          `http://localhost:3000/api/user-tree/${userData?.id}`
+          `/api/user-tree/${userData?.id}`
         );
         const referralId = response.data.referral_id;
         setReferralId(referralId);

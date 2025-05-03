@@ -30,7 +30,7 @@ export default function StorePage() {
 
     const fetchPigsData = async () => {
       const response = await fetch(
-        `http://localhost:3000/api/pigs/${wallet?.account.address}`
+        `/api/pigs/${wallet?.account.address}`
       );
       const data = await response.json();
       setPigsData(data);
