@@ -1,10 +1,16 @@
 .profile-container {
-  .ref-link {
-    padding: 0.5rem;
-    .copy-ref-link-button {
-      cursor: pointer;
-      font-size: 18px;
-      color: #fff;
+  .user-cards-container {
+    .user-card {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      &:not(:last-child) {
+        border-bottom: 1px solid #cccccc4d;
+      }
     }
+  }
+
+  .tgui-1c6d7865a76a19bc {
+    width: 100%;
   }
 }

@@ -5,7 +5,12 @@ import { useTranslations } from "next-intl";
 import "./styles.css";
 import { faCheck, faCopy, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, IconButton } from "@telegram-apps/telegram-ui";
+import {
+  Accordion,
+  Button,
+  Chip,
+  IconButton,
+} from "@telegram-apps/telegram-ui";
 import { DisplayData } from "@/components/DisplayData/DisplayData";
 import {
   TonConnectButton,
@@ -15,20 +20,44 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
+import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
+import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
+import { pigsMap } from "@/utils/pigs_map";
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
   const wallet = useTonWallet();
+  const pigs = pigsMap(t);
+
+  const findPig = (targetCode: number) =>
+    pigs.find((pig) => pig.code === targetCode);
+
+  const [tonConnectUI] = useTonConnectUI();
+
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [balance, setBalance] = useState(0);
   const [isBalanceSet, setIsBalanceSet] = useState(false);
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
-  const [referrals, setReferrals] = useState<Record<string, any>>({});
+  const [referrals, setReferrals] = useState<
+    Record<
+      string,
+      {
+        count: number;
+        total: number;
+        users: {
+          telegram_id: string;
+          wallet_address: string;
+          current_pig: number;
+        }[];
+      }
+    >
+  >({});
   const [isDisconnectConfirmVisible, setIsDisconnectConfirmVisible] =
     useState(false);
-  const [tonConnectUI] = useTonConnectUI();
-  const pathname = usePathname();
-  const router = useRouter();
+  const [expandedLevel, setExpandedLevel] = useState("");
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
@@ -105,6 +134,12 @@ export default function ProfilePage() {
     navigator.clipboard.writeText(walletAddress);
   };
 
+  const handleReferralLevelClick = (level: string) => {
+    console.log(expandedLevel, level);
+    if (expandedLevel === level) setExpandedLevel("");
+    else setExpandedLevel(level);
+  };
+
   const prepareReferrals = () => {
     const levels = Object.keys(referrals);
 
@@ -113,7 +148,30 @@ export default function ProfilePage() {
       const levelNumber = level.replace("level_", "");
       return {
         title: t("levelReferrals", { level: levelNumber }),
-        value: `${referralData.count}/${referralData.total}`,
+        value: (
+          <div className="referral-accordion">
+            <Accordion
+              onChange={() => handleReferralLevelClick(level)}
+              expanded={expandedLevel === level}
+            >
+              <AccordionSummary>
+                {`${referralData.count}/${referralData.total}`}
+              </AccordionSummary>
+              <AccordionContent>
+                <div className="user-cards-container">
+                  {referralData.users.map((user) => (
+                    <div className="user-card" key={user.telegram_id}>
+                      <h4>{user.telegram_id}</h4>
+                      <Chip mode="outline">
+                        {findPig(user.current_pig)?.title || ""}
+                      </Chip>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </Accordion>
+          </div>
+        ),
       };
     });
   };

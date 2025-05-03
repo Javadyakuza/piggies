@@ -1,1 +1,1 @@
-.profile-container .ref-link{padding:.5rem}.profile-container .ref-link .copy-ref-link-button{cursor:pointer;font-size:18px;color:#fff}
+.profile-container .user-cards-container .user-card{display:flex;justify-content:space-between;padding:.5rem 1rem}.profile-container .user-cards-container .user-card:not(:last-child){border-bottom:1px solid rgba(204,204,204,.3019607843)}.profile-container .tgui-1c6d7865a76a19bc{width:100%}

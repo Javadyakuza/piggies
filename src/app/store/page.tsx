@@ -5,11 +5,10 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import "./styles.css";
 import { Button, Card } from "@telegram-apps/telegram-ui";
-import { CardCell } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardCell/CardCell";
-import { CardChip } from "@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip";
 import React from "react";
 import { useTonWallet } from "@tonconnect/ui-react";
 import axios from "axios";
+import { pigsMap } from "@/utils/pigs_map";
 
 type PigData = {
   pig_levels: number;
@@ -24,14 +23,14 @@ export default function StorePage() {
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
 
+  const items = pigsMap(t);
+
   useEffect(() => {
     if (!wallet) return;
     setIsBalanceSet(false);
 
     const fetchPigsData = async () => {
-      const response = await fetch(
-        `/api/pigs/${wallet?.account.address}`
-      );
+      const response = await fetch(`/api/pigs/${wallet?.account.address}`);
       const data = await response.json();
       setPigsData(data);
     };
@@ -46,45 +45,6 @@ export default function StorePage() {
     setSelectedItemIndex(pigsData?.buyable_pigs || 0);
     setIsBalanceSet(true);
   }, [pigsData, wallet, balance, isBalanceSet]);
-
-  const items = [
-    {
-      title: "Bronze Pig",
-      code: 0,
-      price: 500,
-      levels: 4,
-      coverUrl:
-        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
-      purchase: t("purchase"),
-    },
-    {
-      title: "Silver Pig",
-      code: 1,
-      price: 1000,
-      levels: 6,
-      coverUrl:
-        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
-      purchase: t("upgradeSilver"),
-    },
-    {
-      title: "Gold Pig",
-      code: 2,
-      price: 1500,
-      levels: 8,
-      coverUrl:
-        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
-      purchase: t("upgradeGold"),
-    },
-    {
-      title: "Diamond Pig",
-      code: 3,
-      price: 2000,
-      levels: 10,
-      coverUrl:
-        "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
-      purchase: t("upgradeDiamond"),
-    },
-  ];
 
   const getTonBalance = async (address: string): Promise<number> => {
     const response = await axios.get(
