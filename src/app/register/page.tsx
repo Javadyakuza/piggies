@@ -14,14 +14,20 @@ export default function RegisterPage() {
   const t = useTranslations("i18n");
   const initDataState = useSignal(initData.state);
   const startParam = initDataState?.startParam;
-  const refId = startParam?.startsWith("register_") ? startParam.split("_")[1] : null;
-  
+  const refId = startParam?.startsWith("register_")
+    ? startParam.split("_")[1]
+    : null;
 
   const router = useRouter();
 
   const [isButtonClicked, setIsButtonClicked] = useState(false);
-  // const initDataState = useSignal(initData.state);
+
   const userTelegramId = initDataState?.user?.id;
+  const userTelegramFullName =
+    initDataState?.user?.firstName || initDataState?.user?.lastName
+      ? `${initDataState?.user?.firstName || ""} 
+    ${initDataState?.user?.lastName || ""}`
+      : initDataState?.user?.username || initDataState?.user?.id;
 
   const handleRegister = async () => {
     try {
@@ -30,6 +36,7 @@ export default function RegisterPage() {
       const response = await axios.post(`/api/register`, {
         telegram_id: userTelegramId,
         referral_id: refId,
+        fullname: userTelegramFullName,
       });
       if (response.status === 201) {
         router.push("/ton-connect");

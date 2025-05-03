@@ -1,17 +1,20 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCartShopping,
+  faCheck,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
-import "./styles.css";
-import { TonConnectButton } from "@tonconnect/ui-react";
-import { Button } from "@telegram-apps/telegram-ui";
+import { Button, IconButton } from "@telegram-apps/telegram-ui";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import { generateRefLink } from "@/utils/reflink";
+import "./styles.css";
 
 export default function Header() {
   const router = useRouter();
@@ -46,9 +49,7 @@ export default function Header() {
       try {
         const response: AxiosResponse<{
           referral_id: string;
-        }> = await axios.get(
-          `/api/user-tree/${userData?.id}`
-        );
+        }> = await axios.get(`/api/user-tree/${userData?.id}`);
         const referralId = response.data.referral_id;
         setReferralId(referralId);
       } catch (err) {
@@ -63,6 +64,11 @@ export default function Header() {
     router.push("/profile");
   };
 
+  const handleOpenStore = () => {
+    if (pathname === "/store") return;
+    router.push("/store");
+  };
+
   return (
     <div className="main-header">
       <div className="profile-container">
@@ -74,20 +80,25 @@ export default function Header() {
             {userData?.firstName} {userData?.lastName}
           </h4>
         </div>
-        <div className="ref-link">
-          <Button
-            disabled={!referralId}
-            onClick={handleCopyRefLink}
-            className="copy-ref-link-Button primary-btn"
-          >
-            <span>
-              {isRefLinkCopied ? t("refLinkCopied") : t("action.copyRefLink")}
-            </span>{" "}
-            <FontAwesomeIcon
-              icon={isRefLinkCopied ? faCheck : faCopy}
-              size="lg"
-            />
-          </Button>
+        <div className="actions-container">
+          <div className="ref-link">
+            <Button
+              disabled={!referralId}
+              onClick={handleCopyRefLink}
+              className="copy-ref-link-Button primary-btn"
+            >
+              <span>
+                {isRefLinkCopied ? t("refLinkCopied") : t("action.copyRefLink")}
+              </span>{" "}
+              <FontAwesomeIcon
+                icon={isRefLinkCopied ? faCheck : faCopy}
+                size="lg"
+              />
+            </Button>
+          </div>
+          <IconButton mode="plain" onClick={handleOpenStore}>
+            <FontAwesomeIcon icon={faCartShopping} size="lg" />
+          </IconButton>
         </div>
       </div>
       <hr />

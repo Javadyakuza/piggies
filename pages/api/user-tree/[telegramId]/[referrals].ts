@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
 
-
 type User = {
   telegram_id: string;
   wallet_address: string;
   current_pig: number;
   fullname: string;
-} 
+  inviter_id: string;
+};
 interface ReferralLevel {
   count: number;
   total: number;
@@ -31,7 +31,9 @@ const countReferralsByLevel = async (
 ): Promise<ReferralLevel[]> => {
   const { data: allUsers, error } = await supabase
     .from("users")
-    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname");
+    .select(
+      "id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id"
+    );
 
   if (error || !allUsers) {
     throw new Error("Failed to fetch users: " + error?.message);
@@ -47,6 +49,7 @@ const countReferralsByLevel = async (
         wallet_address: user.wallet_address || "",
         current_pig: user.current_pig ?? 0,
         fullname: user.fullname || "",
+        inviter_id: user.inviter_id || "",
       };
     }
     const parent = user.parent_id;
@@ -57,7 +60,6 @@ const countReferralsByLevel = async (
       referralMap[parent].push(user.id);
     }
   });
-  
 
   const levels: string[][] = [[], []];
   const queue: { userId: string; level: number }[] = [{ userId, level: 0 }];
@@ -84,9 +86,7 @@ const countReferralsByLevel = async (
     const idsAtLevel = levels[i] || [];
     const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
-    const users = idsAtLevel
-      .map((id) => userMap[id])
-      .filter(Boolean) as User[];
+    const users = idsAtLevel.map((id) => userMap[id]).filter(Boolean) as User[];
 
     result.push({ count, total, users });
   }

@@ -1,1 +1,1 @@
-export { default } from "./profile/page";
+export { default } from "./store/page";
