@@ -6,7 +6,9 @@
       "copyRefLink": "Скопировать рефлекс"
     },
     "balance": "Баланс",
-    "balanceAmount": "{amount} TON",
+    "earnings": "Доходы",
+    "earningsAmount": "{amount} $ / {currentPigPrice} TON",
+    "pigPrice": "{amount} TON",
     "withdraw": "Вывод",
     "levelNumber": "Уровни: {level}",
     "purchase": "Купить",
@@ -26,6 +28,11 @@
     "welcome": "Добро пожаловать в Piggies!",
     "register": "Завершить регистрацию",
     "pleaseWait": "Пожалуйста, подождите...",
-    "noReferrals": "Рефералов пока нет"
+    "noReferrals": "Рефералов пока нет",
+    "invitedUsers": "Приглашенных {usersInvited} пользователей",
+    "walletAddressChanged": "Адрес кошелька изменен",
+    "walletAddressChangedDescription": "Адрес кошелька изменен с момента последнего подключения, адрес кошелька автоматически меняется при подключении к новому кошельку.",
+    "understood": "Понятно",
+    "usersTree": "Дерево пользователей: {totalUnder}"
   }
 }

@@ -14,17 +14,22 @@ import { Accordion, Button, IconButton } from "@telegram-apps/telegram-ui";
 import { DisplayData } from "@/components/DisplayData/DisplayData";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
 import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
 import { pigsMap } from "@/utils/pigs_map";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
+import { copyToClipboard } from "@/utils/copy-to-clipboard";
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
   const wallet = useTonWallet();
   const pigs = pigsMap(t);
 
+  const truncate = (str: string, maxLength: number) => {
+    if (str.length <= maxLength) return str;
+    return str.slice(0, maxLength) + "...";
+  };
   const findPig = (targetCode: number) =>
     pigs.find((pig) => pig.code === targetCode);
 
@@ -34,6 +39,7 @@ export default function ProfilePage() {
   const [isBalanceSet, setIsBalanceSet] = useState(false);
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
+  const [userId, setUserId] = useState<number>();
   const [referrals, setReferrals] = useState<
     Record<
       string,
@@ -45,6 +51,8 @@ export default function ProfilePage() {
           inviter_id: number;
           fullname: string;
           current_pig: number;
+          total_invited: number;
+          total_under: number;
         }[];
       }
     >
@@ -54,7 +62,8 @@ export default function ProfilePage() {
   const [expandedLevel, setExpandedLevel] = useState("");
 
   const initDataState = useSignal(initData.state);
-  const userTelegramId = initDataState?.user?.id;
+  // const userTelegramId = initDataState?.user?.id;
+  const userTelegramId = 168185687;
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
@@ -70,6 +79,23 @@ export default function ProfilePage() {
       }, 1300);
     }
   }, [isDisconnectConfirmVisible]);
+
+  useEffect(() => {
+    if (userId || !userTelegramId) return;
+
+    const fetchUserData = async () => {
+      try {
+        const response: AxiosResponse<{
+          id: number;
+        }> = await axios.get(`/api/user-tree/${userTelegramId}`);
+        const userIdToSet = response.data.id;
+        setUserId(userIdToSet);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+    fetchUserData();
+  }, [userId, userTelegramId]);
 
   const getTonBalance = async (address: string): Promise<number> => {
     const response = await axios.get(
@@ -122,17 +148,18 @@ export default function ProfilePage() {
   const handleCopyAddress = () => {
     if (isAddressCopied) return;
     setIsAddressCopied(true);
-    navigator.clipboard.writeText(walletAddress);
+    copyToClipboard(walletAddress);
   };
 
   const handleReferralLevelClick = (level: string) => {
-    console.log(expandedLevel, level);
     if (expandedLevel === level) setExpandedLevel("");
     else setExpandedLevel(level);
   };
 
   const prepareReferrals = () => {
-    const levels = Object.keys(referrals);
+    const levels = Object.keys(referrals).filter(
+      (level) => level !== "total_under"
+    );
 
     return levels.map((level) => {
       const referralData = referrals[level];
@@ -155,28 +182,38 @@ export default function ProfilePage() {
                     return (
                       <div
                         className={`user-card ${
-                          user.inviter_id === userTelegramId
-                            ? "--invited-by-me"
-                            : ""
+                          user.inviter_id === userId ? "--invited-by-me" : ""
                         }`}
                         key={user.telegram_id}
                       >
                         <div className="user-info">
                           <div className="avatar">
-                            <FontAwesomeIcon icon={faUser} size="sm" />
+                            {pig && pig.iconUrl ? (
+                              <img
+                                className="pig-icon"
+                                src={pig.iconUrl}
+                                alt="pig-icon"
+                              />
+                            ) : (
+                              "❌"
+                            )}
                           </div>
-                          <h4>{user.fullname}</h4>
+                          <div className="info">
+                            <h4 className="user-name">
+                              {truncate(user.fullname, 14)}
+                            </h4>
+                            <h4 className="invited">
+                              {t("invitedUsers", {
+                                usersInvited: user.total_invited,
+                              })}
+                            </h4>
+                            <h4 className="invited">
+                              {t("usersTree", {
+                                totalUnder: user.total_under,
+                              })}
+                            </h4>
+                          </div>
                         </div>
-
-                        {pig && pig.iconUrl ? (
-                          <img
-                            className="pig-icon"
-                            src={pig.iconUrl}
-                            alt="pig-icon"
-                          />
-                        ) : (
-                          "no-pig"
-                        )}
                       </div>
                     );
                   })}

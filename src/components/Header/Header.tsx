@@ -15,6 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import { generateRefLink } from "@/utils/reflink";
 import "./styles.css";
+import { copyToClipboard } from "@/utils/copy-to-clipboard";
 
 export default function Header() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function Header() {
     if (isRefLinkCopied || !referralId) return;
 
     setIsRefLinkCopied(true);
-    navigator.clipboard.writeText(generateRefLink(referralId));
+    copyToClipboard(generateRefLink(referralId));
   };
 
   useEffect(() => {

@@ -4,10 +4,9 @@ import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import "./styles.css";
-import { Button, Card } from "@telegram-apps/telegram-ui";
+import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
 import { useTonWallet } from "@tonconnect/ui-react";
-import axios from "axios";
 import { pigsMap } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -18,9 +17,9 @@ type PigData = {
 
 export default function StorePage() {
   const t = useTranslations("i18n");
-  const [balance, setBalance] = useState(0);
-  const [isBalanceSet, setIsBalanceSet] = useState(false);
+  const [earnings] = useState(0);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+  const [currentPigIndex, setCurrentPigIndex] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
 
@@ -35,7 +34,6 @@ export default function StorePage() {
 
   useEffect(() => {
     if (!wallet) return;
-    setIsBalanceSet(false);
 
     const fetchPigsData = async () => {
       const response = await fetch(`/api/pigs/${wallet?.account.address}`);
@@ -46,29 +44,10 @@ export default function StorePage() {
   }, [wallet]);
 
   useEffect(() => {
-    if (isBalanceSet) return;
-    if (balance == 0 && wallet) {
-      getTonBalance(wallet?.account.address).then((res) => setBalance(res));
-    }
     setSelectedItemIndex(pigsData?.buyable_pigs || 0);
-    setIsBalanceSet(true);
-  }, [pigsData, wallet, balance, isBalanceSet]);
+    setCurrentPigIndex(pigsData?.buyable_pigs || undefined);
+  }, [pigsData]);
 
-  const getTonBalance = async (address: string): Promise<number> => {
-    const response = await axios.get(
-      `https://toncenter.com/api/v2/getAddressBalance`,
-      {
-        params: {
-          address,
-        },
-      }
-    );
-
-    const rawBalance = response.data.result;
-    const tonBalance = Number(rawBalance) / 1e9;
-
-    return Number(tonBalance.toFixed(2));
-  };
   const handleSelectItem = (index: number) => {
     setSelectedItemIndex(index);
   };
@@ -76,13 +55,21 @@ export default function StorePage() {
   const activeItem =
     selectedItemIndex !== undefined && items[selectedItemIndex];
 
+  const currentPig = currentPigIndex ? items[currentPigIndex] : undefined;
   return (
     <Page>
       <div className="store-container">
         <div className="body-container">
-          <div className="balance-container">
-            <h3>{t("balance")}</h3>
-            <h4>{t("balanceAmount", { amount: balance })}</h4>
+          <div className="earnings-container">
+            <h3>{t("earnings")}</h3>
+            <h4>
+              {t("earningsAmount", {
+                amount: earnings.toLocaleString(),
+                currentPigPrice: currentPig?.price
+                  ? currentPig.price.toLocaleString()
+                  : 0,
+              })}
+            </h4>
             <Button className="withdraw-btn primary-btn">
               {t("withdraw")}
             </Button>
@@ -127,7 +114,9 @@ export default function StorePage() {
                 <h3>{t("levelNumber", { level: activeItem.levels })}</h3>
               </div>
               <div className="item-purchase-action">
-                <h4>{t("balanceAmount", { amount: activeItem.price })}</h4>
+                <h4>
+                  {t("pigPrice", { amount: activeItem.price.toLocaleString() })}
+                </h4>
                 <button className="primary-btn">{t("purchase")}</button>
               </div>
             </div>

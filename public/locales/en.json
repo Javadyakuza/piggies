@@ -6,7 +6,9 @@
       "copyRefLink": "Copy reflink"
     },
     "balance": "Balance",
-    "balanceAmount": "{amount} TON",
+    "earnings": "Earnings",
+    "earningsAmount": "{amount} $ / {currentPigPrice} TON",
+    "pigPrice": "{amount} TON",
     "withdraw": "Withdraw",
     "levelNumber": "Levels: {level}",
     "purchase": "Purchase",
@@ -26,6 +28,11 @@
     "welcome": "Welcome to Piggies!",
     "register": "Complete Registration",
     "pleaseWait": "Please wait...",
-    "noReferrals": "No referrals yet"
+    "noReferrals": "No referrals yet",
+    "invitedUsers": "Invited {usersInvited} users",
+    "walletAddressChanged": "Wallet address changed",
+    "walletAddressChangedDescription": "Your wallet address has been changed since last time you connected, the wallet address automatically changes when you connect to a new wallet.",
+    "understood": "Understood",
+    "usersTree": "Users tree: {totalUnder}"
   }
 }
