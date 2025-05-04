@@ -19,6 +19,7 @@ import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blo
 import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
 import { pigsMap } from "@/utils/pigs_map";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
+import { copyToClipboard } from "@/utils/copy-to-clipboard";
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
@@ -140,7 +141,7 @@ export default function ProfilePage() {
   const handleCopyAddress = () => {
     if (isAddressCopied) return;
     setIsAddressCopied(true);
-    navigator.clipboard.writeText(walletAddress);
+    copyToClipboard(walletAddress);
   };
 
   const handleReferralLevelClick = (level: string) => {

@@ -6,7 +6,9 @@
       "copyRefLink": "Скопировать рефлекс"
     },
     "balance": "Баланс",
-    "balanceAmount": "{amount} TON",
+    "earnings": "Доходы",
+    "earningsAmount": "{amount} $ / {currentPigPrice} TON",
+    "pigPrice": "{amount} TON",
     "withdraw": "Вывод",
     "levelNumber": "Уровни: {level}",
     "purchase": "Купить",
