@@ -20,6 +20,7 @@ export default function StorePage() {
   const [earnings] = useState(0);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
+  const [buyablePigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
 
@@ -51,7 +52,7 @@ export default function StorePage() {
     );
 
     setSelectedItemIndex(buyablePigIndex);
-  }, [pigsData, items]);
+  }, [pigsData]);
 
   const handleSelectItem = (index: number) => {
     setSelectedItemIndex(index);
@@ -109,7 +110,7 @@ export default function StorePage() {
             {items.map((item, index) => (
               <div
                 onClick={() => {
-                  if (index !== selectedItemIndex) return;
+                  // if (index !== selectedItemIndex) return;
                   handleSelectItem(index);
                 }}
                 className={`item-slide ${
@@ -139,9 +140,14 @@ export default function StorePage() {
                 <h4>
                   {t("pigPrice", { amount: activeItem.price.toLocaleString() })}
                 </h4>
-                <button className="primary-btn">
-                  {getPurchaseButtonText(activeItem.code)}
-                </button>
+                <Button
+                  className="primary-btn"
+                  disabled={activeItem.code !== pigsData?.buyable_pigs}
+                >
+                  {activeItem.code !== currentPigCode
+                    ? getPurchaseButtonText(activeItem.code)
+                    : t("currentPig")}
+                </Button>
               </div>
             </div>
           )) || <></>}
