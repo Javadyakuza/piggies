@@ -26,6 +26,10 @@ export default function ProfilePage() {
   const wallet = useTonWallet();
   const pigs = pigsMap(t);
 
+  const truncate = (str: string, maxLength: number) => {
+    if (str.length <= maxLength) return str;
+    return str.slice(0, maxLength) + "...";
+  };
   const findPig = (targetCode: number) =>
     pigs.find((pig) => pig.code === targetCode);
 
@@ -48,6 +52,7 @@ export default function ProfilePage() {
           fullname: string;
           current_pig: number;
           total_invited: number;
+          total_under: number;
         }[];
       }
     >
@@ -57,8 +62,8 @@ export default function ProfilePage() {
   const [expandedLevel, setExpandedLevel] = useState("");
 
   const initDataState = useSignal(initData.state);
-  const userTelegramId = initDataState?.user?.id;
-  // const userTelegramId = 168185687;
+  // const userTelegramId = initDataState?.user?.id;
+  const userTelegramId = 168185687;
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
@@ -152,7 +157,9 @@ export default function ProfilePage() {
   };
 
   const prepareReferrals = () => {
-    const levels = Object.keys(referrals);
+    const levels = Object.keys(referrals).filter(
+      (level) => level !== "total_under"
+    );
 
     return levels.map((level) => {
       const referralData = referrals[level];
@@ -192,10 +199,17 @@ export default function ProfilePage() {
                             )}
                           </div>
                           <div className="info">
-                            <h4 className="user-name">{user.fullname}</h4>
+                            <h4 className="user-name">
+                              {truncate(user.fullname, 14)}
+                            </h4>
                             <h4 className="invited">
                               {t("invitedUsers", {
                                 usersInvited: user.total_invited,
+                              })}
+                            </h4>
+                            <h4 className="invited">
+                              {t("usersTree", {
+                                totalUnder: user.total_under,
                               })}
                             </h4>
                           </div>

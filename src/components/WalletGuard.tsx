@@ -20,7 +20,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
   const pathname = usePathname();
-  const [userWalletAddress, setUserWalletAddress] = useState("");
+  const [userWalletAddress, setUserWalletAddress] = useState<string | null>();
   const [isWalletChangedModalOpen, setIsWalletChangedModalOpen] =
     useState(false);
   const [initialized, setInitialized] = useState(false);
@@ -45,7 +45,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
           }
 
           if (response.data.wallet_address) {
-            setUserWalletAddress(response.data.wallet_address);
+            setUserWalletAddress(response.data.wallet_address || null);
           }
         } catch (err) {
           const error = err as AxiosError;
@@ -58,7 +58,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   }, [userTelegramId]);
 
   useEffect(() => {
-    if (wallet && userTelegramId) {
+    if (userWalletAddress !== undefined && wallet && userTelegramId) {
       if (userWalletAddress !== wallet.account.address) {
         axios.post(`/api/user-tree/setWallet`, {
           wallet_address: wallet.account.address,

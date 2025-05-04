@@ -32,6 +32,7 @@
     "invitedUsers": "Приглашенных {usersInvited} пользователей",
     "walletAddressChanged": "Адрес кошелька изменен",
     "walletAddressChangedDescription": "Адрес кошелька изменен с момента последнего подключения, адрес кошелька автоматически меняется при подключении к новому кошельку.",
-    "understood": "Понятно"
+    "understood": "Понятно",
+    "usersTree": "Дерево пользователей: {totalUnder}"
   }
 }
