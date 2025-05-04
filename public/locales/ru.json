@@ -28,6 +28,7 @@
     "welcome": "Добро пожаловать в Piggies!",
     "register": "Завершить регистрацию",
     "pleaseWait": "Пожалуйста, подождите...",
-    "noReferrals": "Рефералов пока нет"
+    "noReferrals": "Рефералов пока нет",
+    "invitedUsers": "Приглашенных {usersInvited} пользователей"
   }
 }

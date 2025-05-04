@@ -47,6 +47,7 @@ export default function ProfilePage() {
           inviter_id: number;
           fullname: string;
           current_pig: number;
+          total_invited: number;
         }[];
       }
     >
@@ -56,7 +57,8 @@ export default function ProfilePage() {
   const [expandedLevel, setExpandedLevel] = useState("");
 
   const initDataState = useSignal(initData.state);
-  const userTelegramId = initDataState?.user?.id;
+  // const userTelegramId = initDataState?.user?.id;
+  const userTelegramId = 168185687;
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
@@ -189,7 +191,14 @@ export default function ProfilePage() {
                               "❌"
                             )}
                           </div>
-                          <h4 className="user-name">{user.fullname}</h4>
+                          <div className="info">
+                            <h4 className="user-name">{user.fullname}</h4>
+                            <h4 className="invited">
+                              {t("invitedUsers", {
+                                usersInvited: user.total_invited,
+                              })}
+                            </h4>
+                          </div>
                         </div>
                       </div>
                     );

@@ -30,8 +30,10 @@
     height: 50px;
   }
 
-  .user-name {
+  .user-name,
+  .invited {
     font-size: 12px;
+    margin: 0;
   }
   .user-info {
     display: flex;

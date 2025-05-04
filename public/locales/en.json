@@ -28,6 +28,7 @@
     "welcome": "Welcome to Piggies!",
     "register": "Complete Registration",
     "pleaseWait": "Please wait...",
-    "noReferrals": "No referrals yet"
+    "noReferrals": "No referrals yet",
+    "invitedUsers": "Invited {usersInvited} users"
   }
 }
