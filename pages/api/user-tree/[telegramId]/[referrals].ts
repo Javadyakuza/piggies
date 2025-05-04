@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
 
-
 type User = {
   telegram_id: string;
   wallet_address: string;
@@ -49,6 +48,7 @@ const countReferralsByLevel = async (
         current_pig: user.current_pig ?? 0,
         fullname: user.fullname || "",
         inviter_id: user.inviter_id || "",
+        inviter_id: user.inviter_id || "",
       };
     }
     const parent = user.parent_id;
@@ -59,7 +59,6 @@ const countReferralsByLevel = async (
       referralMap[parent].push(user.id);
     }
   });
-  
 
   const levels: string[][] = [[], []];
   const queue: { userId: string; level: number }[] = [{ userId, level: 0 }];
@@ -86,9 +85,7 @@ const countReferralsByLevel = async (
     const idsAtLevel = levels[i] || [];
     const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
-    const users = idsAtLevel
-      .map((id) => userMap[id])
-      .filter(Boolean) as User[];
+    const users = idsAtLevel.map((id) => userMap[id]).filter(Boolean) as User[];
 
     result.push({ count, total, users });
   }

@@ -1,16 +1,37 @@
 .profile-container {
   .user-cards-container {
+    display: grid;
+    grid-template-columns: calc(50% - 0.5rem) calc(50% - 0.5rem);
+    gap: 0.5rem;
     .user-card {
+      border-radius: 9px;
+      background-color: #cccccc21;
+
+      &.--invited-by-me {
+        background-color: #00800033;
+      }
+      &:nth-child(odd) {
+        &:not(:last-child) {
+          border-right: none;
+        }
+      }
       display: flex;
+      align-items: center;
       justify-content: space-between;
       padding: 0.5rem 1rem;
-      &:not(:last-child) {
-        border-bottom: 1px solid #cccccc4d;
-      }
     }
   }
 
   .tgui-1c6d7865a76a19bc {
     width: 100%;
+  }
+
+  .pig-icon {
+    height: 50px;
+  }
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 }

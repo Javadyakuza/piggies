@@ -6,6 +6,7 @@ export const pigsMap = (t: any) => [
     levels: 4,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
+    iconUrl: "/pig_icons/BronzePig_icon.png",
     purchase: t("purchase"),
   },
   {
@@ -15,6 +16,7 @@ export const pigsMap = (t: any) => [
     levels: 6,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
+    iconUrl: "/pig_icons/SilverPig_icon.png",
     purchase: t("upgradeSilver"),
   },
   {
@@ -24,6 +26,7 @@ export const pigsMap = (t: any) => [
     levels: 8,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
+    iconUrl: "/pig_icons/GoldPig_icon.png",
     purchase: t("upgradeGold"),
   },
   {
@@ -33,6 +36,7 @@ export const pigsMap = (t: any) => [
     levels: 10,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
+    iconUrl: "/pig_icons/DiamondPig_icon.png",
     purchase: t("upgradeDiamond"),
   },
 ];

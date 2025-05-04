@@ -3,26 +3,22 @@
 import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import "./styles.css";
-import { faCheck, faCopy, faSignOut } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faCopy,
+  faSignOut,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Accordion,
-  Button,
-  Chip,
-  IconButton,
-} from "@telegram-apps/telegram-ui";
+import { Accordion, Button, IconButton } from "@telegram-apps/telegram-ui";
 import { DisplayData } from "@/components/DisplayData/DisplayData";
-import {
-  TonConnectButton,
-  useTonConnectUI,
-  useTonWallet,
-} from "@tonconnect/ui-react";
+import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { usePathname, useRouter } from "next/navigation";
 import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
 import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
 import { pigsMap } from "@/utils/pigs_map";
+import { useSignal, initData } from "@telegram-apps/sdk-react";
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
@@ -33,9 +29,6 @@ export default function ProfilePage() {
     pigs.find((pig) => pig.code === targetCode);
 
   const [tonConnectUI] = useTonConnectUI();
-
-  const pathname = usePathname();
-  const router = useRouter();
 
   const [balance, setBalance] = useState(0);
   const [isBalanceSet, setIsBalanceSet] = useState(false);
@@ -49,7 +42,8 @@ export default function ProfilePage() {
         total: number;
         users: {
           telegram_id: string;
-          wallet_address: string;
+          inviter_id: number;
+          fullname: string;
           current_pig: number;
         }[];
       }
@@ -59,17 +53,15 @@ export default function ProfilePage() {
     useState(false);
   const [expandedLevel, setExpandedLevel] = useState("");
 
+  const initDataState = useSignal(initData.state);
+  const userTelegramId = initDataState?.user?.id;
+
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
     else {
       setIsDisconnectConfirmVisible(true);
     }
   };
-
-  useEffect(() => {
-    if (pathname === "/profile") return;
-    router.push("/profile");
-  }, [pathname, router]);
 
   useEffect(() => {
     if (isDisconnectConfirmVisible) {
@@ -104,21 +96,20 @@ export default function ProfilePage() {
   }, [wallet, balance, isBalanceSet]);
 
   useEffect(() => {
-    if (wallet) {
+    if (wallet && userTelegramId) {
       setWalletAddress(wallet?.account.address);
 
       const fetchReferrals = async () => {
-        const telegramId = "admin";
         const referrals = 8;
         const response = await fetch(
-          `/api/user-tree/${telegramId}/${referrals}`
+          `/api/user-tree/${userTelegramId}/${referrals}`
         );
         const data = await response.json();
         setReferrals(data);
       };
       fetchReferrals();
     }
-  }, [wallet]);
+  }, [wallet, userTelegramId]);
 
   useEffect(() => {
     if (isAddressCopied) {
@@ -159,14 +150,41 @@ export default function ProfilePage() {
               </AccordionSummary>
               <AccordionContent>
                 <div className="user-cards-container">
-                  {referralData.users.map((user) => (
-                    <div className="user-card" key={user.telegram_id}>
-                      <h4>{user.telegram_id}</h4>
-                      <Chip mode="outline">
-                        {findPig(user.current_pig)?.title || ""}
-                      </Chip>
+                  {referralData.users.map((user) => {
+                    const pig = findPig(user.current_pig);
+                    return (
+                      <div
+                        className={`user-card ${
+                          user.inviter_id === userTelegramId
+                            ? "--invited-by-me"
+                            : ""
+                        }`}
+                        key={user.telegram_id}
+                      >
+                        <div className="user-info">
+                          <div className="avatar">
+                            <FontAwesomeIcon icon={faUser} size="sm" />
+                          </div>
+                          <h4>{user.fullname}</h4>
+                        </div>
+
+                        {pig && pig.iconUrl ? (
+                          <img
+                            className="pig-icon"
+                            src={pig.iconUrl}
+                            alt="pig-icon"
+                          />
+                        ) : (
+                          "no-pig"
+                        )}
+                      </div>
+                    );
+                  })}
+                  {referralData.users.length === 0 && (
+                    <div className="user-card">
+                      <h4>{t("noReferrals")}</h4>
                     </div>
-                  ))}
+                  )}
                 </div>
               </AccordionContent>
             </Accordion>

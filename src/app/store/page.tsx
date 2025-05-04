@@ -9,6 +9,7 @@ import React from "react";
 import { useTonWallet } from "@tonconnect/ui-react";
 import axios from "axios";
 import { pigsMap } from "@/utils/pigs_map";
+import { usePathname, useRouter } from "next/navigation";
 
 type PigData = {
   pig_levels: number;
@@ -24,6 +25,13 @@ export default function StorePage() {
   const wallet = useTonWallet();
 
   const items = pigsMap(t);
+
+  const pathname = usePathname();
+  const router = useRouter();
+  useEffect(() => {
+    if (pathname === "/store") return;
+    router.push("/store");
+  }, [pathname, router]);
 
   useEffect(() => {
     if (!wallet) return;

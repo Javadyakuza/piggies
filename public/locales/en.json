@@ -25,6 +25,7 @@
     "canNotRegisterWithoutReferral": "You can not register without invitation!",
     "welcome": "Welcome to Piggies!",
     "register": "Complete Registration",
-    "pleaseWait": "Please wait..."
+    "pleaseWait": "Please wait...",
+    "noReferrals": "No referrals yet"
   }
 }
