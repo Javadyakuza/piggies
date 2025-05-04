@@ -14,7 +14,7 @@ import { Accordion, Button, IconButton } from "@telegram-apps/telegram-ui";
 import { DisplayData } from "@/components/DisplayData/DisplayData";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
 import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
 import { pigsMap } from "@/utils/pigs_map";
@@ -34,6 +34,7 @@ export default function ProfilePage() {
   const [isBalanceSet, setIsBalanceSet] = useState(false);
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
+  const [userId, setUserId] = useState<number>();
   const [referrals, setReferrals] = useState<
     Record<
       string,
@@ -70,6 +71,23 @@ export default function ProfilePage() {
       }, 1300);
     }
   }, [isDisconnectConfirmVisible]);
+
+  useEffect(() => {
+    if (userId || !userTelegramId) return;
+
+    const fetchUserData = async () => {
+      try {
+        const response: AxiosResponse<{
+          id: number;
+        }> = await axios.get(`/api/user-tree/${userTelegramId}`);
+        const userIdToSet = response.data.id;
+        setUserId(userIdToSet);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+    fetchUserData();
+  }, [userId, userTelegramId]);
 
   const getTonBalance = async (address: string): Promise<number> => {
     const response = await axios.get(
@@ -126,7 +144,6 @@ export default function ProfilePage() {
   };
 
   const handleReferralLevelClick = (level: string) => {
-    console.log(expandedLevel, level);
     if (expandedLevel === level) setExpandedLevel("");
     else setExpandedLevel(level);
   };
@@ -155,28 +172,24 @@ export default function ProfilePage() {
                     return (
                       <div
                         className={`user-card ${
-                          user.inviter_id === userTelegramId
-                            ? "--invited-by-me"
-                            : ""
+                          user.inviter_id === userId ? "--invited-by-me" : ""
                         }`}
                         key={user.telegram_id}
                       >
                         <div className="user-info">
                           <div className="avatar">
-                            <FontAwesomeIcon icon={faUser} size="sm" />
+                            {pig && pig.iconUrl ? (
+                              <img
+                                className="pig-icon"
+                                src={pig.iconUrl}
+                                alt="pig-icon"
+                              />
+                            ) : (
+                              "❌"
+                            )}
                           </div>
-                          <h4>{user.fullname}</h4>
+                          <h4 className="user-name">{user.fullname}</h4>
                         </div>
-
-                        {pig && pig.iconUrl ? (
-                          <img
-                            className="pig-icon"
-                            src={pig.iconUrl}
-                            alt="pig-icon"
-                          />
-                        ) : (
-                          "no-pig"
-                        )}
                       </div>
                     );
                   })}
