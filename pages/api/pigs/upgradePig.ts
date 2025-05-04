@@ -11,7 +11,7 @@ type ResponseData = {
 };
 /**
  * @swagger
- * /api/user-tree/upgradePig:
+ * /api/pigs/upgradePig:
  *   post:
  *     summary: Updates the pig value for a user
  *     description: This endpoint increments the user's current_pig value by 1 using their Telegram ID. If the user does not exist, it returns a 404 error.
