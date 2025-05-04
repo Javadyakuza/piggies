@@ -57,8 +57,8 @@ export default function ProfilePage() {
   const [expandedLevel, setExpandedLevel] = useState("");
 
   const initDataState = useSignal(initData.state);
-  // const userTelegramId = initDataState?.user?.id;
-  const userTelegramId = 168185687;
+  const userTelegramId = initDataState?.user?.id;
+  // const userTelegramId = 168185687;
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();

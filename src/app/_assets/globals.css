@@ -74,3 +74,8 @@ body {
   --tgui--bg_color: var(--tg-theme-bg-color, #17171742) !important;
   --tgui--tertiary_bg_color: #2a2a2a57 !important;
 }
+
+.warning-action-container {
+  text-align: center;
+  padding-bottom: 2.5rem;
+}
