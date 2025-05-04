@@ -2,7 +2,7 @@
 
 import { backButton } from "@telegram-apps/sdk-react";
 import { PropsWithChildren, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { WalletGuard } from "./WalletGuard";
 import Header from "./Header/Header";
 
@@ -23,6 +23,7 @@ export function Page({
   headerAndFooter?: boolean;
 }>) {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (back) {
@@ -34,9 +35,13 @@ export function Page({
 
   useEffect(() => {
     return backButton.onClick(() => {
-      router.back();
+      if (pathname === "/profile") {
+        router.push("/store");
+      } else {
+        router.push("/profile");
+      }
     });
-  }, [router]);
+  }, [router, pathname]);
 
   return (
     <WalletGuard>

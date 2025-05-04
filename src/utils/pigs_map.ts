@@ -1,7 +1,7 @@
 export const pigsMap = (t: any) => [
   {
     title: "Bronze Pig",
-    code: 0,
+    code: 1,
     price: 117,
     levels: 4,
     coverUrl:
@@ -11,7 +11,7 @@ export const pigsMap = (t: any) => [
   },
   {
     title: "Silver Pig",
-    code: 1,
+    code: 2,
     price: 32700,
     levels: 6,
     coverUrl:
@@ -21,7 +21,7 @@ export const pigsMap = (t: any) => [
   },
   {
     title: "Gold Pig",
-    code: 2,
+    code: 3,
     price: 5971510,
     levels: 8,
     coverUrl:
@@ -31,7 +31,7 @@ export const pigsMap = (t: any) => [
   },
   {
     title: "Diamond Pig",
-    code: 3,
+    code: 4,
     price: 106288200,
     levels: 10,
     coverUrl:

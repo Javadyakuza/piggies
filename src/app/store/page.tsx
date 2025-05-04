@@ -11,7 +11,7 @@ import { pigsMap } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
 
 type PigData = {
-  pig_levels: number;
+  pig_level: number;
   buyable_pigs: number;
 };
 
@@ -19,7 +19,7 @@ export default function StorePage() {
   const t = useTranslations("i18n");
   const [earnings] = useState(0);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
-  const [currentPigIndex, setCurrentPigIndex] = useState<number | undefined>();
+  const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
 
@@ -44,9 +44,14 @@ export default function StorePage() {
   }, [wallet]);
 
   useEffect(() => {
-    setSelectedItemIndex(pigsData?.buyable_pigs || 0);
-    setCurrentPigIndex(pigsData?.buyable_pigs || undefined);
-  }, [pigsData]);
+    if (!pigsData) return;
+    setCurrentPigCode(pigsData.pig_level);
+    const buyablePigIndex = items.findIndex(
+      (item) => item.code === pigsData?.buyable_pigs
+    );
+
+    setSelectedItemIndex(buyablePigIndex);
+  }, [pigsData, items]);
 
   const handleSelectItem = (index: number) => {
     setSelectedItemIndex(index);
@@ -55,7 +60,24 @@ export default function StorePage() {
   const activeItem =
     selectedItemIndex !== undefined && items[selectedItemIndex];
 
-  const currentPig = currentPigIndex ? items[currentPigIndex] : undefined;
+  const currentPig = currentPigCode
+    ? items.find((item) => item.code === currentPigCode)
+    : undefined;
+
+  const getPurchaseButtonText = (code: number) => {
+    switch (code) {
+      case 1:
+        return t("purchase");
+      case 2:
+        return t("upgradeSilver");
+      case 3:
+        return t("upgradeGold");
+      case 4:
+        return t("upgradeDiamond");
+      default:
+        return "";
+    }
+  };
   return (
     <Page>
       <div className="store-container">
@@ -65,7 +87,7 @@ export default function StorePage() {
             <h4>
               {t("earningsAmount", {
                 amount: earnings.toLocaleString(),
-                currentPigPrice: currentPig?.price
+                currentPigPrice: currentPig
                   ? currentPig.price.toLocaleString()
                   : 0,
               })}
@@ -96,7 +118,7 @@ export default function StorePage() {
                 key={`item-slide-${index}`}
               >
                 {/* <div className="mask"> */}
-                {/* {item.code === pigsData?.pig_levels ? "Owned" : ""} */}
+                {/* {item.code === pigsData?.pig_level ? "Owned" : ""} */}
                 {/* </div> */}
                 <img
                   src={item.coverUrl}
@@ -117,7 +139,9 @@ export default function StorePage() {
                 <h4>
                   {t("pigPrice", { amount: activeItem.price.toLocaleString() })}
                 </h4>
-                <button className="primary-btn">{t("purchase")}</button>
+                <button className="primary-btn">
+                  {getPurchaseButtonText(activeItem.code)}
+                </button>
               </div>
             </div>
           )) || <></>}
