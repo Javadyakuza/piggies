@@ -5,7 +5,8 @@ import { findOpenSlotInSubtree } from "@/utils/tree";
 
 type RequestBody = {
   telegram_id: string;
-  referral_id?: string | number;
+  referral_id: string | number;
+  fullname: string;
 };
 
 
@@ -108,7 +109,7 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegram_id, referral_id } = req.body as RequestBody;
+  const { telegram_id, referral_id, fullname } = req.body as RequestBody;
   if (!telegram_id) {
     return res
       .status(400)
@@ -168,6 +169,7 @@ export default async function handler(
       telegram_id: telegram_id,
       inviter_id: inviterId,
       parent_id: parentId,
+      fullname: fullname,
       // created_at will default to now() if set in DB default
     })
     .select() // select the inserted row to return it

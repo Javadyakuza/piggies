@@ -7,6 +7,7 @@ type User = {
   wallet_address: string;
   current_pig: number;
   fullname: string;
+  inviter_id: string;
 } 
 interface ReferralLevel {
   count: number;
@@ -31,7 +32,7 @@ const countReferralsByLevel = async (
 ): Promise<ReferralLevel[]> => {
   const { data: allUsers, error } = await supabase
     .from("users")
-    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname");
+    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id");
 
   if (error || !allUsers) {
     throw new Error("Failed to fetch users: " + error?.message);
@@ -47,6 +48,7 @@ const countReferralsByLevel = async (
         wallet_address: user.wallet_address || "",
         current_pig: user.current_pig ?? 0,
         fullname: user.fullname || "",
+        inviter_id: user.inviter_id || "",
       };
     }
     const parent = user.parent_id;
