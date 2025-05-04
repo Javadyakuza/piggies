@@ -17,7 +17,7 @@ interface ReferralLevel {
 }
 
 interface ReferralResponse {
-  [key: string]: ReferralLevel;
+  [key: string]: ReferralLevel | number;
 }
 
 interface SelfReferralId {
@@ -31,6 +31,18 @@ const calculateTotalPossible = (level: number): number => {
 const countReferralsByLevel = async (
   userId: string
 ): Promise<ReferralLevel[]> => {
+  const countTotalUnder = (
+    referralMap: { [key: string]: string[] },
+    userId: string
+  ): number => {
+    let total = 0;
+    const children = referralMap[userId] || [];
+    total += children.length;
+    for (const childId of children) {
+      total += countTotalUnder(referralMap, childId);
+    }
+    return total;
+  };
   const { data: allUsers, error } = await supabase
     .from("users")
     .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id");
@@ -92,8 +104,17 @@ const countReferralsByLevel = async (
     const idsAtLevel = levels[i] || [];
     const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
-    const users = idsAtLevel.map((id) => userMap[id]).filter(Boolean) as User[];
-
+    const users = idsAtLevel.map((id) => {
+      const user = userMap[id];
+      if (user) {
+        return {
+          ...user,
+          total_under: countTotalUnder(referralMap, id),
+        };
+      }
+      return null;
+    }).filter(Boolean) as User[];
+    
     result.push({ count, total, users });
   }
 
@@ -226,6 +247,9 @@ export default async function handler(
   }
 
   try {
+
+   
+
     const referralLevels = await countReferralsByLevel(userExists.id);
 
     if (referralsNum === 0) {
@@ -242,8 +266,11 @@ export default async function handler(
       return res.status(200).json(referral_id[0] as SelfReferralId);
     }
 
+
+
+    
     if (referralsNum === 8) {
-      const response: ReferralResponse = {};
+      let response: ReferralResponse = {};
       let totalUnder = 0;
     
       referralLevels.forEach((level, index) => {
@@ -256,6 +283,7 @@ export default async function handler(
       });
     
       console.log("Computed total_under:", totalUnder); // Debug
+      response.total_under = totalUnder;
       return res.status(200).json({
         ...response,
         total_under: totalUnder,
@@ -273,3 +301,6 @@ export default async function handler(
     return res.status(500).json({ error: "Failed to fetch referrals" });
   }
 }
+
+
+
