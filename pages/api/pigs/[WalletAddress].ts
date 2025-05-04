@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { findOpenSlotInSubtree } from "@/utils/tree";
 
 enum PigLevels {
+  Nothing,
   Bronze,
   Silver,
   Gold,

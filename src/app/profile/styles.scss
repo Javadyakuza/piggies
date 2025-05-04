@@ -15,9 +15,23 @@
           border-right: none;
         }
       }
+
+      .user-name,
+      .invited {
+        font-size: 12px;
+        margin: 0;
+      }
+
+      .inline-box {
+        // display: flex;
+        .invited {
+          font-size: 10px;
+        }
+      }
+
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       padding: 0.5rem 1rem;
     }
   }
@@ -30,11 +44,6 @@
     height: 50px;
   }
 
-  .user-name,
-  .invited {
-    font-size: 12px;
-    margin: 0;
-  }
   .user-info {
     display: flex;
     align-items: center;

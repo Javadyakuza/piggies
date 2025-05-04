@@ -62,8 +62,8 @@ export default function ProfilePage() {
   const [expandedLevel, setExpandedLevel] = useState("");
 
   const initDataState = useSignal(initData.state);
-  // const userTelegramId = initDataState?.user?.id;
-  const userTelegramId = 168185687;
+  const userTelegramId = initDataState?.user?.id;
+  // const userTelegramId = 168185687;
 
   const handleDisconnectWallet = () => {
     if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
@@ -186,33 +186,33 @@ export default function ProfilePage() {
                         }`}
                         key={user.telegram_id}
                       >
-                        <div className="user-info">
-                          <div className="avatar">
-                            {pig && pig.iconUrl ? (
-                              <img
-                                className="pig-icon"
-                                src={pig.iconUrl}
-                                alt="pig-icon"
-                              />
-                            ) : (
-                              "❌"
-                            )}
-                          </div>
-                          <div className="info">
-                            <h4 className="user-name">
-                              {truncate(user.fullname, 14)}
-                            </h4>
+                        <div className="info">
+                          <h4 className="user-name">
+                            {truncate(user.fullname, 14)}
+                          </h4>
+                          <div className="inline-box">
                             <h4 className="invited">
                               {t("invitedUsers", {
                                 usersInvited: user.total_invited,
                               })}
-                            </h4>
+                            </h4>{" "}
                             <h4 className="invited">
                               {t("usersTree", {
                                 totalUnder: user.total_under,
                               })}
                             </h4>
                           </div>
+                        </div>
+                        <div className="avatar">
+                          {pig && pig.iconUrl ? (
+                            <img
+                              className="pig-icon"
+                              src={pig.iconUrl}
+                              alt="pig-icon"
+                            />
+                          ) : (
+                            "❌"
+                          )}
                         </div>
                       </div>
                     );
