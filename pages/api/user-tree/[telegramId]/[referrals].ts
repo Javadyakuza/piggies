@@ -48,7 +48,6 @@ const countReferralsByLevel = async (
         current_pig: user.current_pig ?? 0,
         fullname: user.fullname || "",
         inviter_id: user.inviter_id || "",
-        inviter_id: user.inviter_id || "",
       };
     }
     const parent = user.parent_id;
