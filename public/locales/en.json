@@ -33,6 +33,7 @@
     "walletAddressChanged": "Wallet address changed",
     "walletAddressChangedDescription": "Your wallet address has been changed since last time you connected, the wallet address automatically changes when you connect to a new wallet.",
     "understood": "Understood",
-    "usersTree": "Users tree: {totalUnder}"
+    "usersTree": "Users tree: {totalUnder}",
+    "currentPig": "Current Pig"
   }
 }

@@ -9,6 +9,8 @@ import React from "react";
 import { useTonWallet } from "@tonconnect/ui-react";
 import { pigsMap } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
+import { useSignal, initData } from "@telegram-apps/sdk-react";
 
 type PigData = {
   pig_level: number;
@@ -21,7 +23,12 @@ export default function StorePage() {
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
+  const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
+
   const wallet = useTonWallet();
+
+  const initDataState = useSignal(initData.state);
+  const userTelegramId = initDataState?.user?.id;
 
   const items = pigsMap(t);
 
@@ -32,15 +39,17 @@ export default function StorePage() {
     router.push("/store");
   }, [pathname, router]);
 
-  useEffect(() => {
+  const fetchPigsData = async () => {
     if (!wallet) return;
 
-    const fetchPigsData = async () => {
-      const response = await fetch(`/api/pigs/${wallet?.account.address}`);
-      const data = await response.json();
-      setPigsData(data);
-    };
+    const response = await axios.get(`/api/pigs/${userTelegramId}`);
+    const pigsDataToSet = response.data;
+    setPigsData(pigsDataToSet);
+  };
+
+  useEffect(() => {
     fetchPigsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet]);
 
   useEffect(() => {
@@ -51,10 +60,24 @@ export default function StorePage() {
     );
 
     setSelectedItemIndex(buyablePigIndex);
-  }, [pigsData, items]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pigsData]);
 
   const handleSelectItem = (index: number) => {
+    if (isPurchaseInProgress) return;
     setSelectedItemIndex(index);
+  };
+
+  const handlePurchasePig = async () => {
+    if (!userTelegramId || isPurchaseInProgress) return;
+    setIsPurchaseInProgress(true);
+    await axios.post(`/api/pigs/upgradePig`, {
+      telegram_id: userTelegramId,
+    });
+
+    await fetchPigsData();
+
+    setIsPurchaseInProgress(false);
   };
 
   const activeItem =
@@ -98,7 +121,7 @@ export default function StorePage() {
           </div>
           <div className="preview-container">
             <img
-              src="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png"
+              src={currentPig?.coverUrl || items[0].coverUrl}
               alt="owned"
               className="main-cover"
             />
@@ -109,7 +132,7 @@ export default function StorePage() {
             {items.map((item, index) => (
               <div
                 onClick={() => {
-                  if (index !== selectedItemIndex) return;
+                  // if (index !== selectedItemIndex) return;
                   handleSelectItem(index);
                 }}
                 className={`item-slide ${
@@ -139,9 +162,21 @@ export default function StorePage() {
                 <h4>
                   {t("pigPrice", { amount: activeItem.price.toLocaleString() })}
                 </h4>
-                <button className="primary-btn">
-                  {getPurchaseButtonText(activeItem.code)}
-                </button>
+                <Button
+                  onClick={handlePurchasePig}
+                  className="primary-btn"
+                  disabled={
+                    activeItem.code !== pigsData?.buyable_pigs ||
+                    activeItem.code === currentPigCode ||
+                    isPurchaseInProgress
+                  }
+                >
+                  {isPurchaseInProgress
+                    ? t("pleaseWait")
+                    : activeItem.code !== currentPigCode
+                    ? getPurchaseButtonText(activeItem.code)
+                    : t("currentPig")}
+                </Button>
               </div>
             </div>
           )) || <></>}
