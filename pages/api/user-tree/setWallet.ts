@@ -12,7 +12,7 @@ type ResponseData = {
 };
 /**
  * @swagger
- * /api/register-wallet:
+ * /api/setWallet:
  *   post:
  *     summary: Registers or updates the wallet address for a user
  *     description: This endpoint updates the user's wallet address using their Telegram ID. If the user does not exist, it returns a 404 error.
