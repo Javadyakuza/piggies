@@ -8,6 +8,7 @@ type User = {
   fullname: string;
   inviter_id: string;
   total_invited: number;
+  total_under?: number;
 } 
 interface ReferralLevel {
   count: number;
@@ -243,14 +244,22 @@ export default async function handler(
 
     if (referralsNum === 8) {
       const response: ReferralResponse = {};
+      let totalUnder = 0;
+    
       referralLevels.forEach((level, index) => {
         response[`level_${index + 1}`] = {
           count: level.count,
           total: level.total,
           users: level.users,
         };
+        totalUnder += level.count;
       });
-      return res.status(200).json(response);
+    
+      console.log("Computed total_under:", totalUnder); // Debug
+      return res.status(200).json({
+        ...response,
+        total_under: totalUnder,
+      });
     } else {
       const level = referralLevels[referralsNum - 1];
       return res.status(200).json({
