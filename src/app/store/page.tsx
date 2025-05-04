@@ -20,7 +20,6 @@ export default function StorePage() {
   const [earnings] = useState(0);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
-  const [buyablePigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
   const wallet = useTonWallet();
 
@@ -52,6 +51,7 @@ export default function StorePage() {
     );
 
     setSelectedItemIndex(buyablePigIndex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pigsData]);
 
   const handleSelectItem = (index: number) => {
