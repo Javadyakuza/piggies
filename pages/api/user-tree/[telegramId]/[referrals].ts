@@ -7,6 +7,7 @@ type User = {
   current_pig: number;
   fullname: string;
   inviter_id: string;
+  total_invited: number;
 } 
 interface ReferralLevel {
   count: number;
@@ -42,12 +43,18 @@ const countReferralsByLevel = async (
 
   allUsers.forEach((user) => {
     if (user.id && user.telegram_id) {
+      // Count how many users have this user as their inviter
+      const totalInvited = allUsers.filter(
+        (u) => u.inviter_id === user.id
+      ).length;
+    
       userMap[user.id] = {
         telegram_id: user.telegram_id,
         wallet_address: user.wallet_address || "",
         current_pig: user.current_pig ?? 0,
         fullname: user.fullname || "",
         inviter_id: user.inviter_id || "",
+        total_invited: totalInvited,
       };
     }
     const parent = user.parent_id;
