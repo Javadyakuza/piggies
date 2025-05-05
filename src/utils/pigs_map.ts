@@ -15,7 +15,7 @@ export const pigsMap = (t: any) => [
     code: 2,
     price: 100,
     earnings: 32700,
-    levels: 6,
+    levels: 7,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
     iconUrl: "/pig_icons/SilverPig_icon.png",
@@ -26,7 +26,7 @@ export const pigsMap = (t: any) => [
     code: 3,
     price: 1000,
     earnings: 5971510,
-    levels: 8,
+    levels: 10,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
     iconUrl: "/pig_icons/GoldPig_icon.png",
@@ -37,7 +37,7 @@ export const pigsMap = (t: any) => [
     code: 4,
     price: 10000,
     earnings: 106288200,
-    levels: 10,
+    levels: 11,
     coverUrl:
       "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
     iconUrl: "/pig_icons/DiamondPig_icon.png",
