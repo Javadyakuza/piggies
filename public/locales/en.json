@@ -8,7 +8,7 @@
     "balance": "Balance",
     "earnings": "Earnings",
     "earningsAmount": "{amount} / {currentPigPrice} $",
-      "pigPrice": "{amount} $ ({amountT} TON)",
+    "pigPrice": "{amount} $ ({amountT} TON)",
     "withdraw": "Withdraw",
     "levelNumber": "Levels: {level}",
     "purchase": "Purchase",
@@ -34,6 +34,7 @@
     "walletAddressChangedDescription": "Your wallet address has been changed since last time you connected, the wallet address automatically changes when you connect to a new wallet.",
     "understood": "Understood",
     "usersTree": "Users tree: {totalUnder}",
-    "currentPig": "Current Pig"
+    "currentPig": "Current Pig",
+    "firstPurchaseToUnlockLevels": "Purchase your first pig to unlock levels!"
   }
 }

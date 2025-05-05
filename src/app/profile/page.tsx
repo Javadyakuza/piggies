@@ -21,6 +21,11 @@ import { pigsMap } from "@/utils/pigs_map";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 
+type PigData = {
+  pig_level: number;
+  buyable_pigs: number;
+};
+
 export default function ProfilePage() {
   const t = useTranslations("i18n");
   const wallet = useTonWallet();
@@ -40,6 +45,9 @@ export default function ProfilePage() {
   const [isAddressCopied, setIsAddressCopied] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
   const [userId, setUserId] = useState<number>();
+  const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
+  const [pigsData, setPigsData] = useState<PigData>();
+
   const [referrals, setReferrals] = useState<
     Record<
       string,
@@ -71,6 +79,25 @@ export default function ProfilePage() {
       setIsDisconnectConfirmVisible(true);
     }
   };
+
+  const fetchPigsData = async () => {
+    if (!wallet) return;
+
+    const response = await axios.get(`/api/pigs/${userTelegramId}`);
+    const pigsDataToSet = response.data;
+    setPigsData(pigsDataToSet);
+  };
+
+  useEffect(() => {
+    fetchPigsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallet]);
+
+  useEffect(() => {
+    if (!pigsData) return;
+    setCurrentPigCode(pigsData.pig_level);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pigsData]);
 
   useEffect(() => {
     if (isDisconnectConfirmVisible) {
@@ -121,12 +148,14 @@ export default function ProfilePage() {
     setIsBalanceSet(true);
   }, [wallet, balance, isBalanceSet]);
 
+  const currentPig = pigs.find((pig) => pig.code === currentPigCode);
+
   useEffect(() => {
-    if (wallet && userTelegramId) {
+    if (wallet && userTelegramId && currentPigCode) {
       setWalletAddress(wallet?.account.address);
 
       const fetchReferrals = async () => {
-        const referrals = 8;
+        const referrals = currentPig?.levels;
         const response = await fetch(
           `/api/user-tree/${userTelegramId}/${referrals}`
         );
@@ -135,7 +164,8 @@ export default function ProfilePage() {
       };
       fetchReferrals();
     }
-  }, [wallet, userTelegramId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallet, userTelegramId, currentPigCode]);
 
   useEffect(() => {
     if (isAddressCopied) {
@@ -158,11 +188,12 @@ export default function ProfilePage() {
 
   const prepareReferrals = () => {
     const levels = Object.keys(referrals).filter(
-      (level) => level !== "total_under"
+      (level) => !!level.startsWith("level_")
     );
 
     return levels.map((level) => {
-      const referralData = referrals[level];
+      const referralData = referrals[level] || { users: [] };
+
       const levelNumber = level.replace("level_", "");
       return {
         title: t("levelReferrals", { level: levelNumber }),

@@ -42,7 +42,7 @@ export default function StorePage() {
 
   const fetchPigsData = async () => {
     if (!wallet) return;
-    
+
     const response = await axios.get(`/api/pigs/${userTelegramId}`);
     const pigsDataToSet = response.data;
     setPigsData(pigsDataToSet);
@@ -56,7 +56,6 @@ export default function StorePage() {
   }, [wallet]);
 
   useEffect(() => {
-    
     if (!pigsData) return;
     setCurrentPigCode(pigsData.pig_level);
     const buyablePigIndex = items.findIndex(
@@ -84,8 +83,10 @@ export default function StorePage() {
     setIsPurchaseInProgress(false);
   };
   const handleTonPrice = async () => {
-    const res = await axios.get(`https://api.coinpaprika.com/v1/tickers/ton-toncoin`);
-    console.log("ressssssssssssss", res?.data?.quotes?.USD.price.toFixed(2))
+    const res = await axios.get(
+      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
+    );
+
     setTonPrice(res?.data?.quotes?.USD.price.toFixed(2));
   };
 
@@ -166,19 +167,22 @@ export default function StorePage() {
               <div className="item-slide-details-container">
                 <h3>{activeItem.title}</h3>
                 <h3
-                    style={{
-                           fontSize: currentPig?.code ? "1rem" : ".85rem",
-                           paddingRight: currentPig?.code ? "0" : ".5rem", 
-                           }}
-                            >
-  {currentPig?.code
-    ? t("levelNumber", { level: activeItem.levels })
-    : "Purchase your first pig to unlock levels !"}
-</h3>
-                  </div>
+                  style={{
+                    fontSize: currentPig?.code ? "1rem" : ".85rem",
+                    paddingRight: currentPig?.code ? "0" : ".5rem",
+                  }}
+                >
+                  {currentPig?.code
+                    ? t("levelNumber", { level: activeItem.levels })
+                    : t("firstPurchaseToUnlockLevels")}
+                </h3>
+              </div>
               <div className="item-purchase-action">
                 <h4>
-                  {t("pigPrice", { amount: activeItem.price, amountT : (activeItem.price / tonPrice).toFixed(2) })}
+                  {t("pigPrice", {
+                    amount: activeItem.price,
+                    amountT: (activeItem.price / tonPrice).toFixed(2),
+                  })}
                 </h4>
                 <Button
                   onClick={handlePurchasePig}
