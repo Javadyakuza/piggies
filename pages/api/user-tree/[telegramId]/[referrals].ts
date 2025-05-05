@@ -9,7 +9,8 @@ type User = {
   inviter_id: string;
   total_invited: number;
   total_under?: number;
-} 
+};
+
 interface ReferralLevel {
   count: number;
   total: number;
@@ -43,6 +44,7 @@ const countReferralsByLevel = async (
     }
     return total;
   };
+
   const { data: allUsers, error } = await supabase
     .from("users")
     .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id");
@@ -56,7 +58,6 @@ const countReferralsByLevel = async (
 
   allUsers.forEach((user) => {
     if (user.id && user.telegram_id) {
-      // Count how many users have this user as their inviter
       const totalInvited = allUsers.filter(
         (u) => u.inviter_id === user.id
       ).length;
@@ -100,7 +101,7 @@ const countReferralsByLevel = async (
   }
 
   const result: ReferralLevel[] = [];
-  for (let i = 1; i <= 7; i++) {
+  for (let i = 1; i <= 11; i++) {
     const idsAtLevel = levels[i] || [];
     const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
@@ -126,7 +127,7 @@ const countReferralsByLevel = async (
  * /api/user-tree/{telegramId}/{referrals}:
  *   get:
  *     summary: Fetches the referral data for the given user at a specific level or all levels
- *     description: This endpoint retrieves the referral tree data for a user. You can fetch one level (1–7), all levels (8), or just the user's own referral ID (0).
+ *     description: This endpoint retrieves the referral tree data for a user. You can fetch one level (1–11), or all levels up to the specified number (e.g., if referrals=8, it will return levels 1–8). Use "0" to return only the user's referral ID.
  *     parameters:
  *       - name: telegramId
  *         in: path
@@ -137,7 +138,7 @@ const countReferralsByLevel = async (
  *           example: "123456789"
  *       - name: referrals
  *         in: path
- *         description: The level of the referral tree to fetch (1-8). Use "0" to return only the user's referral ID.
+ *         description: The level of the referral tree to fetch (1-11). Use "0" to return only the user's referral ID.
  *         required: true
  *         schema:
  *           type: string
@@ -188,7 +189,7 @@ const countReferralsByLevel = async (
  *                 total_under:
  *                   type: integer
  *                   example: 11
- *                   description: Total number of people under the user across all levels (only present when referrals=8)
+ *                   description: Total number of people under the user across all levels (only present when referrals=11 or less)
  *       400:
  *         description: Bad request due to invalid or missing telegramId or referrals parameter.
  *         content:
@@ -242,10 +243,10 @@ export default async function handler(
   }
 
   const referralsNum = parseInt(referrals, 10);
-  if (isNaN(referralsNum) || referralsNum < 0 || referralsNum > 8) {
+  if (isNaN(referralsNum) || referralsNum < 0 || referralsNum > 11) {
     return res
       .status(400)
-      .json({ error: "Referrals must be a number between 0 and 8" });
+      .json({ error: "Referrals must be a number between 0 and 11" });
   }
 
   const { data: userExists, error: userError } = await supabase
@@ -259,9 +260,6 @@ export default async function handler(
   }
 
   try {
-
-   
-
     const referralLevels = await countReferralsByLevel(userExists.id);
 
     if (referralsNum === 0) {
@@ -273,46 +271,26 @@ export default async function handler(
       if (error || !referral_id) {
         return res.status(404).json({ error: "User not found" });
       }
-      console.log("START", referral_id, "END");
-
       return res.status(200).json(referral_id[0] as SelfReferralId);
     }
 
+    let response: ReferralResponse = {};
+    let totalUnder = 0;
 
-
-    
-    if (referralsNum === 8) {
-      let response: ReferralResponse = {};
-      let totalUnder = 0;
-    
-      referralLevels.forEach((level, index) => {
-        response[`level_${index + 1}`] = {
-          count: level.count,
-          total: level.total,
-          users: level.users,
-        };
-        totalUnder += level.count;
-      });
-    
-      console.log("Computed total_under:", totalUnder); // Debug
-      response.total_under = totalUnder;
-      return res.status(200).json({
-        ...response,
-        total_under: totalUnder,
-      });
-    } else {
-      const level = referralLevels[referralsNum - 1];
-      return res.status(200).json({
+    // Loop through levels based on referralsNum
+    for (let i = 0; i < referralsNum; i++) {
+      const level = referralLevels[i];
+      response[`level_${i + 1}`] = {
         count: level.count,
         total: level.total,
         users: level.users,
-      });
+      };
+      totalUnder += level.count;
     }
+
+    return res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching referrals:", error);
     return res.status(500).json({ error: "Failed to fetch referrals" });
   }
 }
-
-
-
