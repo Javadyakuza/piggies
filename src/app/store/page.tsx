@@ -23,6 +23,7 @@ export default function StorePage() {
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
+  const [tonPrice, setTonPrice] = useState(3);
   const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
 
   const wallet = useTonWallet();
@@ -49,6 +50,8 @@ export default function StorePage() {
 
   useEffect(() => {
     fetchPigsData();
+    handleTonPrice();
+    console.log("tonPrice", tonPrice);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet]);
 
@@ -78,6 +81,13 @@ export default function StorePage() {
     await fetchPigsData();
 
     setIsPurchaseInProgress(false);
+  };
+  const handleTonPrice = async () => {
+    const res = await axios.get(
+      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
+    );
+
+    setTonPrice(res?.data?.quotes?.USD.price.toFixed(2));
   };
 
   const activeItem =
@@ -111,7 +121,7 @@ export default function StorePage() {
               {t("earningsAmount", {
                 amount: earnings.toLocaleString(),
                 currentPigPrice: currentPig
-                  ? currentPig.price.toLocaleString()
+                  ? currentPig.earnings.toLocaleString()
                   : 0,
               })}
             </h4>
@@ -156,11 +166,23 @@ export default function StorePage() {
             <div className="active-item-details-container">
               <div className="item-slide-details-container">
                 <h3>{activeItem.title}</h3>
-                <h3>{t("levelNumber", { level: activeItem.levels })}</h3>
+                <h3
+                  style={{
+                    fontSize: currentPig?.code ? "1rem" : ".85rem",
+                    paddingRight: currentPig?.code ? "0" : ".5rem",
+                  }}
+                >
+                  {currentPig?.code
+                    ? t("levelNumber", { level: activeItem.levels })
+                    : t("firstPurchaseToUnlockLevels")}
+                </h3>
               </div>
               <div className="item-purchase-action">
                 <h4>
-                  {t("pigPrice", { amount: activeItem.price.toLocaleString() })}
+                  {t("pigPrice", {
+                    amount: activeItem.price,
+                    amountT: (activeItem.price / tonPrice).toFixed(2),
+                  })}
                 </h4>
                 <Button
                   onClick={handlePurchasePig}
