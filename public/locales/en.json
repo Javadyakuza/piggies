@@ -8,7 +8,7 @@
     "balance": "Balance",
     "earnings": "Earnings",
     "earningsAmount": "{amount} / {currentPigPrice} $",
-    "pigPrice": "{amount} TON",
+      "pigPrice": "{amount} $ ({amountT} TON)",
     "withdraw": "Withdraw",
     "levelNumber": "Levels: {level}",
     "purchase": "Purchase",
