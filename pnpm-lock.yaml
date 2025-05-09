@@ -1357,28 +1357,6 @@ packages:
   '@telegram-apps/types@1.2.0':
     resolution: {integrity: sha512-HhvnSCsqlJpes5ZGsZP/qbDNq8eLLnjgZKaF5NRsDqAKUPvaIIFT1HdyDII/8EioUgoI4FHsP8MylK2Gzm2efg==}
 
-  '@ton-api/client@0.4.0':
-    resolution: {integrity: sha512-k3d6RzNWRDEZpVa9Gig2kHqp74tGvaK/imkjb08RIGxn+wKC7Yv5g98GnXEHf3srRkjtRCG0Nnjx8EsasOMJkw==}
-    peerDependencies:
-      '@ton/core': '>=0.59.0'
-
-  '@ton-api/ton-adapter@0.4.1':
-    resolution: {integrity: sha512-snvd49M2PnDiIgMyeeIpGPTWI7ECnRYz4qIcFplv/mmYvV+6OiNM4UtHOplAh7sGR1JY1xBf+HP+RJ8qzCN2Hw==}
-    peerDependencies:
-      '@ton-api/client': ^0.4.0
-      '@ton/core': '>=0.60.1'
-
-  '@ton/core@0.60.1':
-    resolution: {integrity: sha512-8FwybYbfkk57C3l9gvnlRhRBHbLYmeu0LbB1z9N+dhDz0Z+FJW8w0TJlks8CgHrAFxsT3FlR2LsqFnsauMp38w==}
-    peerDependencies:
-      '@ton/crypto': '>=3.2.0'
-
-  '@ton/crypto-primitives@2.1.0':
-    resolution: {integrity: sha512-PQesoyPgqyI6vzYtCXw4/ZzevePc4VGcJtFwf08v10OevVJHVfW238KBdpj1kEDQkxWLeuNHEpTECNFKnP6tow==}
-
-  '@ton/crypto@3.3.0':
-    resolution: {integrity: sha512-/A6CYGgA/H36OZ9BbTaGerKtzWp50rg67ZCH2oIjV1NcrBaCK9Z343M+CxedvM7Haf3f/Ee9EhxyeTp0GKMUpA==}
-
   '@tonconnect/isomorphic-eventsource@0.0.2':
     resolution: {integrity: sha512-B4UoIjPi0QkvIzZH5fV3BQLWrqSYABdrzZQSI9sJA9aA+iC0ohOzFwVVGXanlxeDAy1bcvPbb29f6sVUk0UnnQ==}
 
@@ -6917,31 +6895,6 @@ snapshots:
       '@telegram-apps/types': 1.2.0
 
   '@telegram-apps/types@1.2.0': {}
-
-  '@ton-api/client@0.4.0(@ton/core@0.60.1(@ton/crypto@3.3.0))':
-    dependencies:
-      '@ton/core': 0.60.1(@ton/crypto@3.3.0)
-      core-js-pure: 3.41.0
-
-  '@ton-api/ton-adapter@0.4.1(@ton-api/client@0.4.0(@ton/core@0.60.1(@ton/crypto@3.3.0)))(@ton/core@0.60.1(@ton/crypto@3.3.0))':
-    dependencies:
-      '@ton-api/client': 0.4.0(@ton/core@0.60.1(@ton/crypto@3.3.0))
-      '@ton/core': 0.60.1(@ton/crypto@3.3.0)
-
-  '@ton/core@0.60.1(@ton/crypto@3.3.0)':
-    dependencies:
-      '@ton/crypto': 3.3.0
-      symbol.inspect: 1.0.1
-
-  '@ton/crypto-primitives@2.1.0':
-    dependencies:
-      jssha: 3.2.0
-
-  '@ton/crypto@3.3.0':
-    dependencies:
-      '@ton/crypto-primitives': 2.1.0
-      jssha: 3.2.0
-      tweetnacl: 1.0.3
 
   '@tonconnect/isomorphic-eventsource@0.0.2':
     dependencies:
