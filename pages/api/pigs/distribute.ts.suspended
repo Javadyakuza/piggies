@@ -1,0 +1,31 @@
+// import { NextApiRequest, NextApiResponse } from "next";
+// import { supabase } from "@/utils/supebase";
+
+// const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+//   if (req.method !== "POST") {
+//     return res.status(405).json({ error: "Method not allowed" });
+//   }
+
+//   const { userId, amount, pigId } = req.body;
+
+//   try {
+//     // 1. Get the 3 upper users
+//     const upperUsers = await getUpperUsers(userId);
+
+//     // 2. Send the money to those 3 users
+//     await sendMoneyToUpperUsers(amount, upperUsers);
+
+//     // 3. Mint the NFT
+//     await mintNFT(userId, pigId);
+
+//     // 4. Update the database
+//     await updateDatabaseAfterPurchase(userId, pigId, upperUsers, amount);
+
+//     return res.status(200).json({ message: "Purchase successful and data updated" });
+//   } catch (error) {
+//     console.error("Error in purchase process:", error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
+// export default handler;

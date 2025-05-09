@@ -2,19 +2,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
 import { cookies } from "next/headers";
 import { findOpenSlotInSubtree } from "@/utils/tree";
-
-type RequestBody = {
-  telegram_id: string;
-  referral_id: string | number;
-  fullname: string;
-};
+import { RegisterRequest } from "@/models/registerModels";
 
 
-type RegisterResponse = {
-  success: boolean;
-  user?: any;
-  message?: string;
-};
 
 /**
  * @swagger
@@ -109,7 +99,7 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegram_id, referral_id, fullname } = req.body as RequestBody;
+  const { telegram_id, referral_id, fullname } = req.body as RegisterRequest;
   if (!telegram_id) {
     return res
       .status(400)

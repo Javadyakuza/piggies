@@ -1,29 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
+import { ReferralLevel, ReferralResponse, SelfReferralId, User } from "@/models/userTreeModels";
 
-type User = {
-  telegram_id: string;
-  wallet_address: string;
-  current_pig: number;
-  fullname: string;
-  inviter_id: string;
-  total_invited: number;
-  total_under?: number;
-};
-
-interface ReferralLevel {
-  count: number;
-  total: number;
-  users: User[];
-}
-
-interface ReferralResponse {
-  [key: string]: ReferralLevel | number;
-}
-
-interface SelfReferralId {
-  referral_id: string;
-}
 
 const calculateTotalPossible = (level: number): number => {
   return Math.pow(3, level);

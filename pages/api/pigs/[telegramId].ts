@@ -1,19 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
+import { PigLevels, UserPigs } from "@/models/pigModels";
 
-enum PigLevels {
-  Nothing = 0,
-  Bronze = 1,
-  Silver = 2,
-  Gold = 3,
-  Diamond = 4,
-}
 
-interface UserPigs {
-  wallet_address: string;
-  pig_level: PigLevels;
-  buyable_pigs: PigLevels;
-}
 
 /**
  * @swagger

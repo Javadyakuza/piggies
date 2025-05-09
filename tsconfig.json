@@ -22,6 +22,6 @@
       "@public/*": ["./public/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "pages/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "pages/**/*.ts", "pages/api/pigs/distribute.ts.suspended"],
   "exclude": ["node_modules"]
 }
