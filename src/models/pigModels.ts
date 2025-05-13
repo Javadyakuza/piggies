@@ -1,12 +1,6 @@
-export type PurchasePigRequest = {
-  telegram_id: string;
-  wallet_address: string;
-};
+import { Address, Dictionary } from "@ton/core";
+import { User } from "./userTreeModels";
 
-export type PurchasePigResponse = {
-  success: boolean;
-  message: string;
-};
 
 export enum PigLevels {
   Nothing = 0,
@@ -21,3 +15,5 @@ export interface UserPigs {
   pig_level: PigLevels;
   buyable_pigs: PigLevels;
 }
+
+

@@ -25,7 +25,7 @@ const countReferralsByLevel = async (
 
   const { data: allUsers, error } = await supabase
     .from("users")
-    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id");
+    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id, user_type");
 
   if (error || !allUsers) {
     throw new Error("Failed to fetch users: " + error?.message);
@@ -47,6 +47,7 @@ const countReferralsByLevel = async (
         fullname: user.fullname || "",
         inviter_id: user.inviter_id || "",
         total_invited: totalInvited,
+        user_type: user.user_type,
       };
     }
     const parent = user.parent_id;

@@ -6,6 +6,7 @@ export type User = {
   inviter_id: string;
   total_invited: number;
   total_under?: number;
+  user_type: number;
 };
 
 export interface ReferralLevel {
@@ -21,3 +22,9 @@ export interface ReferralResponse {
 export interface SelfReferralId {
   referral_id: string;
 }
+
+export type SetWalletRequest = {
+  telegram_id: string;
+  wallet_address: string;
+};
+

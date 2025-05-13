@@ -160,6 +160,7 @@ export default async function handler(
       inviter_id: inviterId,
       parent_id: parentId,
       fullname: fullname,
+      user_type: 1,
       // created_at will default to now() if set in DB default
     })
     .select() // select the inserted row to return it

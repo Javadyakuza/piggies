@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
+import { SetWalletRequest } from "@/models/userTreeModels";
 
-type RequestBody = {
-  telegram_id: string;
-  wallet_address: string;
-};
-
-type ResponseData = {
+export type ResponseData = {
   success: boolean;
   message: string;
 };
+
 /**
  * @swagger
  * /api/user-tree/setWallet:
@@ -99,7 +96,7 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegram_id, wallet_address } = req.body as RequestBody;
+  const { telegram_id, wallet_address } = req.body as SetWalletRequest;
 
   if (!telegram_id || !wallet_address) {
     return res
