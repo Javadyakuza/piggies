@@ -27,6 +27,7 @@ import {
   updateTxHistory,
   upgradeUserPig,
 } from "./dbOps";
+import { PigLevel } from "@/models/pigs";
 
 async function catchEvents(listenAddress: Address, afterLt: bigint) {
   const tc = getTonClient();
@@ -109,6 +110,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toString(),
         request_status: "PigUpgradePending",
+        upgradedPigLevel: pig_data.new_pig_level,
       });
     }
     if (event.$$type == "PigApprovalEvent") {
@@ -131,6 +133,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toString(),
         request_status: "PigPurchaseApproved",
+        upgradedPigLevel: pig_data.new_pig_level,
       });
 
       // update the referrals rewards history

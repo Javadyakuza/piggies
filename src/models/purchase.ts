@@ -2,6 +2,7 @@ import { Address, Dictionary } from "@ton/ton";
 
 import { PigApproval, PigApprovalEvent, UpgradePig } from "../../wrappers/PigShop";
 import { txHistory } from "./history";
+import { PigLevel } from "./pigs";
 
 
 export type PurchasePigRequest = {
@@ -20,8 +21,9 @@ export interface bountyHuntersResponse {
 }
 
 export type upgradeUserPigsInternalResponse = { 
-    old_pig_level: number;
-    new_pig_level: number;
+    old_pig_level: PigLevel;
+    new_pig_level: PigLevel;
+    
 }
 
 export interface extendedPigUpgradeEvent extends UpgradePig {

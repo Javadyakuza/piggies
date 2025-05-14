@@ -1,13 +1,21 @@
 import { PurchasePigResponse } from "@/models/purchase";
 import { txHistory, TxId } from "@/models/history";
 import { supabase } from "../supebase";
+import { PigLevel } from "@/models/pigs";
 
 // export const client = createClient(); // not used yet
 
 export async function handlePigPurchase(
   userAddress: string,
-  pigLevel: 1 | 2 | 3
+  pigLevel: PigLevel
 ): Promise<PurchasePigResponse> {
+
+  if (pigLevel === 4 ) {
+    return {
+      success: false,
+      message: "your pig is already maxed out",
+    };
+  }
   let tx_id = TxId.create(userAddress.toString(), pigLevel);
   const { data: req, error: fetchError } = await supabase
     .from("txHistory")

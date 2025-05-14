@@ -1,5 +1,6 @@
 import { hash } from "crypto";
 import { PigApprovalEvent, UpgradePig } from "../../wrappers/PigShop";
+import { PigLevel } from "./pigs";
 export type txId = string;
 
 export class TxId {
@@ -13,4 +14,26 @@ export type txHistory = {
   tx_hash: string;
   wallet_address: string;
   request_status: "PigPurchaseApproved" | "PigUpgradePending";
+  upgradedPigLevel: PigLevel;
 };
+
+export type rewardHistory = {
+  related_tx: string;
+  reward: number;
+  referral: string;
+  wallet_address: string;
+};
+
+export type rewardHistoryResponse = {
+  success: boolean;
+  message: rewardHistory[] | string;
+};
+
+export interface rewardsHistoryRequest {
+  telegram_id: string;
+}
+
+export interface txRewardHistoryRequest {
+  tx_hash : string; 
+  telegram_id: string;
+}

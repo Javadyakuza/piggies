@@ -1,7 +1,6 @@
 import { Address, Dictionary } from "@ton/core";
 import { User } from "./userTree";
 
-
 export enum PigLevels {
   Nothing = 0,
   Bronze = 1,
@@ -16,4 +15,4 @@ export interface UserPigs {
   buyable_pigs: PigLevels;
 }
 
-
+export type PigLevel = 1 | 2 | 3 | 4;

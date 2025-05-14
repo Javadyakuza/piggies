@@ -5,7 +5,7 @@ import {
   upgradeUserPigsInternalResponse,
 } from "@/models/purchase";
 import { supabase } from "../supebase";
-import { txHistory } from "@/models/purchase";
+import { txHistory } from "@/models/history";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (

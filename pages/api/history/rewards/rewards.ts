@@ -1,48 +1,55 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
-import { txHistory } from "@/models/history";
+import {
+  rewardHistory,
+  rewardHistoryResponse,
+  rewardsHistoryRequest,
+  txHistory,
+} from "@/models/history";
 import { PurchasePigResponse } from "@/models/purchase";
 
 /**
  * @swagger
  * /api/user-tree/{telegramId}:
  *   get:
- *     summary: Retrieve transaction history for a user by Telegram ID
- *     description: Fetches the transaction history data for a user by first resolving their wallet address from the Telegram ID, then querying the txHistory table.
+ *     summary: Retrieve reward history for a user by Telegram ID
+ *     description: Fetches the reward history data for a user by resolving their wallet address from the given Telegram ID, then querying the rewardHistory table.
  *     parameters:
  *       - name: telegramId
  *         in: path
- *         description: The Telegram ID of the user whose transaction history is being requested.
+ *         description: The Telegram ID of the user whose reward history is being requested.
  *         required: true
  *         schema:
  *           type: string
  *           example: "123456789"
  *     responses:
  *       200:
- *         description: Transaction history successfully retrieved.
+ *         description: Reward history successfully retrieved.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                   example: "abc123"
- *                 wallet_address:
- *                   type: string
- *                   example: "0xabc...123"
- *                 tx_hash:
- *                   type: string
- *                   example: "0xdef...456"
- *                 amount:
- *                   type: number
- *                   example: 0.5
- *                 timestamp:
- *                   type: string
- *                   format: date-time
- *                   example: "2024-05-13T10:00:00Z"
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: object
+ *                   properties:
+ *                     wallet_address:
+ *                       type: string
+ *                       example: "0xabc...123"
+ *                     reward:
+ *                       type: number
+ *                       example: 1.5
+ *                     referral:
+ *                       type: string
+ *                       example: "0xdef...456"
+ *                     related_tx:
+ *                       type: string
+ *                       example: "0xghi...789"
  *       400:
- *         description: Missing or invalid telegram ID provided.
+ *         description: Missing or invalid Telegram ID provided.
  *         content:
  *           application/json:
  *             schema:
@@ -84,7 +91,7 @@ import { PurchasePigResponse } from "@/models/purchase";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<PurchasePigResponse>
+  res: NextApiResponse<rewardHistoryResponse>
 ) {
   if (req.method !== "GET") {
     return res
@@ -92,9 +99,9 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegramId } = req.query;
+  const { telegram_id } = req.body as rewardsHistoryRequest;
 
-  if (!telegramId || typeof telegramId !== "string") {
+  if (!telegram_id || typeof telegram_id !== "string") {
     return res
       .status(400)
       .json({ success: false, message: "Invalid or missing telegram id" });
@@ -105,7 +112,7 @@ export default async function handler(
     const { data: wallet_address, error: userError } = await supabase
       .from("users")
       .select("wallet_address")
-      .eq("telegram_id", telegramId)
+      .eq("telegram_id", telegram_id)
       .single();
 
     if (userError || !wallet_address) {
@@ -113,14 +120,12 @@ export default async function handler(
         .status(404)
         .json({ success: false, message: "Wallet is not connected !" });
     }
-    const { data: tx, error } = await supabase
-      .from("txHistory")
-      .select(
-        "tx_id, tx_hash, wallet_address, request_status, upgradedPigLevel"
-      )
+    const { data: rewards, error } = await supabase
+      .from("rewardHistory")
+      .select("wallet_address, reward, referral, related_tx")
       .eq("wallet_address", wallet_address);
 
-    const [userData] = tx || [];
+    const [userData] = rewards || [];
 
     if (error) {
       throw new Error(error.message);
