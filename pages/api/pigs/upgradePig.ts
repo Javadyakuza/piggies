@@ -4,7 +4,7 @@ import { handlePigPurchase } from "@/utils/purchase/purchaseHandler";
 import {
   PurchasePigRequest,
   PurchasePigResponse,
-} from "@/models/purchaseModels";
+} from "@/models/purchase";
 
 export default async function handler(
   req: NextApiRequest,

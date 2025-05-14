@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
-import { ReferralLevel, ReferralResponse, SelfReferralId, User } from "@/models/userTreeModels";
+import { ReferralLevel, ReferralResponse, SelfReferralId, User } from "@/models/userTree";
 
 
 const calculateTotalPossible = (level: number): number => {

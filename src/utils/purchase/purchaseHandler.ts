@@ -1,4 +1,5 @@
-import { PurchasePigResponse, txHistory, TxId } from "@/models/purchaseModels";
+import { PurchasePigResponse } from "@/models/purchase";
+import { txHistory, TxId } from "@/models/history";
 import { supabase } from "../supebase";
 
 // export const client = createClient(); // not used yet

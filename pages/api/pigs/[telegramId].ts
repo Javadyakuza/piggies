@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
-import { PigLevels, UserPigs } from "@/models/pigModels";
+import { PigLevels, UserPigs } from "@/models/pigs";
 
 
 

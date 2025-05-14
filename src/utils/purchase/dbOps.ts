@@ -3,9 +3,9 @@ import {
   bountyHuntersResponse,
   extendedPigApprovalEvent,
   upgradeUserPigsInternalResponse,
-} from "@/models/purchaseModels";
+} from "@/models/purchase";
 import { supabase } from "../supebase";
-import { txHistory } from "@/models/purchaseModels";
+import { txHistory } from "@/models/purchase";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (

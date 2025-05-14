@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
-import { SetWalletRequest } from "@/models/userTreeModels";
+import { SetWalletRequest } from "@/models/userTree";
 
 export type ResponseData = {
   success: boolean;

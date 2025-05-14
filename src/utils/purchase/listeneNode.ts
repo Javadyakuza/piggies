@@ -2,8 +2,8 @@ import {
   bountyHuntersResponse,
   extendedPigApprovalEvent,
   extendedPigUpgradeEvent,
-  TxId,
-} from "@/models/purchaseModels";
+} from "@/models/purchase";
+import { TxId } from "@/models/history";
 import { TonApiClient } from "@ton-api/client";
 import { Address } from "@ton/core";
 webkitURL;

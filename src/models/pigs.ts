@@ -1,5 +1,5 @@
 import { Address, Dictionary } from "@ton/core";
-import { User } from "./userTreeModels";
+import { User } from "./userTree";
 
 
 export enum PigLevels {

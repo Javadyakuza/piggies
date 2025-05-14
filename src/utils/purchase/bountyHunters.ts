@@ -1,6 +1,6 @@
 import { supabase } from "@/utils/supebase";
-import { User } from "@/models/userTreeModels";
-import { bountyHuntersResponse } from "@/models/purchaseModels";
+import { User } from "@/models/userTree";
+import { bountyHuntersResponse } from "@/models/purchase";
 import { Address, Dictionary } from "@ton/core";
 
 export async function findUsersBountyHunters(
