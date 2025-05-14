@@ -10,7 +10,7 @@ export type PurchasePigRequest = {
 
 export type PurchasePigResponse = {
   success: boolean;
-  message: txHistory[] | string;
+  message: txHistory | string;
 };
 
 export interface bountyHuntersResponse {
@@ -38,7 +38,7 @@ export type txHistory = {
   tx_id: txId;
   tx_hash: string;
   wallet_address: string;
-  tx_type: 1 | 2 | 3;
+  request_status: "PigPurchaseApproved" | "PigUpgradePending";
 };
 
 export interface extendedPigUpgradeEvent extends UpgradePig {

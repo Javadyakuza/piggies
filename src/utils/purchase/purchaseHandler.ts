@@ -7,14 +7,35 @@ export async function handlePigPurchase(
   userAddress: string,
   pigLevel: 1 | 2 | 3
 ): Promise<PurchasePigResponse> {
+  let tx_id = TxId.create(userAddress.toString(), pigLevel);
+  const { data: req, error: fetchError } = await supabase
+    .from("txHistory")
+    .select("request_status")
+    .eq("tx_id", tx_id)
+    .single();
+
+  if (fetchError) {
+    console.error("Error fetching tx history:", fetchError);
+  }
+  if (req?.request_status && req.request_status === "PigPurchaseApproved") {
+    return {
+      success: true,
+      message: "you've already purchased a pig",
+    };
+  } else if (
+    req?.request_status &&
+    req.request_status === "PigUpgradePending"
+  ) {
+    return {
+      success: true,
+      message: "you've already requested to upgrade your pig",
+    };
+  }
   // sleeping for 15 seconds to simulate the time it takes to process the transaction
   await new Promise((resolve) => setTimeout(resolve, 15000));
 
   // checking the db so that we if the users request has been processed
-  let purchase_tx_id = TxId.create(userAddress, 1);
-  let approve_tx_id = TxId.create(userAddress, pigLevel);
   let found = false;
-  let txs: txHistory[] = [];
   let max_retries = 10;
   let retries = 0;
   let backoff_secs = 3000;
@@ -22,8 +43,8 @@ export async function handlePigPurchase(
     await new Promise((resolve) => setTimeout(resolve, backoff_secs));
     const { data: tx, error: fetchError } = await supabase
       .from("txHistory")
-      .select("tx_id")
-      .in("tx_id", [purchase_tx_id, approve_tx_id])
+      .select()
+      .eq("tx_id", tx_id)
       .single();
 
     if (retries > max_retries) {
@@ -33,19 +54,19 @@ export async function handlePigPurchase(
     if (fetchError || !tx) {
       continue;
     }
-    if (txs.length === 0) {
-      txs.push(tx as txHistory);
-    } else if (txs.length === 1) {
-      if (txs[0].tx_id !== tx.tx_id) {
-        txs.push(tx as txHistory);
-      }
+
+    if (tx.request_status === "PigPurchaseApproved") {
+      return {
+        success: true,
+        message: tx as txHistory,
+      };
     }
 
     found = true;
   }
 
   return {
-    success: true,
-    message: txs,
+    success: false,
+    message: "couldn't process you request, contact to support team",
   };
 }

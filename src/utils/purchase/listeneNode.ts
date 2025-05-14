@@ -20,6 +20,8 @@ import { getTonApiClient, getTonClient } from "../tonClients";
 import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
+  getPigs,
+  initTxHistory,
   updateBountyHuntersBalances,
   updateReferralsRewardsHistory,
   updateTxHistory,
@@ -87,9 +89,10 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
     let bh: bountyHuntersResponse = await findUsersBountyHunters(
       event.userAddress.toString()
     );
+    let pig_data = await getPigs(event.userAddress.toString());
     // identifying the event type
     if (event.$$type == "UpgradePig") {
-      // the purchase have been initated and the tokens are received by the "pigsShop" contract
+      // the purchase have been initiated and the tokens are received by the "pigsShop" contract
       console.log(
         `Upgrade pig request initiated wallet address${event.userAddress}`
       );
@@ -98,11 +101,14 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       await sendPigApproval(bh, adminWallet, pigShop);
 
       // update users transaction history
-      await updateTxHistory({
-        tx_id: TxId.create(event.userAddress.toString(), 1),
+      await initTxHistory({
+        tx_id: TxId.create(
+          event.userAddress.toString(),
+          pig_data.old_pig_level
+        ),
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toString(),
-        tx_type: 1,
+        request_status: "PigUpgradePending",
       });
     }
     if (event.$$type == "PigApprovalEvent") {
@@ -114,7 +120,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       await updateBountyHuntersBalances(bh);
 
       // the user current pig should be upgraded
-      let pig_data = await upgradeUserPig(event.userAddress.toString());
+      await upgradeUserPig(event.userAddress.toString());
 
       // update users transaction history
       await updateTxHistory({
@@ -124,10 +130,10 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         ),
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toString(),
-        tx_type: 2,
+        request_status: "PigPurchaseApproved",
       });
 
-      // update the referrals rewards history 
+      // update the referrals rewards history
       let updateRes = await updateReferralsRewardsHistory(event);
 
       if (!updateRes) {

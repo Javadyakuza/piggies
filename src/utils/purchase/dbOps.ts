@@ -48,9 +48,7 @@ export const updateBountyHuntersBalances = async (
   if (updateError) throw updateError;
 };
 
-export const upgradeUserPig = async (
-  userAddress: string
-): Promise<upgradeUserPigsInternalResponse> => {
+export const upgradeUserPig = async (userAddress: string) => {
   const { data: current_pig, error: userError } = await supabase
     .from("users")
     .select("current_pig")
@@ -65,11 +63,33 @@ export const upgradeUserPig = async (
   if (updateError) {
     console.error("Wallet update error:", updateError);
   }
+};
+
+export const getPigs = async (
+  userAddress: string
+): Promise<upgradeUserPigsInternalResponse> => {
+  const { data: current_pig, error: userError } = await supabase
+    .from("users")
+    .select("current_pig")
+    .eq("wallet_address", userAddress)
+    .single();
 
   return {
     old_pig_level: current_pig?.current_pig ?? 0,
     new_pig_level: current_pig?.current_pig ?? 0 + 1,
   };
+};
+export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
+  const { data: tx, error: insertError } = await supabase
+    .from("txHistory")
+    .insert(txData)
+    .select()
+    .single();
+
+  if (insertError) {
+    console.error("Wallet update error:", insertError);
+  }
+  return tx as txHistory;
 };
 
 export const updateTxHistory = async (
@@ -77,7 +97,7 @@ export const updateTxHistory = async (
 ): Promise<txHistory> => {
   const { data: tx, error: insertError } = await supabase
     .from("txHistory")
-    .insert(txData)
+    .update(txData)
     .select()
     .single();
 
