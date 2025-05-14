@@ -69,8 +69,12 @@ contract PigShop {
   }
 
   receive(msg: Withdraw){
-    require(sender() == self.owner, "Only owner can withdraw");
-    require(msg.amount > ton("0.1"), "Amount must be greater than 0.1");
+    require(msg.amount > ton("0.1") &&
+        msg.amount <= self.balances.get(sender())!!,
+      "Amount must be greater than 0.1 and less than or equal to the user's balance"
+    );
+    let oldAmount = self.balances.get(sender())!!;
+    self.balances.set(sender(), oldAmount + msg.amount);
     send(SendParameters{
         to: msg.to,
         value: msg.amount,
@@ -78,8 +82,12 @@ contract PigShop {
         bounce: true
       }
     );
-    // Send the remaining value to the owner
-    self.reply(null);
+    emit(
+      Withdraw {
+        amount: msg.amount,
+        to: sender(),
+      }.toCell()
+    )
   }
 
   get fun getBalance(user: Address): Int? {
