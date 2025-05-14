@@ -1,6 +1,7 @@
 import { Address, Dictionary } from "@ton/ton";
 import { hash } from "crypto";
-import { PurchaseEvent } from "../../wrappers/PigShop";
+import { PigApproval, PigApprovalEvent, UpgradePig } from "../../wrappers/PigShop";
+
 
 export type PurchasePigRequest = {
   telegram_id: string;
@@ -40,6 +41,10 @@ export type txHistory = {
   tx_type: 1 | 2 | 3;
 };
 
-export interface extendedPurchaseEvent extends PurchaseEvent {
+export interface extendedPigUpgradeEvent extends UpgradePig {
+    tx_hash: string;
+}
+
+export interface extendedPigApprovalEvent extends PigApprovalEvent {
     tx_hash: string;
 }

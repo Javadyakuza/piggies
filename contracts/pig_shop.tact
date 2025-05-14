@@ -1,10 +1,14 @@
 import "@stdlib/deploy"; // Ensure standard library is imported
 
-message PurchaseEvent {
-  type: Int as uint8;
+message UpgradePig {
   userAddress: Address;
 }
 message PigApproval {
+  userBountyHunters: map<Address, Int as coins>;
+  adminsShares: map<Address, Int as coins>;
+}
+message PigApprovalEvent {
+  userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
@@ -16,7 +20,6 @@ message Withdraw {
 contract PigShop {
   owner: Address; // Persistent state variable
   balances: map<Address, Int as coins> = emptyMap();
-
   // Initialize the owner in the init() function
   init(owner: Address){
     self.owner = owner;
@@ -35,11 +38,7 @@ contract PigShop {
   }
 
   receive("UpgradePig"){
-    emit(PurchaseEvent{
-        type: 1, // purchase initiated
-        userAddress: sender()
-      }.toCell()
-    );
+    emit(UpgradePig{userAddress: sender()}.toCell());
   }
 
   receive(msg: PigApproval){
@@ -47,24 +46,22 @@ contract PigShop {
     require(!msg.userBountyHunters.isEmpty() && !msg.adminsShares.isEmpty(),
       "Distribution map cannot be empty"
     );
-
     // updating the user balances
     foreach (address, amount in msg.userBountyHunters) {
       require(amount > 0, "Amount must be greater than 0");
       let oldAmount = self.balances.get(address)!!;
-      self.balances.set(address, oldAmount  + amount);
+      self.balances.set(address, oldAmount + amount);
     }
-
     foreach (address, amount in msg.adminsShares) {
       require(amount > 0, "Amount must be greater than 0");
       let oldAmount = self.balances.get(address)!!;
-      self.balances.set(address, oldAmount  + amount);
+      self.balances.set(address, oldAmount + amount);
     }
-
     // emit the approval event
-    emit(PurchaseEvent{
-        type: 2, // approved
-        userAddress: sender()
+    emit(PigApprovalEvent{
+        userAddress: sender(),
+        userBountyHunters: msg.userBountyHunters,
+        adminsShares: msg.adminsShares
       }.toCell()
     );
     // TODO: Mint NFT

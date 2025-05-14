@@ -1,6 +1,7 @@
 // call the mint nft function on the contract
 import {
   bountyHuntersResponse,
+  extendedPigApprovalEvent,
   upgradeUserPigsInternalResponse,
 } from "@/models/purchaseModels";
 import { supabase } from "../supebase";
@@ -85,3 +86,42 @@ export const updateTxHistory = async (
   }
   return tx as txHistory;
 };
+
+export async function updateReferralsRewardsHistory(
+  event_data: extendedPigApprovalEvent
+): Promise<boolean> {
+  event_data.userBountyHunters.keys().forEach(async (user) => {
+    const { data: tx, error: insertError } = await supabase
+      .from("rewardsHistory")
+      .insert({
+        wallet_address: user.toString(),
+        reward: event_data.userBountyHunters.get(user) ?? 3,
+        referral: event_data.userAddress.toString(),
+        related_tx: event_data.tx_hash,
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("Update users reward error:", insertError);
+    }
+  });
+
+  event_data.adminsShares.keys().forEach(async (admin) => {
+    const { data: tx, error: insertError } = await supabase
+      .from("rewardsHistory")
+      .insert({
+        wallet_address: admin.toString(),
+        reward: event_data.adminsShares.get(admin) ?? 3,
+        referral: event_data.userAddress.toString(),
+        related_tx: event_data.tx_hash,
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("Update admins reward error:", insertError);
+    }
+  });
+  return true;
+}

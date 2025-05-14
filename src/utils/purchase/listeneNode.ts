@@ -1,26 +1,27 @@
 import {
   bountyHuntersResponse,
-  extendedPurchaseEvent,
+  extendedPigApprovalEvent,
+  extendedPigUpgradeEvent,
   TxId,
 } from "@/models/purchaseModels";
 import { TonApiClient } from "@ton-api/client";
 import { Address } from "@ton/core";
 webkitURL;
 import {
-  loadPurchaseEvent,
-  PurchaseEvent,
+  loadPigApproval,
+  loadPigApprovalEvent,
+  loadUpgradePig,
   PigShop,
 } from "../../../build/PigShop/tact_PigShop";
 
 import { findUsersBountyHunters } from "./bountyHunters";
 import { getAdminWallet } from "../admin";
-import { ContractAdapter } from "@ton-api/ton-adapter";
-import { loadConfigParamsAsSlice } from "@ton/ton";
 import { getTonApiClient, getTonClient } from "../tonClients";
 import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
   updateBountyHuntersBalances,
+  updateReferralsRewardsHistory,
   updateTxHistory,
   upgradeUserPig,
 } from "./dbOps";
@@ -42,7 +43,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
 
   if (txs.transactions.length === 0) return afterLt;
 
-  let event: extendedPurchaseEvent | undefined;
+  let event: extendedPigUpgradeEvent | extendedPigApprovalEvent | undefined;
   for (const tx of txs.transactions) {
     // tx must be successful
     if (!tx.computePhase?.success || !tx.actionPhase?.success || tx.aborted)
@@ -57,7 +58,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       ) {
         try {
           event = {
-            ...loadPurchaseEvent(msg.rawBody?.asSlice()),
+            ...loadUpgradePig(msg.rawBody?.asSlice()),
             tx_hash: tx.hash,
           };
         } catch (e) {
@@ -70,7 +71,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       ) {
         try {
           event = {
-            ...loadPurchaseEvent(msg.rawBody?.asSlice()),
+            ...loadPigApprovalEvent(msg.rawBody?.asSlice()),
             tx_hash: tx.hash,
           };
         } catch (e) {
@@ -87,7 +88,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       event.userAddress.toString()
     );
     // identifying the event type
-    if (event.type == BigInt(1)) {
+    if (event.$$type == "UpgradePig") {
       // the purchase have been initated and the tokens are received by the "pigsShop" contract
       console.log(
         `Upgrade pig request initiated wallet address${event.userAddress}`
@@ -104,7 +105,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         tx_type: 1,
       });
     }
-    if (event.type == BigInt(2)) {
+    if (event.$$type == "PigApprovalEvent") {
       console.log(
         `approval received for wallet address ${event.userAddress} pig upgrade request`
       );
@@ -117,11 +118,21 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
 
       // update users transaction history
       await updateTxHistory({
-        tx_id: TxId.create(event.userAddress.toString(), pig_data.old_pig_level),
+        tx_id: TxId.create(
+          event.userAddress.toString(),
+          pig_data.old_pig_level
+        ),
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toString(),
         tx_type: 2,
       });
+
+      // update the referrals rewards history 
+      let updateRes = await updateReferralsRewardsHistory(event);
+
+      if (!updateRes) {
+        console.error("Failed to update referrals rewards history!");
+      }
     }
   }
 
