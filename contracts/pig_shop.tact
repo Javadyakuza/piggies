@@ -81,4 +81,8 @@ contract PigShop {
     // Send the remaining value to the owner
     self.reply(null);
   }
+
+  get fun getBalance(user: Address): Int? {
+    return self.balances.get(user);
+  }
 }
