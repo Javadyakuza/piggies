@@ -125,7 +125,7 @@ export default async function handler(
       .select("wallet_address, reward, referral, related_tx")
       .eq("wallet_address", wallet_address);
 
-    const [userData] = rewards || [];
+    const userData = rewards || [];
 
     if (error) {
       throw new Error(error.message);
