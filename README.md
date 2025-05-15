@@ -155,4 +155,15 @@ after running the service on the dev mode or prd mode go to
 
 
   
- 
+ ### Database setup from scratch
+
+ ```bash
+ # login to supabase CLI
+ npx supabase login
+ # link the project (you can see project ref in Project Settings on supabase , it is called Project ID)
+ # this will also require your DB password. if you don't know it you can restore password in Project Settings -> Database section on supabase website.
+ npx supabase link --project-ref <your-project-ref>
+ # now when you set up the supabase CLI, run migration to set up empty tables
+
+ npx supabase db push
+```
