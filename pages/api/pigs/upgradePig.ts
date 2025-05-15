@@ -63,9 +63,4 @@ export default async function handler(
       message: `Failed to update pig value, message ${error}`,
     });
   }
-
-  return res.status(500).json({
-    success: false,
-    message: `Failed to update pig value, message`,
-  });
 }

@@ -48,3 +48,9 @@ export const pigsMap = (t: any) => [
     purchase: t("upgradeDiamond"),
   },
 ];
+export const pigsPriceMap: Record<string, number> = {
+  "1": 11,
+  "2": 100,
+  "3": 1000,
+  "4": 10000,
+};

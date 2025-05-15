@@ -6,11 +6,18 @@ import { useEffect, useState } from "react";
 import "./styles.css";
 import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
-import { useTonWallet } from "@tonconnect/ui-react";
+import {
+  useTonWallet,
+  TonConnectUI,
+  useTonConnectUI,
+} from "@tonconnect/ui-react";
 import { pigsMap } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
+import { getUpgradePigTx } from "../../../scripts/upgradePig";
+import { UpgradePigTx } from "@/models/purchase";
+import { handlePigPurchase } from "@/utils/purchase/purchaseHandler";
 
 type PigData = {
   pig_level: number;
@@ -26,7 +33,7 @@ export default function StorePage() {
   const [tonPrice, setTonPrice] = useState(3);
   const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
 
-  const wallet = useTonWallet();
+  const [wallet] = useTonConnectUI();
 
   const initDataState = useSignal(initData.state);
   const userTelegramId = initDataState?.user?.id;
@@ -73,11 +80,37 @@ export default function StorePage() {
 
   const handlePurchasePig = async () => {
     if (!userTelegramId || isPurchaseInProgress) return;
-    setIsPurchaseInProgress(true);
-    await axios.post(`/api/pigs/upgradePig`, {
-      telegram_id: userTelegramId,
-    });
+    let wallet_address = wallet.wallet?.account.address.toString();
+    if (!wallet_address) {
+      console.error("Wallet not connected");
+      return;
+    }
 
+    let tx = await getUpgradePigTx(userTelegramId.toString());
+
+    try {
+      const result = await wallet.sendTransaction(
+        (tx.message as UpgradePigTx).tx
+      );
+
+      console.log("Transaction sent, result:", result);
+
+      alert("✅ UpgradePig transaction sent successfully!");
+
+      console.log("Waiting for transaction to be confirmed...");
+
+      setIsPurchaseInProgress(true);
+      let res = await axios.post(`/api/pigs/upgradePig`, {
+        telegram_id: userTelegramId,
+        wallet_address,
+      });
+
+      // show the rest to the user
+    } catch (error) {
+      console.error("Transaction failed or was rejected:", error);
+
+      alert("⚠️ Transaction was cancelled or failed.");
+    }
     await fetchPigsData();
 
     setIsPurchaseInProgress(false);
@@ -196,8 +229,8 @@ export default function StorePage() {
                   {isPurchaseInProgress
                     ? t("pleaseWait")
                     : activeItem.code !== currentPigCode
-                    ? getPurchaseButtonText(activeItem.code)
-                    : t("currentPig")}
+                      ? getPurchaseButtonText(activeItem.code)
+                      : t("currentPig")}
                 </Button>
               </div>
             </div>
