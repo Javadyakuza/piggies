@@ -5,6 +5,10 @@
     "action": {
       "copyRefLink": "Скопировать рефлекс"
     },
+    "welcomePage": {
+      "oink": "Ойнк!",
+      "walletRequired": "Приложение требует кошелька TON"
+    },
     "balance": "Баланс",
     "earnings": "Доходы",
     "earningsAmount": "{amount} / {currentPigPrice} $",

@@ -5,8 +5,11 @@ import { TonConnectButton, useTonWallet } from "@tonconnect/ui-react";
 import { List, Placeholder, Text } from "@telegram-apps/telegram-ui";
 
 import "./styles.css";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function TONConnectPage() {
+  const t = useTranslations("i18n");
   const wallet = useTonWallet();
 
   if (!wallet) {
@@ -14,13 +17,20 @@ export default function TONConnectPage() {
       <Page headerAndFooter={false}>
         <Placeholder
           className="ton-connect-page__placeholder"
-          header="TON Connect"
           description={
             <>
-              <Text>
-                To display the data related to the TON Connect, it is required
-                to connect your wallet
-              </Text>
+              <Image
+                src="/imgs/common/welcome.png"
+                alt="tonconnect"
+                width={200}
+                height={200}
+                className="welcome-image"
+              />
+
+              <h2 className="oink">{t("welcomePage.oink")}</h2>
+              <h4 className="wallet-required">
+                {t("welcomePage.walletRequired")}
+              </h4>
               <TonConnectButton className="ton-connect-page__button" />
             </>
           }

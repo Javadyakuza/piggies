@@ -5,6 +5,10 @@
     "action": {
       "copyRefLink": "Copy reflink"
     },
+    "welcomePage": {
+      "oink": "Oink!",
+      "walletRequired": "App requires TON wallet"
+    },
     "balance": "Balance",
     "earnings": "Earnings",
     "earningsAmount": "{amount} / {currentPigPrice} $",
