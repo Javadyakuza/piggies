@@ -7,7 +7,9 @@
     },
     "welcomePage": {
       "oink": "Ойнк!",
-      "walletRequired": "Приложение требует кошелька TON"
+      "walletRequired": "Приложение требует кошелька TON",
+      "welcome": "Добро пожаловать!",
+      "referralLinkRequired": "Вам нужен реферальный ссылка для присоединения"
     },
     "balance": "Баланс",
     "earnings": "Доходы",

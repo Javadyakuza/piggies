@@ -47,7 +47,7 @@ body {
   text-align: center;
 }
 
-.ton-connect-page__button-connected button {
+.welcome-page__button-connected button {
   background-color: rgba(109, 109, 131, 0.2705882353) !important;
 }
 body .s-enter-active ul {

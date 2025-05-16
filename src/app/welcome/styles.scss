@@ -1,4 +1,4 @@
-.ton-connect-page__placeholder {
+.welcome-page__placeholder {
   position: absolute;
   top: 0;
   left: 0;
@@ -6,21 +6,22 @@
   height: 100%;
   box-sizing: border-box;
 
-  .oink,
-  .wallet-required {
+  .title,
+  .description {
     margin: 0;
     color: #facefd !important;
   }
 
-  .oink {
+  .title {
     margin-top: 1.5rem;
     margin-bottom: 0.8rem;
     font-size: 32px;
   }
 
-  .wallet-required {
+  .description {
     margin-bottom: 2rem;
     font-size: 24px;
+    font-weight: 300;
   }
 
   .welcome-image {
@@ -29,10 +30,10 @@
   }
 }
 
-.ton-connect-page__button {
+.welcome-page__button {
   margin: 16px auto 0;
 }
 
-.ton-connect-page__button-connected {
+.welcome-page__button-connected {
   margin: 16px 24px 16px auto;
 }

@@ -2,7 +2,7 @@
 
 import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Button,
   Modal,
@@ -17,6 +17,9 @@ import { useTranslations } from "next-intl";
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const t = useTranslations("i18n");
   const wallet = useTonWallet();
+  const query = useSearchParams();
+  const isUnRegisteredUserRedirectedToWelcome = query?.get("noref") === "true";
+
   const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
   const pathname = usePathname();
@@ -29,6 +32,12 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   );
 
   const initDataState = useSignal(initData.state);
+
+  const startParam = initDataState?.startParam;
+  const refId = startParam?.startsWith("register_")
+    ? startParam.split("_")[1]
+    : null;
+
   const userTelegramId = initDataState?.user?.id;
 
   useEffect(() => {
@@ -83,22 +92,24 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
         router.replace("/");
       }
     } else {
-      if (pathname !== "/register") {
+      if (refId && pathname !== "/register") {
         router.replace("/register");
-        return;
+      } else if (pathname !== "/welcome") {
+        router.replace("/welcome?noref=true");
       }
+
       return;
     }
 
     const connected = !!wallet;
 
     if (connected) {
-      if (pathname === "/ton-connect") {
+      if (pathname === "/welcome") {
         router.replace("/");
       }
     } else {
-      if (pathname !== "/ton-connect") {
-        router.replace("/ton-connect");
+      if (pathname !== "/welcome") {
+        router.replace("/welcome");
       }
     }
   }, [initialized, wallet, pathname, router, isUserRegistered]);
