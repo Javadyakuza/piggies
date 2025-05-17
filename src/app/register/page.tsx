@@ -3,12 +3,13 @@
 
 import { Page } from "@/components/Page";
 import "./styles.css";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button, Title } from "@telegram-apps/telegram-ui";
+import { useRouter } from "next/navigation";
+import { Button } from "@telegram-apps/telegram-ui";
 import { useTranslations } from "next-intl";
 import axios from "axios";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { useState } from "react";
+import Welcome from "@/components/Welcome/Welcome";
 
 export default function RegisterPage() {
   const t = useTranslations("i18n");
@@ -39,43 +40,36 @@ export default function RegisterPage() {
         fullname: userTelegramFullName,
       });
       if (response.status === 201) {
-        router.push("/welcome");
+        router.push("/wallet-connect");
       }
     } catch (error) {
       setIsButtonClicked(false);
       console.error("Error registering user:", error);
     }
   };
+
+  const title = t("welcomePage.welcome");
+
   return (
     <Page headerAndFooter={false}>
-      <div className="register-container">
-        {refId ? (
-          <>
-            <Title level="1" weight="2">
-              {t("welcome")}
-            </Title>
-            <br />
-            <Button
-              disabled={isButtonClicked}
-              onClick={handleRegister}
-              mode="filled"
-              size="l"
-            >
-              {isButtonClicked ? t("pleaseWait") : t("register")}
-            </Button>
-          </>
-        ) : (
-          <>
-            <Title level="1" weight="2">
-              {t("pleaseJoinViaReferralLink")}
-            </Title>
-            <br />
-            <Title level="2" weight="1">
-              {t("canNotRegisterWithoutReferral")}
-            </Title>
-          </>
-        )}
-      </div>
+      {refId && (
+        <div className="register-container">
+          <Welcome
+            title={title}
+            description=""
+            additionalJsx={
+              <Button
+                disabled={isButtonClicked}
+                onClick={handleRegister}
+                mode="filled"
+                size="l"
+              >
+                {isButtonClicked ? t("pleaseWait") : t("register")}
+              </Button>
+            }
+          />
+        </div>
+      )}
     </Page>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Button,
   Modal,
@@ -17,8 +17,6 @@ import { useTranslations } from "next-intl";
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const t = useTranslations("i18n");
   const wallet = useTonWallet();
-  const query = useSearchParams();
-  const isUnRegisteredUserRedirectedToWelcome = query?.get("noref") === "true";
 
   const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
@@ -34,6 +32,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   const initDataState = useSignal(initData.state);
 
   const startParam = initDataState?.startParam;
+
   const refId = startParam?.startsWith("register_")
     ? startParam.split("_")[1]
     : null;
@@ -91,28 +90,30 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
       if (pathname === "/register") {
         router.replace("/");
       }
-    } else {
-      if (refId && pathname !== "/register") {
+    } else if (refId) {
+      if (pathname !== "/register") {
         router.replace("/register");
-      } else if (pathname !== "/welcome") {
-        router.replace("/welcome?noref=true");
       }
-
+      return;
+    } else {
+      if (pathname !== "/no-ref-link") {
+        router.replace("/no-ref-link");
+      }
       return;
     }
 
     const connected = !!wallet;
 
     if (connected) {
-      if (pathname === "/welcome") {
+      if (pathname === "/wallet-connect") {
         router.replace("/");
       }
     } else {
-      if (pathname !== "/welcome") {
-        router.replace("/welcome");
+      if (pathname !== "/wallet-connect") {
+        router.replace("/wallet-connect");
       }
     }
-  }, [initialized, wallet, pathname, router, isUserRegistered]);
+  }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
 
   if (!initialized || isUserRegistered === null) {
     return (
