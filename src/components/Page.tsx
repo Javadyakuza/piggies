@@ -5,6 +5,7 @@ import { PropsWithChildren, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { WalletGuard } from "./WalletGuard";
 import Header from "./Header/Header";
+import { Footer } from "./Footer/Footer";
 
 export function Page({
   children,
@@ -46,7 +47,10 @@ export function Page({
   return (
     <WalletGuard>
       {headerAndFooter && <Header />}
-      <div className="page-content">{children}</div>
+      <div className="page-content">
+        {children}
+        {headerAndFooter && <Footer />}
+      </div>
     </WalletGuard>
   );
 }
