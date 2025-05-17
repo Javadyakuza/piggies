@@ -13,17 +13,15 @@ export default function WalletConnectPage() {
   const title = t("welcomePage.oink");
   const description = t("welcomePage.walletRequired");
 
-  if (!wallet) {
-    return (
-      <Page headerAndFooter={false}>
+  return (
+    <Page headerAndFooter={false}>
+      {!wallet && (
         <Welcome
           title={title}
           description={description}
           additionalJsx={<TonConnectButton className="welcome-page__button" />}
         />
-      </Page>
-    );
-  }
-
-  return <></>;
+      )}
+    </Page>
+  );
 }
