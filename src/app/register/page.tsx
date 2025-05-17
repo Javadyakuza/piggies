@@ -39,7 +39,7 @@ export default function RegisterPage() {
         fullname: userTelegramFullName,
       });
       if (response.status === 201) {
-        router.push("/ton-connect");
+        router.push("/welcome");
       }
     } catch (error) {
       setIsButtonClicked(false);

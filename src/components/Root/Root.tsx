@@ -62,7 +62,8 @@ function RootInner({ children }: PropsWithChildren) {
   return (
     <AppRoot
       appearance={isDark ? "dark" : "light"}
-      platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+      // platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+      platform={"ios"}
     >
       <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/tonconnect-manifest.json">
         {children}
@@ -90,7 +91,8 @@ export function Root(props: PropsWithChildren) {
     <div className="root__loading">
       <AppRoot
         appearance={isDark ? "dark" : "light"}
-        platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+        // platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+        platform={"ios"}
       >
         <Spinner size="l" />
       </AppRoot>
