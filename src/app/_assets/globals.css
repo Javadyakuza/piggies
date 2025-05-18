@@ -65,8 +65,8 @@ body {
   overflow: hidden;
 }
 .page-content {
-  overflow: scroll;
-  height: calc(100vh - 78px);
+  /* overflow: scroll;
+  height: calc(100vh - 78px); */
 }
 
 .s-enter-active > div > div:first-child {

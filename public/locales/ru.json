@@ -11,6 +11,11 @@
       "welcome": "Добро пожаловать!",
       "referralLinkRequired": "Вам нужен реферальный ссылка для присоединения"
     },
+    "footerContent": {
+      "bank": "Банк",
+      "friends": "Друзья",
+      "history": "История"
+    },
     "balance": "Баланс",
     "earnings": "Доходы",
     "earningsAmount": "{amount} / {currentPigPrice} $",

@@ -83,8 +83,14 @@ export default function ProfilePage() {
   const fetchPigsData = async () => {
     if (!wallet) return;
 
-    const response = await axios.get(`/api/pigs/${userTelegramId}`);
-    const pigsDataToSet = response.data;
+    const response = await axios
+      .get(`/api/pigs/${userTelegramId}`)
+      .catch((err) => {
+        console.error("Error fetching pigs data:", err);
+        return null;
+      });
+
+    const pigsDataToSet = response?.data || undefined;
     setPigsData(pigsDataToSet);
   };
 
