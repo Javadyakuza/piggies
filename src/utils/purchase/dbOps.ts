@@ -5,7 +5,8 @@ import {
   upgradeUserPigsInternalResponse,
 } from "@/models/purchase";
 import { supabase } from "../supebase";
-import { txHistory } from "@/models/history";
+import { txHistory, TxId } from "@/models/history";
+import { PigLevel } from "@/models/pigs";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (
@@ -144,4 +145,30 @@ export async function updateReferralsRewardsHistory(
     }
   });
   return true;
+}
+
+export async function isDuplicatePurchase(
+  userAddress: string,
+  pigLevel: PigLevel
+): Promise<boolean> {
+  let tx_id = TxId.create(userAddress.toString(), pigLevel);
+  const { data: req, error: fetchError } = await supabase
+    .from("txHistory")
+    .select("request_status")
+    .eq("tx_id", tx_id)
+    .single();
+
+  if (fetchError) {
+    console.error("Error fetching tx history:", fetchError);
+  }
+  if (req?.request_status && req.request_status === "PigPurchaseApproved") {
+    return true;
+  } else if (
+    req?.request_status &&
+    req.request_status === "PigUpgradePending"
+  ) {
+    return true;
+  }
+
+  return false;
 }

@@ -2,6 +2,7 @@ import { PurchasePigResponse } from "@/models/purchase";
 import { txHistory, TxId } from "@/models/history";
 import { supabase } from "../supebase";
 import { PigLevel } from "@/models/pigs";
+import { isDuplicatePurchase } from "./dbOps";
 
 // export const client = createClient(); // not used yet
 
@@ -9,35 +10,19 @@ export async function handlePigPurchase(
   userAddress: string,
   pigLevel: PigLevel
 ): Promise<PurchasePigResponse> {
-
-  if (pigLevel === 4 ) {
+  if (pigLevel === 4) {
     return {
       success: false,
       message: "your pig is already maxed out",
     };
   }
   let tx_id = TxId.create(userAddress.toString(), pigLevel);
-  const { data: req, error: fetchError } = await supabase
-    .from("txHistory")
-    .select("request_status")
-    .eq("tx_id", tx_id)
-    .single();
+  let isDuplicate = await isDuplicatePurchase(userAddress, pigLevel);
 
-  if (fetchError) {
-    console.error("Error fetching tx history:", fetchError);
-  }
-  if (req?.request_status && req.request_status === "PigPurchaseApproved") {
+  if (isDuplicate) {
     return {
       success: true,
-      message: "you've already purchased a pig",
-    };
-  } else if (
-    req?.request_status &&
-    req.request_status === "PigUpgradePending"
-  ) {
-    return {
-      success: true,
-      message: "you've already requested to upgrade your pig",
+      message: "your request has already been processed !",
     };
   }
   // sleeping for 15 seconds to simulate the time it takes to process the transaction

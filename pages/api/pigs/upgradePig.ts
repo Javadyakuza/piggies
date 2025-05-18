@@ -53,7 +53,7 @@ export default async function handler(
   try {
     let purchaseResponse: PurchasePigResponse = await handlePigPurchase(
       wallet_address,
-      user.current_pig
+      user.current_pig + 1
     );
     return res.status(200).json(purchaseResponse);
   } catch (error) {

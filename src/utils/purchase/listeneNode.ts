@@ -22,6 +22,7 @@ import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
   getPigs,
   initTxHistory,
+  isDuplicatePurchase,
   updateBountyHuntersBalances,
   updateReferralsRewardsHistory,
   updateTxHistory,
@@ -93,25 +94,33 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
     let pig_data = await getPigs(event.userAddress.toString());
     // identifying the event type
     if (event.$$type == "UpgradePig") {
-      // the purchase have been initiated and the tokens are received by the "pigsShop" contract
-      console.log(
-        `Upgrade pig request initiated wallet address${event.userAddress}`
+      let tx_id = TxId.create(
+        event.userAddress.toString(),
+        pig_data.old_pig_level
       );
-
-      // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
-      await sendPigApproval(bh, adminWallet, pigShop);
-
-      // update users transaction history
-      await initTxHistory({
-        tx_id: TxId.create(
+      if (
+        !(await isDuplicatePurchase(
           event.userAddress.toString(),
           pig_data.old_pig_level
-        ),
-        tx_hash: event.tx_hash,
-        wallet_address: event.userAddress.toString(),
-        request_status: "PigUpgradePending",
-        upgradedPigLevel: pig_data.new_pig_level,
-      });
+        ))
+      ) {
+        // the purchase have been initiated and the tokens are received by the "pigsShop" contract
+        console.log(
+          `Upgrade pig request initiated wallet address${event.userAddress}`
+        );
+
+        // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
+        await sendPigApproval(bh, adminWallet, pigShop);
+
+        // update users transaction history
+        await initTxHistory({
+          tx_id,
+          tx_hash: event.tx_hash,
+          wallet_address: event.userAddress.toString(),
+          request_status: "PigUpgradePending",
+          upgradedPigLevel: pig_data.new_pig_level,
+        });
+      }
     }
     if (event.$$type == "PigApprovalEvent") {
       console.log(
