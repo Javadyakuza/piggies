@@ -6,8 +6,7 @@ export const pigsMap = (t: any) => [
     earnings: 117,
     capacity: 100,
     levels: 3,
-    coverUrl:
-      "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/BronzePig.png",
+    coverUrl: "/imgs/pigs/placeholder.png",
     iconUrl: "/pig_icons/BronzePig_icon.png",
     purchase: t("purchase"),
   },
@@ -18,8 +17,7 @@ export const pigsMap = (t: any) => [
     earnings: 32700,
     capacity: 250,
     levels: 7,
-    coverUrl:
-      "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/SilverPig.png",
+    coverUrl: "/imgs/pigs/bronze.png",
     iconUrl: "/pig_icons/SilverPig_icon.png",
     purchase: t("upgradeSilver"),
   },
@@ -30,8 +28,7 @@ export const pigsMap = (t: any) => [
     earnings: 5971510,
     capacity: 500,
     levels: 10,
-    coverUrl:
-      "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/GoldPig.png",
+    coverUrl: "/imgs/pigs/gold.png",
     iconUrl: "/pig_icons/GoldPig_icon.png",
     purchase: t("upgradeGold"),
   },
@@ -42,8 +39,7 @@ export const pigsMap = (t: any) => [
     earnings: 106288200,
     capacity: 1000,
     levels: 11,
-    coverUrl:
-      "https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/DiamondPig.png",
+    coverUrl: "/imgs/pigs/diamond.png",
     iconUrl: "/pig_icons/DiamondPig_icon.png",
     purchase: t("upgradeDiamond"),
   },
@@ -54,3 +50,38 @@ export const pigsPriceMap: Record<string, number> = {
   "3": 1000,
   "4": 10000,
 };
+
+export const pigsMapNew = (t: any) => [
+  {
+    title: "Bronze Pig",
+    code: 1,
+    slots: 27,
+    level: 3,
+    price: 11,
+    earnings: 117,
+  },
+  {
+    title: "Silver Pig",
+    code: 2,
+    slots: 147,
+    level: 7,
+    price: 100,
+    earnings: 32700,
+  },
+  {
+    title: "Gold Pig",
+    code: 3,
+    slots: 377,
+    level: 10,
+    price: 1000,
+    earnings: 5971510,
+  },
+  {
+    title: "Diamond Pig",
+    code: 4,
+    slots: 1000,
+    level: 11,
+    price: 10000,
+    earnings: 106288200,
+  },
+];
