@@ -11,6 +11,11 @@
       "welcome": "Welcome!",
       "referralLinkRequired": "You need referral link to join"
     },
+    "footerContent": {
+      "bank": "Bank",
+      "friends": "Friends",
+      "history": "History"
+    },
     "balance": "Balance",
     "earnings": "Earnings",
     "earningsAmount": "{amount} / {currentPigPrice} $",
