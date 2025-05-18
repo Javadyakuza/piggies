@@ -165,4 +165,4 @@ export async function listenForever() {
       lastLt
     );
   }
-}
+} // why with loop while we have setInterval ???!!!

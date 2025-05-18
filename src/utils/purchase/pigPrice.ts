@@ -3,7 +3,7 @@ import axios from "axios";
 import { error } from "console";
 import { pigsPriceMap } from "../pigs_map";
 
-export async function calculatePigPrice(pig_level: PigLevels): Promise<number> {
+export async function calculatePigPrice(pig_level: PigLevel): Promise<number> {
   try {
     const res = await axios.get(
       `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
