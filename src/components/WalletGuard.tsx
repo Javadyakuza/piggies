@@ -83,37 +83,37 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
     });
   }, [tonConnectUI]);
 
-  useEffect(() => {
-    if (!initialized || isUserRegistered === null) return;
+  // useEffect(() => {
+  //   if (!initialized || isUserRegistered === null) return;
 
-    if (isUserRegistered) {
-      if (pathname === "/register") {
-        router.replace("/");
-      }
-    } else if (refId) {
-      if (pathname !== "/register") {
-        router.replace("/register");
-      }
-      return;
-    } else {
-      if (pathname !== "/no-ref-link") {
-        router.replace("/no-ref-link");
-      }
-      return;
-    }
+  //   if (isUserRegistered) {
+  //     if (pathname === "/register") {
+  //       router.replace("/");
+  //     }
+  //   } else if (refId) {
+  //     if (pathname !== "/register") {
+  //       router.replace("/register");
+  //     }
+  //     return;
+  //   } else {
+  //     if (pathname !== "/no-ref-link") {
+  //       router.replace("/no-ref-link");
+  //     }
+  //     return;
+  //   }
 
-    const connected = !!wallet;
+  //   const connected = !!wallet;
 
-    if (connected) {
-      if (pathname === "/wallet-connect") {
-        router.replace("/");
-      }
-    } else {
-      if (pathname !== "/wallet-connect") {
-        router.replace("/wallet-connect");
-      }
-    }
-  }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
+  //   if (connected) {
+  //     if (pathname === "/wallet-connect") {
+  //       router.replace("/");
+  //     }
+  //   } else {
+  //     if (pathname !== "/wallet-connect") {
+  //       router.replace("/wallet-connect");
+  //     }
+  //   }
+  // }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
 
   if (!initialized || isUserRegistered === null) {
     return (

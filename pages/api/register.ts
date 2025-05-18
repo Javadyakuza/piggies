@@ -4,8 +4,6 @@ import { cookies } from "next/headers";
 import { findOpenSlotInSubtree } from "@/utils/tree";
 import { RegisterRequest } from "@/models/register";
 
-
-
 /**
  * @swagger
  * /api/register:
@@ -99,26 +97,25 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegram_id, referral_id, fullname } = req.body as RegisterRequest;
-  if (!telegram_id) {
-    return res
-      .status(400)
-      .json({ success: false, message: "telegram_id is required" });
-  }
+  const { telegram_id, referral_id, wallet_address, fullname } =
+    req.body as RegisterRequest;
 
-  if (!referral_id) {
-    return res
-      .status(400)
-      .json({ success: false, message: "registration is only available via referral link !" });
+  if (!telegram_id || !wallet_address) {
+    return res.status(400).json({
+      success: false,
+      message: "telegram_id and wallet_address are required",
+    });
   }
 
   // Optional: Check if user with this telegram_id already exists to prevent duplicates
-  const { data: existing } = await supabase
+  const { data: user } = await supabase
     .from("users")
-    .select("id")
-    .eq("telegram_id", telegram_id)
+    .select("")
+    .eq("wallet_address", wallet_address)
     .maybeSingle();
-  if (existing) {
+
+  // user exists
+  if (user) {
     return res
       .status(409)
       .json({ success: false, message: "User already registered" });
@@ -135,12 +132,10 @@ export default async function handler(
       .eq("referral_id", referral_id)
       .single();
     if (!inviter) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Invalid referral_id (inviter not found)",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid referral_id (inviter not found)",
+      });
     }
     inviterId = inviter.id;
     // Find an open slot in inviter's subtree for the new user
@@ -149,10 +144,23 @@ export default async function handler(
       // If for some reason no slot found (tree completely full), default to attaching to inviter
       parentId = inviterId;
     }
-  }
-  // If no referral_id provided (direct registration or first user), parentId and inviterId remain null (user is root of a new tree).
+  } else {
+    const { data: genesisUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("telegram_id", "@genesis")
+      .single();
 
-  // Insert the new user into the database
+    if (!genesisUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid referral_id (inviter not found)",
+      });
+    }
+    parentId = await findOpenSlotInSubtree(String(genesisUser.id));
+    inviterId = genesisUser.id;
+  }
+
   const { data: insertData, error } = await supabase
     .from("users")
     .insert({
@@ -160,8 +168,8 @@ export default async function handler(
       inviter_id: inviterId,
       parent_id: parentId,
       fullname: fullname,
+      wallet_address: wallet_address,
       user_type: 1,
-      // created_at will default to now() if set in DB default
     })
     .select() // select the inserted row to return it
     .single();

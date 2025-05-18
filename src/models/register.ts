@@ -1,5 +1,6 @@
 export type RegisterRequest = {
   telegram_id: string;
-  referral_id: string | number;
+  wallet_address: string;
   fullname: string;
+  referral_id: string | number;
 };
