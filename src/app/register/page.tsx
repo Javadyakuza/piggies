@@ -24,12 +24,12 @@ export default function RegisterPage() {
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const userTelegramId = initDataState?.user?.id;
-  const userTelegramFullName =
+  let userTelegramFullName =
     initDataState?.user?.firstName || initDataState?.user?.lastName
       ? `${initDataState?.user?.firstName || ""} 
     ${initDataState?.user?.lastName || ""}`
       : initDataState?.user?.username || initDataState?.user?.id;
-
+  userTelegramFullName = String(userTelegramFullName).replace(/\n/g, " ");
   const handleRegister = async () => {
     try {
       setIsButtonClicked(true);

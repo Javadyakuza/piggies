@@ -59,6 +59,7 @@ export const pigsMapNew = (t: any) => [
     level: 3,
     price: 11,
     earnings: 117,
+    cover: "/imgs/pigs/bronze.png",
   },
   {
     title: "Silver Pig",
@@ -67,6 +68,7 @@ export const pigsMapNew = (t: any) => [
     level: 7,
     price: 100,
     earnings: 32700,
+    cover: "/imgs/pigs/silver.png",
   },
   {
     title: "Gold Pig",
@@ -75,6 +77,7 @@ export const pigsMapNew = (t: any) => [
     level: 10,
     price: 1000,
     earnings: 5971510,
+    cover: "/imgs/pigs/gold.png",
   },
   {
     title: "Diamond Pig",
@@ -83,5 +86,6 @@ export const pigsMapNew = (t: any) => [
     level: 11,
     price: 10000,
     earnings: 106288200,
+    cover: "/imgs/pigs/diamond.png",
   },
 ];
