@@ -9,25 +9,24 @@ import { PurchasePigResponse } from "@/models/purchase";
 
 /**
  * @swagger
- * /api/user-tree/{telegram_id}:
+ * /api/history/rewards/txRewards:
  *   post:
  *     summary: Retrieve specific reward history by Telegram ID and transaction hash
  *     description: Resolves the wallet address from the provided Telegram ID and fetches reward history entries matching the given transaction hash.
- *     parameters:
- *       - name: telegram_id
- *         in: path
- *         description: The Telegram ID of the user whose reward data is being queried.
- *         required: true
- *         schema:
- *           type: string
- *           example: "123456789"
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - telegram_id
+ *               - tx_hash
  *             properties:
+ *               telegram_id:
+ *                 type: string
+ *                 description: The Telegram ID of the user
+ *                 example: "123456789"
  *               tx_hash:
  *                 type: string
  *                 description: Transaction hash to filter reward history
@@ -86,6 +85,19 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                 message:
  *                   type: string
  *                   example: "Wallet is not connected !"
+ *       405:
+ *         description: Method not allowed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Method not allowed"
  *       500:
  *         description: Internal server error during request.
  *         content:
@@ -100,6 +112,7 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   type: string
  *                   example: "internal server error"
  */
+
 
 export default async function handler(
   req: NextApiRequest,

@@ -10,18 +10,20 @@ import { PurchasePigResponse } from "@/models/purchase";
 
 /**
  * @swagger
- * /api/user-tree/{telegramId}:
+ * /api/history/rewards/rewards:
  *   get:
- *     summary: Retrieve reward history for a user by Telegram ID
- *     description: Fetches the reward history data for a user by resolving their wallet address from the given Telegram ID, then querying the rewardHistory table.
- *     parameters:
- *       - name: telegramId
- *         in: path
- *         description: The Telegram ID of the user whose reward history is being requested.
- *         required: true
- *         schema:
- *           type: string
- *           example: "123456789"
+ *     summary: Retrieve reward history for a user
+ *     description: Fetches the reward history for a user by resolving their wallet address from the provided Telegram ID in the request body.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               telegram_id:
+ *                 type: string
+ *                 example: "123456789"
  *     responses:
  *       200:
  *         description: Reward history successfully retrieved.
@@ -34,22 +36,24 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   type: boolean
  *                   example: true
  *                 message:
- *                   type: object
- *                   properties:
- *                     wallet_address:
- *                       type: string
- *                       example: "0xabc...123"
- *                     reward:
- *                       type: number
- *                       example: 1.5
- *                     referral:
- *                       type: string
- *                       example: "0xdef...456"
- *                     related_tx:
- *                       type: string
- *                       example: "0xghi...789"
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       wallet_address:
+ *                         type: string
+ *                         example: "0xabc...123"
+ *                       reward:
+ *                         type: number
+ *                         example: 1.5
+ *                       referral:
+ *                         type: string
+ *                         example: "0xdef...456"
+ *                       related_tx:
+ *                         type: string
+ *                         example: "0xghi...789"
  *       400:
- *         description: Missing or invalid Telegram ID provided.
+ *         description: Invalid or missing Telegram ID in request.
  *         content:
  *           application/json:
  *             schema:
@@ -62,7 +66,7 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   type: string
  *                   example: "Invalid or missing telegram id"
  *       404:
- *         description: User not found or wallet not connected.
+ *         description: Wallet not connected or user not found.
  *         content:
  *           application/json:
  *             schema:
@@ -74,8 +78,21 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                 message:
  *                   type: string
  *                   example: "Wallet is not connected !"
+ *       405:
+ *         description: Method not allowed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Method not allowed"
  *       500:
- *         description: Internal server error during lookup.
+ *         description: Internal server error.
  *         content:
  *           application/json:
  *             schema:

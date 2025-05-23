@@ -5,15 +5,15 @@ import { PurchasePigResponse } from "@/models/purchase";
 
 /**
  * @swagger
- * /api/user-tree/{telegramId}:
+ * /api/history/{telegramId}:
  *   get:
  *     summary: Retrieve transaction history for a user by Telegram ID
- *     description: Fetches the transaction history data for a user by first resolving their wallet address from the Telegram ID, then querying the txHistory table.
+ *     description: Resolves the user's wallet address from the given Telegram ID and fetches associated transaction history from the txHistory table.
  *     parameters:
  *       - name: telegramId
  *         in: path
- *         description: The Telegram ID of the user whose transaction history is being requested.
  *         required: true
+ *         description: The Telegram ID of the user
  *         schema:
  *           type: string
  *           example: "123456789"
@@ -25,24 +25,29 @@ import { PurchasePigResponse } from "@/models/purchase";
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                   example: "abc123"
- *                 wallet_address:
- *                   type: string
- *                   example: "0xabc...123"
- *                 tx_hash:
- *                   type: string
- *                   example: "0xdef...456"
- *                 amount:
- *                   type: number
- *                   example: 0.5
- *                 timestamp:
- *                   type: string
- *                   format: date-time
- *                   example: "2024-05-13T10:00:00Z"
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: object
+ *                   properties:
+ *                     tx_id:
+ *                       type: string
+ *                       example: "abc123"
+ *                     tx_hash:
+ *                       type: string
+ *                       example: "0xdef...456"
+ *                     wallet_address:
+ *                       type: string
+ *                       example: "0xabc...123"
+ *                     request_status:
+ *                       type: string
+ *                       example: "approved"
+ *                     upgradedPigLevel:
+ *                       type: integer
+ *                       example: 2
  *       400:
- *         description: Missing or invalid telegram ID provided.
+ *         description: Invalid or missing Telegram ID provided.
  *         content:
  *           application/json:
  *             schema:
@@ -55,7 +60,7 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   type: string
  *                   example: "Invalid or missing telegram id"
  *       404:
- *         description: User not found or wallet not connected.
+ *         description: Wallet not connected or user data not found.
  *         content:
  *           application/json:
  *             schema:
@@ -67,8 +72,21 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                 message:
  *                   type: string
  *                   example: "Wallet is not connected !"
+ *       405:
+ *         description: Method not allowed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Method not allowed"
  *       500:
- *         description: Internal server error during lookup.
+ *         description: Internal server error during request.
  *         content:
  *           application/json:
  *             schema:
@@ -81,6 +99,7 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   type: string
  *                   example: "internal server error"
  */
+
 
 export default async function handler(
   req: NextApiRequest,
