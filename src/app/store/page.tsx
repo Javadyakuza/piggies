@@ -14,6 +14,7 @@ import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { getUpgradePigTx } from "../../../scripts/upgradePig";
 import { UpgradePigTx } from "@/models/purchase";
 import ImageSlider from "@/components/ImageSlider/ImageSlider";
+import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 
 type PigData = {
   pig_level: number;
@@ -189,6 +190,59 @@ export default function StorePage() {
     setIsConfirmModalOpen(!isConfirmModalOpen);
   };
 
+  const suggestionSlides = [
+    {
+      title: t("storePage.buyThe"),
+      pigTitle: t("storePage.bronzePig"),
+      description: t("storePage.startEarning"),
+      buttonText: t("storePage.purchase"),
+      cover: "/imgs/pigs/bronze.png",
+      onClick: () => {
+        console.log("bronze clicked");
+      },
+    },
+    {
+      title: t("storePage.buyThe"),
+      pigTitle: t("storePage.bronzePig"),
+      description: t("storePage.startEarning"),
+      buttonText: t("storePage.purchase"),
+      cover: "/imgs/pigs/bronze.png",
+      onClick: () => {
+        console.log("bronze clicked");
+      },
+    },
+    {
+      title: t("storePage.buyThe"),
+      pigTitle: t("storePage.bronzePig"),
+      description: t("storePage.startEarning"),
+      buttonText: t("storePage.purchase"),
+      cover: "/imgs/pigs/bronze.png",
+      onClick: () => {
+        console.log("bronze clicked");
+      },
+    },
+    {
+      title: t("storePage.buyThe"),
+      pigTitle: t("storePage.bronzePig"),
+      description: t("storePage.startEarning"),
+      buttonText: t("storePage.purchase"),
+      cover: "/imgs/pigs/bronze.png",
+      onClick: () => {
+        console.log("bronze clicked");
+      },
+    },
+    {
+      title: t("storePage.buyThe"),
+      pigTitle: t("storePage.bronzePig"),
+      description: t("storePage.startEarning"),
+      buttonText: t("storePage.purchase"),
+      cover: "/imgs/pigs/bronze.png",
+      onClick: () => {
+        console.log("bronze clicked");
+      },
+    },
+  ];
+
   const mainPage = (
     <div className="main-container">
       <div className="balance-container">
@@ -203,8 +257,9 @@ export default function StorePage() {
           {t("storePage.withdraw")}
         </Button>
       </div>
-      <ImageSlider slides={filteredSlides} />
-      <div className="suggestion-container">
+      <ImageSlider slides={filteredSlides} locked />
+      <SuggestionSlider slides={suggestionSlides} />
+      {/* <div className="suggestion-container">
         <div className="text">
           <h2>{suggestionData.title}</h2>
           <h2 className="bold">{nextPig?.title}</h2>
@@ -216,7 +271,7 @@ export default function StorePage() {
             <div>{suggestionData.buttonText}</div>
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 
@@ -273,12 +328,12 @@ export default function StorePage() {
     </div>
   );
 
-  if (!pigsData)
-    return (
-      <div className="root__loading">
-        <Spinner size="l" />
-      </div>
-    );
+  // if (!pigsData)
+  //   return (
+  //     <div className="root__loading">
+  //       <Spinner size="l" />
+  //     </div>
+  //   );
 
   return (
     <Page>

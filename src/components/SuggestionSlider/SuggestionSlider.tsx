@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef } from "react";
 import "./styles.css";
 import Image from "next/image";
@@ -10,13 +11,16 @@ import Image from "next/image";
 // ];
 
 type Slide = {
-  hint?: React.ReactNode;
-  title: React.ReactNode;
-  caption?: React.ReactNode;
+  title: string;
+  pigTitle: string;
+  description: string;
+  buttonText: string;
   cover: string;
+  onClick: () => void;
+  isLocked?: boolean;
 };
 
-const ImageSlider = ({
+const SuggestionSlider = ({
   slides,
   locked,
 }: {
@@ -54,35 +58,12 @@ const ImageSlider = ({
 
   return (
     <div
-      className="slider-container"
+      className="suggestion-slider-container"
       onMouseDown={(e) => handleStart(e.clientX)}
       onMouseUp={(e) => handleEnd(e.clientX)}
       onTouchStart={(e) => handleStart(e.touches[0].clientX)}
       onTouchEnd={(e) => handleEnd(e.changedTouches[0].clientX)}
     >
-      <div className="slider-wrapper">
-        <div
-          className="slider-track"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {slides.map((slide, index) => (
-            <div className="slider-slide" key={index}>
-              <h4 className="hint"> {slide.hint || <></>}</h4>
-              <h2 className="title">{slide.title}</h2>
-              <Image
-                width={500}
-                height={500}
-                src={slide.cover}
-                alt={`Slide ${index + 1}`}
-                className="slider-image"
-                draggable={false}
-              />
-              <h3 className="caption">{slide.caption || <></>}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {!locked && (
         <div className="slider-dots">
           {slides.map((_, index) => (
@@ -94,8 +75,35 @@ const ImageSlider = ({
           ))}
         </div>
       )}
+
+      <div className="slider-wrapper">
+        <div
+          className="slider-track"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {slides.map((slide, index) => (
+            <div className="suggestion-slide" key={index}>
+              <div className="text">
+                <h2>{slide.title}</h2>
+                <h2 className="bold">{slide.pigTitle}</h2>
+                <h3>{slide.description}</h3>
+              </div>
+              <div className="action">
+                <img
+                  className="action-img"
+                  src={slide.cover}
+                  alt="action-img"
+                />
+                <button onClick={slide.onClick} className="action-btn">
+                  <div>{slide.buttonText}</div>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ImageSlider;
+export default SuggestionSlider;

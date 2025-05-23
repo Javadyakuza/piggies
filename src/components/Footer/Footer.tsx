@@ -21,7 +21,7 @@ export function Footer() {
       title: t("footerContent.friends"),
       icon: "/imgs/icons/friends.png",
       link: "/",
-      key: "/profile",
+      key: "/friends",
     },
     {
       title: t("footerContent.history"),
