@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
 import { handlePigPurchase } from "@/utils/purchase/purchaseHandler";
-import {
-  PurchasePigRequest,
-  PurchasePigResponse,
-} from "@/models/purchase";
+import { PurchasePigRequest, PurchasePigResponse } from "@/models/purchase";
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,18 +25,13 @@ export default async function handler(
   // Check if the user exists
   const { data: user, error: userError } = await supabase
     .from("users")
-    .select("id, current_pig, wallet_address")
+    .select("id, current_pig")
     .eq("telegram_id", telegram_id)
+    .eq("wallet_address", wallet_address)
     .single();
 
   if (userError || !user) {
     return res.status(404).json({ success: false, message: "User not found" });
-  }
-
-  if (user.wallet_address !== wallet_address) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid wallet address" });
   }
 
   if (user.current_pig === 4) {

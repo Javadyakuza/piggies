@@ -29,13 +29,13 @@ export async function sendUpgradePig(
 }
 
 export async function getUpgradePigTx(
-  telegram_id: string
+  wallet_address: string
 ): Promise<PurchasePigResponse> {
   // Check if the user exists
   const { data: user, error: userError } = await supabase
     .from("users")
     .select("wallet_address, current_pig")
-    .eq("telegram_id", telegram_id)
+    .eq("wallet_address", wallet_address)
     .single();
 
   if (userError || !user.wallet_address || !user.current_pig) {
