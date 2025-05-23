@@ -24,57 +24,57 @@
       margin-bottom: 15px;
     }
 
-    .suggestion-container {
-      margin-top: 10px;
-      padding: 5px 15px;
-      background-color: #0b0b0b5a;
-      border-top: 2px solid #ffbe0b;
-      border-bottom: 2px solid #ffbe0b;
-      display: flex;
-      justify-content: space-between;
-      .text {
-        h2,
-        h3 {
-          margin: 0;
-          margin-bottom: 4px;
-          font-size: 26px;
-          font-weight: 200;
+    // .suggestion-slide {
+    //   margin-top: 10px;
+    //   padding: 5px 15px;
+    //   background-color: #0b0b0b5a;
+    //   border-top: 2px solid #ffbe0b;
+    //   border-bottom: 2px solid #ffbe0b;
+    //   display: flex;
+    //   justify-content: space-between;
+    //   .text {
+    //     h2,
+    //     h3 {
+    //       margin: 0;
+    //       margin-bottom: 4px;
+    //       font-size: 26px;
+    //       font-weight: 200;
 
-          &.bold {
-            font-weight: bold !important;
-            color: #c23970 !important;
-          }
-        }
-        h3 {
-          font-size: 20px;
-        }
-      }
+    //       &.bold {
+    //         font-weight: bold !important;
+    //         color: #c23970 !important;
+    //       }
+    //     }
+    //     h3 {
+    //       font-size: 20px;
+    //     }
+    //   }
 
-      .action {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: center;
-        .action-img {
-          width: 74px;
-        }
-        .action-btn {
-          border: 0;
-          padding: 8px 25px;
-          height: 35px;
-          background-color: #2cc48f;
-          color: #fff;
-          border-radius: 34px;
-          font-size: 24px;
-          display: flex;
-          align-items: center;
+    //   .action {
+    //     display: flex;
+    //     flex-direction: column;
+    //     gap: 12px;
+    //     align-items: center;
+    //     .action-img {
+    //       width: 74px;
+    //     }
+    //     .action-btn {
+    //       border: 0;
+    //       padding: 8px 25px;
+    //       height: 35px;
+    //       background-color: #2cc48f;
+    //       color: #fff;
+    //       border-radius: 34px;
+    //       font-size: 24px;
+    //       display: flex;
+    //       align-items: center;
 
-          div {
-            font-weight: 600;
-          }
-        }
-      }
-    }
+    //       div {
+    //         font-weight: 600;
+    //       }
+    //     }
+    //   }
+    // }
     .balance-container {
       margin-left: 15px;
       text-align: center;
