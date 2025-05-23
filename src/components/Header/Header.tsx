@@ -16,14 +16,19 @@ import axios, { AxiosResponse } from "axios";
 import { generateRefLink } from "@/utils/reflink";
 import "./styles.css";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 
 export default function Header() {
+  const t = useTranslations("i18n");
+
   const router = useRouter();
   const pathname = usePathname();
 
+  const [wallet] = useTonConnectUI();
+  const walletAddress = wallet?.account?.address;
+
   const initDataState = useSignal(initData.state);
   const userData = initDataState?.user;
-  const t = useTranslations("i18n");
 
   const [isRefLinkCopied, setIsRefLinkCopied] = useState(false);
   const [referralId, setReferralId] = useState<string>();
@@ -44,13 +49,13 @@ export default function Header() {
   }, [isRefLinkCopied]);
 
   useEffect(() => {
-    if (!userData?.id && referralId) return;
+    if (!walletAddress && referralId) return;
 
     const fetchUserData = async () => {
       try {
         const response: AxiosResponse<{
           referral_id: string;
-        }> = await axios.get(`/api/user-tree/${userData?.id}`);
+        }> = await axios.get(`/api/user-tree/${walletAddress}`);
         const referralId = response.data.referral_id;
         setReferralId(referralId);
       } catch (err) {
@@ -58,7 +63,7 @@ export default function Header() {
       }
     };
     fetchUserData();
-  }, [userData, referralId]);
+  }, [walletAddress, referralId]);
 
   const handleNavigateProfile = () => {
     if (pathname === "/profile") return;

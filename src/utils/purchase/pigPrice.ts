@@ -1,7 +1,9 @@
 import { PigLevel, PigLevels } from "@/models/pigs";
 import axios from "axios";
 import { error } from "console";
-import { pigsPriceMap } from "../pigs_map";
+import { pigsMapNew } from "../pigs_map";
+
+const pigsMap = pigsMapNew(undefined);
 
 export async function calculatePigPrice(pig_level: PigLevel): Promise<number> {
   try {
@@ -9,9 +11,10 @@ export async function calculatePigPrice(pig_level: PigLevel): Promise<number> {
       `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
     );
 
-    let tonPriceInUSD = res?.data?.quotes?.USD.price;
+    const tonPriceInUSD = res?.data?.quotes?.USD.price;
 
-    let priceInUSD = pigsPriceMap[(pig_level).toString()];
+    const targetPig = pigsMap.find((pig) => pig.code === pig_level);
+    const priceInUSD = targetPig?.price || 0;
 
     // calculate USDs in ton
     return priceInUSD / tonPriceInUSD;

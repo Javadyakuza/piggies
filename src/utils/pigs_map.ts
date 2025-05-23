@@ -44,48 +44,56 @@ export const pigsMap = (t: any) => [
     purchase: t("upgradeDiamond"),
   },
 ];
-export const pigsPriceMap: Record<string, number> = {
-  "1": 11,
-  "2": 100,
-  "3": 1000,
-  "4": 10000,
-};
 
-export const pigsMapNew = (t: any) => [
+const usdToTon = (usd: number, tonPrice: number) => (usd / tonPrice).toFixed(2);
+
+export const pigsMapNew = (t: any, tonPrice: number) => [
   {
-    title: "Bronze Pig",
+    title: t?.("storePage.bronzePig"),
     code: 1,
     slots: 27,
     level: 3,
     price: 11,
+    priceInTon: usdToTon(11, tonPrice),
     earnings: 117,
     cover: "/imgs/pigs/bronze.png",
+    capacity: 100,
+    capacityInTon: usdToTon(100, tonPrice),
   },
   {
-    title: "Silver Pig",
+    title: t?.("storePage.silverPig"),
     code: 2,
     slots: 147,
     level: 7,
     price: 100,
+    priceInTon: usdToTon(100, tonPrice),
     earnings: 32700,
     cover: "/imgs/pigs/silver.png",
+    capacity: 250,
+    capacityInTon: usdToTon(250, tonPrice),
   },
   {
-    title: "Gold Pig",
+    title: t?.("storePage.goldPig"),
     code: 3,
     slots: 377,
     level: 10,
     price: 1000,
+    priceInTon: usdToTon(1000, tonPrice),
     earnings: 5971510,
     cover: "/imgs/pigs/gold.png",
+    capacity: 500,
+    capacityInTon: usdToTon(500, tonPrice),
   },
   {
-    title: "Diamond Pig",
+    title: t?.("storePage.diamondPig"),
     code: 4,
     slots: 1000,
     level: 11,
     price: 10000,
+    priceInTon: usdToTon(10000, tonPrice),
     earnings: 106288200,
     cover: "/imgs/pigs/diamond.png",
+    capacity: 1000,
+    capacityInTon: usdToTon(1000, tonPrice),
   },
 ];

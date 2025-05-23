@@ -4,12 +4,12 @@ import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import "./styles.css";
-import { Button } from "@telegram-apps/telegram-ui";
+import { Button, Spinner } from "@telegram-apps/telegram-ui";
 import React from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { getUpgradePigTx } from "../../../scripts/upgradePig";
 import { UpgradePigTx } from "@/models/purchase";
@@ -22,23 +22,63 @@ type PigData = {
 
 export default function StorePage() {
   const t = useTranslations("i18n");
-  const [earnings] = useState(0);
+  const [piggyBankBalance, setPiggyBankBalance] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
-  const [selectedItemIndex, setSelectedItemIndex] = useState(0);
-
-  const initDataState = useSignal(initData.state);
-  const userTelegramId = initDataState?.user?.id;
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [tonPrice, setTonPrice] = useState(0);
+  const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
 
   const [wallet] = useTonConnectUI();
+  const walletAddress = wallet?.account?.address;
+  const pigsMap = pigsMapNew(t, tonPrice);
 
-  const pigsMap = pigsMapNew(t);
+  const handlePurchasePig = async () => {
+    if (!walletAddress || isPurchaseInProgress) return;
+
+    let tx = await getUpgradePigTx(walletAddress);
+
+    try {
+      const result = await wallet.sendTransaction(
+        (tx.message as UpgradePigTx).tx
+      );
+
+      console.log("Transaction sent, result:", result);
+
+      alert("✅ UpgradePig transaction sent successfully!");
+
+      console.log("Waiting for transaction to be confirmed...");
+
+      setIsPurchaseInProgress(true);
+      await axios.post(`/api/pigs/upgradePig`, {
+        wallet_address: walletAddress,
+      });
+
+      // show the rest to the user
+    } catch (error) {
+      console.error("Transaction failed or was rejected:", error);
+
+      alert("⚠️ Transaction was cancelled or failed.");
+    }
+    await fetchPigsData();
+
+    setIsPurchaseInProgress(false);
+  };
+
+  const fetchTonPrice = async () => {
+    const res = await axios.get(
+      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
+    );
+    const tonPriceToSet = res?.data?.quotes?.USD.price.toFixed(2);
+
+    setTonPrice(tonPriceToSet || 0);
+  };
 
   const fetchPigsData = async () => {
-    if (!wallet) return;
+    if (!walletAddress) return;
 
     const response = await axios
-      .get(`/api/pigs/${userTelegramId}`)
+      .get(`/api/pigs/${walletAddress}`)
       .catch((err) => {
         return null;
       });
@@ -46,20 +86,32 @@ export default function StorePage() {
     setPigsData(pigsDataToSet);
   };
 
+  const fetchUserData = async () => {
+    if (!walletAddress) return;
+
+    try {
+      const response: AxiosResponse<{
+        piggy_bank_balance: number;
+      }> = await axios.get(`/api/user-tree/${walletAddress}`);
+      const referralId = response.data.piggy_bank_balance;
+      setPiggyBankBalance(referralId);
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+    }
+  };
+
   useEffect(() => {
     fetchPigsData();
+    fetchTonPrice();
+    fetchUserData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallet]);
+  }, [walletAddress]);
 
   useEffect(() => {
     if (!pigsData) return;
     setCurrentPigCode(pigsData.pig_level);
-    const buyablePigIndex = pigsMap.findIndex(
-      (item) => item.code === pigsData?.buyable_pigs
-    );
 
-    setSelectedItemIndex(buyablePigIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pigsData]);
 
@@ -72,20 +124,21 @@ export default function StorePage() {
     currentPigCode || currentPigCode === 0
       ? pigsMap.find((item) => item.code === currentPigCode + 1)
       : undefined;
-  console.log(nextPig);
+
   const placeholderSlide = {
     title: (
       <span className="slide-title-container">
-        <span className="thick">Buy the </span>{" "}
-        <span className="slide-title">Bronze Pig</span>
+        <span className="thick">{t("storePage.buyThe")} </span>{" "}
+        <span className="slide-title">{t("storePage.bronzePig")}</span>
       </span>
     ),
     hint: (
       <>
-        <span className="yellow">Begin journey towards the Dream</span>
+        <span className="yellow">{t("storePage.beginJourneyMessage")}</span>
       </>
     ),
     cover: "/imgs/pigs/placeholder.png",
+    code: 0,
   };
   const slides = [
     placeholderSlide,
@@ -97,53 +150,140 @@ export default function StorePage() {
       ),
       caption: (
         <>
-          <span className="normal-bold">{pigData.level} Levels</span>{" "}
-          <span className="thick">({pigData.slots} Slots)</span>
+          <span className="normal-bold">
+            {t("storePage.numberOfLevels", {
+              level: pigData.level,
+            })}
+          </span>{" "}
+          <span className="thick">
+            (
+            {t("storePage.numberOfSlots", {
+              slots: pigData.slots,
+            })}
+            )
+          </span>
         </>
       ),
       cover: pigData.cover,
+      code: pigData.code,
     })),
   ];
 
+  const filteredSlides = slides.filter(
+    (slide) =>
+      (currentPigCode && slide.code >= currentPigCode) || !currentPigCode
+  );
+
   const suggestionData = {
-    title: nextPig?.code === 1 ? "Buy" : "Upgrade to",
-    description: nextPig?.code === 1 ? "to start earning" : "to earn more",
-    buttonText: nextPig?.code === 1 ? "Purchase" : "Upgrade",
+    title:
+      nextPig?.code === 1 ? t("storePage.buyThe") : t("storePage.upgradeTo"),
+    description:
+      nextPig?.code === 1
+        ? t("storePage.startEarning")
+        : t("storePage.earnMore"),
+    buttonText:
+      nextPig?.code === 1 ? t("storePage.purchase") : t("storePage.upgrade"),
   };
+
+  const toggleConfirmModal = () => {
+    setIsConfirmModalOpen(!isConfirmModalOpen);
+  };
+
+  const mainPage = (
+    <div className="main-container">
+      <div className="balance-container">
+        <div className="balance-info">
+          <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
+          <span className="text">
+            <h4 className="earning">{piggyBankBalance}</h4>{" "}
+            <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
+          </span>
+        </div>
+        <Button className="withdraw-btn normal">
+          {t("storePage.withdraw")}
+        </Button>
+      </div>
+      <ImageSlider slides={filteredSlides} />
+      <div className="suggestion-container">
+        <div className="text">
+          <h2>{suggestionData.title}</h2>
+          <h2 className="bold">{nextPig?.title}</h2>
+          <h3>{suggestionData.description}</h3>
+        </div>
+        <div className="action">
+          <img className="action-img" src={nextPig?.cover} alt="action-img" />
+          <button onClick={toggleConfirmModal} className="action-btn">
+            <div>{suggestionData.buttonText}</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const confirmModal = (
+    <div className="confirm-modal-container">
+      <div className="title-container">
+        <span className="yellow">{suggestionData.title} </span>{" "}
+        <span className="bold">{nextPig?.title}</span>
+        <br />
+        <span className="normal">{suggestionData.description}</span>{" "}
+      </div>
+      <div className="cover-container">
+        <img
+          className="shining-image"
+          src="/imgs/common/shining.png"
+          alt="cover-container"
+        />
+        <img
+          className="pig-image"
+          src="/imgs/pigs/bronze.png"
+          alt="pig-cover"
+        />
+      </div>
+      <div className="details-container">
+        <div className="detail-item">
+          <span>
+            {t("storePage.numberOfLevels", { level: nextPig?.level })}
+          </span>
+        </div>
+        <div className="detail-item">
+          <span>{t("storePage.numberOfSlots", { slots: nextPig?.slots })}</span>
+        </div>
+        <div className="detail-item">
+          <span>
+            {t("storePage.tonCapacity", { capacity: nextPig?.capacityInTon })}
+          </span>
+        </div>
+      </div>
+      <div className="action-container">
+        <div className="btns">
+          <button
+            onClick={handlePurchasePig}
+            className="action-btn purchase-btn"
+          >
+            <div>
+              <span className="price">{nextPig?.priceInTon}</span> TON
+            </div>
+          </button>
+          <button onClick={toggleConfirmModal} className="action-btn close-btn">
+            <div>{t("storePage.cancel")}</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!pigsData)
+    return (
+      <div className="root__loading">
+        <Spinner size="l" />
+      </div>
+    );
 
   return (
     <Page>
       <div className="bank-container">
-        <div className="balance-container">
-          <div className="balance-info">
-            <img
-              src="/imgs/icons/ton.png"
-              alt="ton-icon"
-              className="ton-icon"
-            />
-            <span className="text">
-              <h4 className="earning">{earnings}</h4>{" "}
-              <h4 className="total">/ {currentPig?.price || 0} TON</h4>
-            </span>
-          </div>
-          <Button className="withdraw-btn normal">{t("withdraw")}</Button>
-        </div>
-        <ImageSlider slides={slides} />
-        <div className="suggestion-container">
-          <div className="text">
-            <h2>{suggestionData.title}</h2>
-            <h2 className="bold">{nextPig?.title}</h2>
-            <h3>{suggestionData.description}</h3>
-          </div>
-          <div className="action">
-            <img
-              className="action-img"
-              src="/imgs/pigs/bronze.png"
-              alt="action-img"
-            />
-            <Button className="action-btn">{suggestionData.buttonText}</Button>
-          </div>
-        </div>
+        {isConfirmModalOpen ? confirmModal : mainPage}
       </div>
     </Page>
   );

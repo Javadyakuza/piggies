@@ -21,9 +21,8 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
   const pathname = usePathname();
-  const [userWalletAddress, setUserWalletAddress] = useState<string | null>();
-  const [isWalletChangedModalOpen, setIsWalletChangedModalOpen] =
-    useState(false);
+  const [isRegisterRequestSent, setIsRegisterRequestSent] = useState(false);
+
   const [initialized, setInitialized] = useState(false);
   const [isUserRegistered, setIsUserRegistered] = useState<boolean | null>(
     null
@@ -46,18 +45,30 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   userTelegramFullName = String(userTelegramFullName).replace(/\n/g, " ");
 
   useEffect(() => {
-    if (userWalletAddress !== undefined && wallet && userTelegramId) {
-      if (userWalletAddress !== wallet.account.address) {
-        axios.post(`/api/register`, {
-          wallet_address: wallet.account.address,
-          telegram_id: userTelegramId,
-          referral_id: refId,
-          fullname: userTelegramFullName,
-        });
-        setIsWalletChangedModalOpen(true);
-      }
+    if (wallet && userTelegramId && !isRegisterRequestSent) {
+      const handleRegister = async () => {
+        setIsRegisterRequestSent(true);
+
+        await axios
+          .post(`/api/register`, {
+            wallet_address: wallet.account.address,
+            telegram_id: userTelegramId,
+            referral_id: refId || "",
+            fullname: userTelegramFullName,
+          })
+          .catch((err) => {
+            return null;
+          });
+      };
+      handleRegister();
     }
-  }, [userWalletAddress, wallet, userTelegramId, userTelegramFullName, refId]);
+  }, [
+    wallet,
+    userTelegramId,
+    userTelegramFullName,
+    refId,
+    isRegisterRequestSent,
+  ]);
 
   useEffect(() => {
     tonConnectUI.connectionRestored.then(() => {
@@ -97,7 +108,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
     }
   }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
 
-  if ((!initialized || !wallet ) && pathname !== "/wallet-connect") {
+  if ((!initialized || !wallet) && pathname !== "/wallet-connect") {
     return (
       <div className="root__loading">
         <Spinner size="l" />
