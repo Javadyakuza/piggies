@@ -6,14 +6,14 @@ import { PigLevels, UserPigs } from "@/models/pigs";
 
 /**
  * @swagger
- * /api/pigs/{telegramId}:
+ * /api/pigs/{walletAddr}:
  *   get:
- *     summary: Fetches the pig data for the given Telegram ID
- *     description: This endpoint retrieves pig level information for a user based on their Telegram ID, including their current pig level and available pigs to buy.
+ *     summary: Fetches the pig data for the given wallet address
+ *     description: This endpoint retrieves pig level information for a user based on their wallet address, including their current pig level and available pigs to buy.
  *     parameters:
- *       - name: telegramId
+ *       - name: walletAddr
  *         in: path
- *         description: The Telegram ID for the user whose pig data is being requested.
+ *         description: The wallet address for the user whose pig data is being requested.
  *         required: true
  *         schema:
  *           type: string
@@ -50,7 +50,7 @@ import { PigLevels, UserPigs } from "@/models/pigs";
  *                   description: The next available pig level that the user can buy.
  *                   example: 2  # Silver
  *       400:
- *         description: Bad request if `telegramId` is missing or invalid.
+ *         description: Bad request if `walletAddr` is missing or invalid.
  *         content:
  *           application/json:
  *             schema:
@@ -61,7 +61,7 @@ import { PigLevels, UserPigs } from "@/models/pigs";
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "telegramId is required"
+ *                   example: "walletAddr is required"
  *       405:
  *         description: Method not allowed if the request method is not GET.
  *         content:
@@ -99,19 +99,19 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegramId } = req.query;
+  const { walletAddr } = req.query;
 
-  if (!telegramId) {
+  if (!walletAddr) {
     return res
       .status(400)
-      .json({ success: false, message: "telegramId is required" });
+      .json({ success: false, message: "walletAddr is required" });
   }
 
   // Fetch the user's data from the database
   const { data: user, error: userError } = await supabase
     .from("users")
     .select("wallet_address, current_pig")
-    .eq("telegram_id", telegramId)
+    .eq("wallet_address", walletAddr)
     .single();
 
   if (userError || !user) {

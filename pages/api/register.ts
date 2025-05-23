@@ -161,6 +161,14 @@ export default async function handler(
     inviterId = genesisUser.id;
   }
 
+  console.log({
+    telegram_id: telegram_id,
+    inviter_id: inviterId,
+    parent_id: parentId,
+    fullname: fullname,
+    wallet_address: wallet_address,
+    user_type: 1,
+  });
   const { data: insertData, error } = await supabase
     .from("users")
     .insert({

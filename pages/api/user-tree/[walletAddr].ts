@@ -3,14 +3,14 @@ import { supabase } from "@/utils/supebase";
 
 /**
  * @swagger
- * /api/user-tree/{telegramId}:
+ * /api/user-tree/{walletAddr}:
  *   get:
- *     summary: Fetches the user data for the given telegramId
- *     description: This endpoint retrieves the user data based on the provided telegramId in the dynamic route parameter.
+ *     summary: Fetches the user data for the given walletAddr
+ *     description: This endpoint retrieves the user data based on the provided walletAddr in the dynamic route parameter.
  *     parameters:
- *       - name: telegramId
+ *       - name: walletAddr
  *         in: path
- *         description: The Telegram ID of the user whose data is being requested.
+ *         description: The wallet address of the user whose data is being requested.
  *         required: true
  *         schema:
  *           type: string
@@ -26,7 +26,7 @@ import { supabase } from "@/utils/supebase";
  *                 id:
  *                   type: string
  *                   example: "abc123"
- *                 telegram_id:
+ *                 wallet_address:
  *                   type: string
  *                   example: "123456789"
  *                 inviter_id:
@@ -36,7 +36,7 @@ import { supabase } from "@/utils/supebase";
  *                   type: string
  *                   example: "567890123"
  *       400:
- *         description: Bad request due to missing or invalid telegramId in the request.
+ *         description: Bad request due to missing or invalid walletAddr in the request.
  *         content:
  *           application/json:
  *             schema:
@@ -44,9 +44,9 @@ import { supabase } from "@/utils/supebase";
  *               properties:
  *                 error:
  *                   type: string
- *                   example: "Invalid or missing telegram id"
+ *                   example: "Invalid or missing wallet address"
  *       404:
- *         description: User not found if no user matches the provided telegramId.
+ *         description: User not found if no user matches the provided walletAddr.
  *         content:
  *           application/json:
  *             schema:
@@ -74,17 +74,17 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { telegramId } = req.query;
+  const { walletAddr } = req.query;
 
-  if (!telegramId || typeof telegramId !== "string") {
-    return res.status(400).json({ error: "Invalid or missing telegram id" });
+  if (!walletAddr || typeof walletAddr !== "string") {
+    return res.status(400).json({ error: "Invalid or missing wallet address" });
   }
 
   try {
     const { data, error } = await supabase
       .from("users")
       .select()
-      .eq("telegram_id", telegramId);
+      .eq("wallet_address", walletAddr);
 
     const [userData] = data || [];
 

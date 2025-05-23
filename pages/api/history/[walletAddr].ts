@@ -1,19 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
-import { txHistory } from "@/models/history";
 import { PurchasePigResponse } from "@/models/purchase";
 
 /**
  * @swagger
- * /api/history/{telegramId}:
+ * /api/history/{walletAddr}:
  *   get:
- *     summary: Retrieve transaction history for a user by Telegram ID
- *     description: Resolves the user's wallet address from the given Telegram ID and fetches associated transaction history from the txHistory table.
+ *     summary: Retrieve transaction history for a user by wallet address
+ *     description: Resolves the user's wallet address from the given wallet address and fetches associated transaction history from the txHistory table.
  *     parameters:
- *       - name: telegramId
+ *       - name: walletAddr
  *         in: path
  *         required: true
- *         description: The Telegram ID of the user
+ *         description: The wallet address of the user
  *         schema:
  *           type: string
  *           example: "123456789"
@@ -47,7 +46,7 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                       type: integer
  *                       example: 2
  *       400:
- *         description: Invalid or missing Telegram ID provided.
+ *         description: Invalid or missing wallet address provided.
  *         content:
  *           application/json:
  *             schema:
@@ -58,7 +57,7 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Invalid or missing telegram id"
+ *                   example: "Invalid or missing wallet address"
  *       404:
  *         description: Wallet not connected or user data not found.
  *         content:
@@ -111,12 +110,12 @@ export default async function handler(
       .json({ success: false, message: "Method not allowed" });
   }
 
-  const { telegramId } = req.query;
+  const { walletAddr } = req.query;
 
-  if (!telegramId || typeof telegramId !== "string") {
+  if (!walletAddr || typeof walletAddr !== "string") {
     return res
       .status(400)
-      .json({ success: false, message: "Invalid or missing telegram id" });
+      .json({ success: false, message: "Invalid or missing wallet address" });
   }
 
   try {
@@ -124,7 +123,7 @@ export default async function handler(
     const { data: wallet_address, error: userError } = await supabase
       .from("users")
       .select("wallet_address")
-      .eq("telegram_id", telegramId)
+      .eq("wallet_address", walletAddr)
       .single();
 
     if (userError || !wallet_address) {
