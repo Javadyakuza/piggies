@@ -197,49 +197,31 @@ export default function StorePage() {
       description: t("storePage.startEarning"),
       buttonText: t("storePage.purchase"),
       cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      onClick: toggleConfirmModal,
     },
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      title: t("storePage.upgradeTo"),
+      pigTitle: t("storePage.silverPig"),
+      description: t("storePage.earnMore"),
+      buttonText: t("storePage.upgrade"),
+      cover: "/imgs/pigs/silver.png",
+      onClick: () => toggleConfirmModal,
     },
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      title: t("storePage.upgradeTo"),
+      pigTitle: t("storePage.goldPig"),
+      description: t("storePage.earnMore"),
+      buttonText: t("storePage.upgrade"),
+      cover: "/imgs/pigs/gold.png",
+      onClick: () => toggleConfirmModal,
     },
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
-    },
-    {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      title: t("storePage.upgradeTo"),
+      pigTitle: t("storePage.diamondPig"),
+      description: t("storePage.earnMore"),
+      buttonText: t("storePage.upgrade"),
+      cover: "/imgs/pigs/diamond.png",
+      onClick: () => toggleConfirmModal,
     },
   ];
 
