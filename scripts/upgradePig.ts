@@ -12,21 +12,21 @@ import { supabase } from "@/utils/supebase";
 import { PurchasePigResponse, UpgradePigTx } from "@/models/purchase";
 import { calculatePigPrice } from "@/utils/purchase/pigPrice";
 
-export async function sendUpgradePig(
-  pigShop: OpenedContract<PigShop>,
-  wallet: OpenedContract<WalletContractV5R1>
-) {
-  let secretKey = (await keyPairFromEnv()).secretKey;
+// export async function sendUpgradePig(
+//   pigShop: OpenedContract<PigShop>,
+//   wallet: OpenedContract<WalletContractV5R1>
+// ) {
+//   let secretKey = (await keyPairFromEnv()).secretKey;
 
-  await pigShop.send(
-    wallet.sender(secretKey),
-    {
-      value: toNano("0.1"),
-    },
+//   await pigShop.send(
+//     wallet.sender(secretKey),
+//     {
+//       value: toNano("0.1"),
+//     },
 
-    "UpgradePig"
-  );
-}
+//     "UpgradePig"
+//   );
+// }
 
 export async function getUpgradePigTx(
   wallet_address: string
