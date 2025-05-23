@@ -1,5 +1,8 @@
 .bank-container {
   .main-container {
+    height: 75vh;
+    overflow: scroll;
+
     .yellow {
       color: #ffbe0b;
       font-weight: bold;

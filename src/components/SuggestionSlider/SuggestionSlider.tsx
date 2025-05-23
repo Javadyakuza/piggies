@@ -2,6 +2,7 @@
 import React, { useState, useRef } from "react";
 import "./styles.css";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 // const images = [
 //   "/imgs/pigs/placeholder.png",
@@ -11,9 +12,8 @@ import Image from "next/image";
 // ];
 
 type Slide = {
-  title: string;
-  pigTitle: string;
-  description: string;
+  nextText: React.ReactNode;
+  lockedText?: React.ReactNode;
   buttonText: string;
   cover: string;
   onClick: () => void;
@@ -27,6 +27,8 @@ const SuggestionSlider = ({
   slides: Slide[];
   locked?: boolean;
 }) => {
+  const t = useTranslations("i18n");
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const startX = useRef<number | null>(null);
 
@@ -84,9 +86,7 @@ const SuggestionSlider = ({
           {slides.map((slide, index) => (
             <div className="suggestion-slide" key={index}>
               <div className="text">
-                <h2>{slide.title}</h2>
-                <h2 className="bold">{slide.pigTitle}</h2>
-                <h3>{slide.description}</h3>
+                {slide.isLocked ? slide.lockedText : slide.nextText}
               </div>
               <div className="action">
                 <img
@@ -94,8 +94,14 @@ const SuggestionSlider = ({
                   src={slide.cover}
                   alt="action-img"
                 />
-                <button onClick={slide.onClick} className="action-btn">
-                  <div>{slide.buttonText}</div>
+                <button
+                  disabled={slide.isLocked}
+                  onClick={slide.onClick}
+                  className="action-btn"
+                >
+                  <div>
+                    {slide.isLocked ? t("storePage.locked") : slide.buttonText}
+                  </div>
                 </button>
               </div>
             </div>

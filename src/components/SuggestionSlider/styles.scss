@@ -92,7 +92,11 @@
 
         &.bold {
           font-weight: bold !important;
-          color: #c23970 !important;
+          color: #c23970;
+        }
+
+        &.small {
+          font-size: 16px;
         }
       }
       h3 {
@@ -118,7 +122,10 @@
         font-size: 24px;
         display: flex;
         align-items: center;
-
+        &:disabled {
+          background-color: #2cc48f8d;
+          color: #ffffff6a;
+        }
         div {
           font-weight: 600;
         }
