@@ -1,5 +1,8 @@
 .bank-container {
   .main-container {
+    height: 75vh;
+    overflow: scroll;
+
     .yellow {
       color: #ffbe0b;
       font-weight: bold;
@@ -147,6 +150,7 @@
         transform: translate(-50%, -50%);
         width: 256px;
         display: block;
+        animation: spin 3s linear infinite;
       }
 
       .pig-image {
@@ -216,6 +220,16 @@
     }
   }
 }
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
 // .store-container {
 //   .body-container {
 //     display: flex;

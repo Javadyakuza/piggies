@@ -18,6 +18,7 @@
     },
     "storePage": {
       "buyThe": "Buy the",
+      "buy": "Buy",
       "upgradeTo": "Upgrade to",
       "purchase": "Purchase",
       "upgrade": "Upgrade",
@@ -32,7 +33,9 @@
       "numberOfSlots": "{slots} Slots",
       "withdraw": "Withdraw",
       "tonCapacity": "{capacity} TON Capacity",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "toUnlock": "to unlock",
+      "locked": "Locked"
     },
     "friendsPage": {
       "title": "Invite Friends!",

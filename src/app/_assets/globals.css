@@ -98,3 +98,17 @@ body {
 .referral-accordion > div {
   background-color: transparent !important;
 }
+
+/* pigs color */
+.bronze {
+  color: #c23970 !important;
+}
+.silver {
+  color: #eddcfa !important;
+}
+.gold {
+  color: #ffbe0b !important;
+}
+.diamond {
+  color: #32e0ff !important;
+}

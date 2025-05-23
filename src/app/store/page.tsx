@@ -130,7 +130,7 @@ export default function StorePage() {
     title: (
       <span className="slide-title-container">
         <span className="thick">{t("storePage.buyThe")} </span>{" "}
-        <span className="slide-title">{t("storePage.bronzePig")}</span>
+        <span className="slide-title bronze">{t("storePage.bronzePig")}</span>
       </span>
     ),
     hint: (
@@ -143,31 +143,37 @@ export default function StorePage() {
   };
   const slides = [
     placeholderSlide,
-    ...pigsMap.map((pigData) => ({
-      title: (
-        <>
-          <span className="slide-title">{pigData.title}</span>
-        </>
-      ),
-      caption: (
-        <>
-          <span className="normal-bold">
-            {t("storePage.numberOfLevels", {
-              level: pigData.level,
-            })}
-          </span>{" "}
-          <span className="thick">
-            (
-            {t("storePage.numberOfSlots", {
-              slots: pigData.slots,
-            })}
-            )
-          </span>
-        </>
-      ),
-      cover: pigData.cover,
-      code: pigData.code,
-    })),
+    ...pigsMap.map((pigData) => {
+      let titleClassName = pigData.title.replace(" Pig", "") as string;
+      titleClassName = titleClassName.toLowerCase();
+      return {
+        title: (
+          <>
+            <span className={`slide-title ${titleClassName}`}>
+              {pigData.title}
+            </span>
+          </>
+        ),
+        caption: (
+          <>
+            <span className="normal-bold">
+              {t("storePage.numberOfLevels", {
+                level: pigData.level,
+              })}
+            </span>{" "}
+            <span className="thick">
+              (
+              {t("storePage.numberOfSlots", {
+                slots: pigData.slots,
+              })}
+              )
+            </span>
+          </>
+        ),
+        cover: pigData.cover,
+        code: pigData.code,
+      };
+    }),
   ];
 
   const filteredSlides = slides.filter(
@@ -192,57 +198,109 @@ export default function StorePage() {
 
   const suggestionSlides = [
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
+      nextText: (
+        <>
+          <div className="text">
+            <h2>{t("storePage.buy")}</h2>
+            <h2 className="bold bronze">{t("storePage.bronzePig")}</h2>
+            <h3>{t("storePage.startEarning")}</h3>
+          </div>
+        </>
+      ),
       buttonText: t("storePage.purchase"),
       cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      onClick: toggleConfirmModal,
+      code: 1,
     },
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      nextText: (
+        <>
+          <div className="text">
+            <h2>{t("storePage.upgradeTo")}</h2>
+            <h2 className="bold silver">{t("storePage.silverPig")}</h2>
+            <h3>{t("storePage.earnMore")}</h3>
+          </div>
+        </>
+      ),
+      lockedText: (
+        <>
+          <div className="text">
+            <h2 className="bold silver">{t("storePage.silverPig")}</h2>
+            <h2>
+              {t("storePage.buy")}{" "}
+              <span className="bold bronze">{t("storePage.bronzePig")}</span>
+            </h2>
+            <h3 className="small">{t("storePage.toUnlock")}</h3>
+          </div>
+        </>
+      ),
+      buttonText: t("storePage.upgrade"),
+      cover: "/imgs/pigs/silver.png",
+      onClick: toggleConfirmModal,
+      isLocked: currentPigCode !== 1,
+      code: 2,
     },
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      nextText: (
+        <>
+          <div className="text">
+            <h2>{t("storePage.upgradeTo")}</h2>
+            <h2 className="bold gold">{t("storePage.goldPig")}</h2>
+            <h3>{t("storePage.earnMore")}</h3>
+          </div>
+        </>
+      ),
+      lockedText: (
+        <>
+          <div className="text">
+            <h2 className="bold gold">{t("storePage.goldPig")}</h2>
+            <h2>
+              {t("storePage.buy")}{" "}
+              <span className="bold silver">{t("storePage.silverPig")}</span>
+            </h2>
+            <h3 className="small">{t("storePage.toUnlock")}</h3>
+          </div>
+        </>
+      ),
+      buttonText: t("storePage.upgrade"),
+      cover: "/imgs/pigs/gold.png",
+      onClick: toggleConfirmModal,
+      isLocked: currentPigCode !== 2,
+      code: 3,
     },
     {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
-    },
-    {
-      title: t("storePage.buyThe"),
-      pigTitle: t("storePage.bronzePig"),
-      description: t("storePage.startEarning"),
-      buttonText: t("storePage.purchase"),
-      cover: "/imgs/pigs/bronze.png",
-      onClick: () => {
-        console.log("bronze clicked");
-      },
+      nextText: (
+        <>
+          <div className="text">
+            <h2>{t("storePage.upgradeTo")}</h2>
+            <h2 className="bold diamond">{t("storePage.diamondPig")}</h2>
+            <h3>{t("storePage.earnMore")}</h3>
+          </div>
+        </>
+      ),
+      lockedText: (
+        <>
+          <div className="text">
+            <h2 className="bold diamond">{t("storePage.diamondPig")}</h2>
+            <h2>
+              {t("storePage.buy")}{" "}
+              <span className="bold gold">{t("storePage.goldPig")}</span>
+            </h2>
+            <h3 className="small">{t("storePage.toUnlock")}</h3>
+          </div>
+        </>
+      ),
+      buttonText: t("storePage.upgrade"),
+      cover: "/imgs/pigs/diamond.png",
+      onClick: toggleConfirmModal,
+      isLocked: currentPigCode !== 3,
+      code: 4,
     },
   ];
 
+  const filteredSuggestionSlides = suggestionSlides.filter(
+    (slide) => slide.code > (currentPigCode || 0)
+  );
   const mainPage = (
     <div className="main-container">
       <div className="balance-container">
@@ -258,7 +316,10 @@ export default function StorePage() {
         </Button>
       </div>
       <ImageSlider slides={filteredSlides} locked />
-      <SuggestionSlider slides={suggestionSlides} />
+      <SuggestionSlider slides={filteredSuggestionSlides} />
+      <br />
+      <br />
+      <br />
       {/* <div className="suggestion-container">
         <div className="text">
           <h2>{suggestionData.title}</h2>
@@ -274,12 +335,13 @@ export default function StorePage() {
       </div> */}
     </div>
   );
-
+  let nextPigClassName = (nextPig?.title || "").replace(" Pig", "") as string;
+  nextPigClassName = nextPigClassName.toLowerCase();
   const confirmModal = (
     <div className="confirm-modal-container">
       <div className="title-container">
         <span className="yellow">{suggestionData.title} </span>{" "}
-        <span className="bold">{nextPig?.title}</span>
+        <span className={`bold ${nextPigClassName}`}>{nextPig?.title}</span>
         <br />
         <span className="normal">{suggestionData.description}</span>{" "}
       </div>
