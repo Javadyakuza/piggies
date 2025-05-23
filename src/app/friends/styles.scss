@@ -1,0 +1,68 @@
+.friends-container {
+  .invite-container {
+    width: 360px;
+    margin: auto;
+
+    .title {
+      font-weight: 600;
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .invite-link {
+      background: #691d82;
+      border-radius: 8px;
+      width: calc(100% - 32px);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+
+      .link {
+        color: #facefd;
+        font-size: 20px;
+      }
+
+      .copy-btn {
+        border: none;
+        background: transparent;
+        width: 24px;
+        img {
+          width: 24px;
+        }
+      }
+    }
+    .hint {
+      margin-top: 8px;
+      text-align: center;
+      color: #facefd;
+      font-size: 16px;
+    }
+  }
+  .accordion-container {
+    margin-top: 10px;
+    .accordion {
+      padding: 5px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      &.your-refs {
+        background-color: #2cc48f;
+      }
+      .title {
+        color: #691d82;
+        font-weight: bold;
+        font-size: 20px;
+      }
+
+      .arrow {
+        width: 32px;
+        img {
+          height: 26px;
+        }
+      }
+    }
+  }
+}
