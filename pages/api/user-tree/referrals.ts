@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supebase";
-import { ReferralLevel, ReferralResponse, SelfReferralId, User } from "@/models/userTree";
-
+import {
+  ReferralLevel,
+  ReferralRequest,
+  ReferralResponse,
+  SelfReferralId,
+  User,
+} from "@/models/userTree";
 
 const calculateTotalPossible = (level: number): number => {
   return Math.pow(3, level);
@@ -25,7 +30,9 @@ const countReferralsByLevel = async (
 
   const { data: allUsers, error } = await supabase
     .from("users")
-    .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id, user_type");
+    .select(
+      "id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id, user_type"
+    );
 
   if (error || !allUsers) {
     throw new Error("Failed to fetch users: " + error?.message);
@@ -39,7 +46,7 @@ const countReferralsByLevel = async (
       const totalInvited = allUsers.filter(
         (u) => u.inviter_id === user.id
       ).length;
-    
+
       userMap[user.id] = {
         telegram_id: user.telegram_id,
         wallet_address: user.wallet_address || "",
@@ -84,17 +91,19 @@ const countReferralsByLevel = async (
     const idsAtLevel = levels[i] || [];
     const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
-    const users = idsAtLevel.map((id) => {
-      const user = userMap[id];
-      if (user) {
-        return {
-          ...user,
-          total_under: countTotalUnder(referralMap, id),
-        };
-      }
-      return null;
-    }).filter(Boolean) as User[];
-    
+    const users = idsAtLevel
+      .map((id) => {
+        const user = userMap[id];
+        if (user) {
+          return {
+            ...user,
+            total_under: countTotalUnder(referralMap, id),
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as User[];
+
     result.push({ count, total, users });
   }
 
@@ -103,74 +112,84 @@ const countReferralsByLevel = async (
 
 /**
  * @swagger
- * /api/user-tree/{telegramId}/{referrals}:
+ * /api/user-tree/referrals:
  *   get:
- *     summary: Fetches the referral data for the given user at a specific level or all levels
- *     description: This endpoint retrieves the referral tree data for a user. You can fetch one level (1–11), or all levels up to the specified number (e.g., if referrals=8, it will return levels 1–8). Use "0" to return only the user's referral ID.
+ *     summary: Fetch referral data by Telegram ID and wallet address
+ *     description: Retrieves referral tree data for a user. Returns levels 1–N based on the `referrals` query param (up to level 11). Use "0" to fetch only the user's referral ID.
  *     parameters:
  *       - name: telegramId
- *         in: path
- *         description: The Telegram ID of the user whose referral data is being requested.
+ *         in: query
  *         required: true
+ *         description: Telegram ID of the user
  *         schema:
  *           type: string
  *           example: "123456789"
  *       - name: referrals
- *         in: path
- *         description: The level of the referral tree to fetch (1-11). Use "0" to return only the user's referral ID.
+ *         in: query
  *         required: true
+ *         description: Referral depth level (0–11)
  *         schema:
  *           type: string
- *           example: "8"
+ *           example: "3"
+ *       - name: wallet_address
+ *         in: query
+ *         required: true
+ *         description: Wallet address of the user
+ *         schema:
+ *           type: string
+ *           example: "EQBc...abc"
  *     responses:
  *       200:
- *         description: The referral data has been successfully retrieved.
+ *         description: Referral data successfully retrieved
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 level_1:
- *                   type: object
+ *               oneOf:
+ *                 - type: object
+ *                   description: Returned when referrals = 0
  *                   properties:
- *                     count:
- *                       type: integer
- *                       example: 3
- *                     total:
- *                       type: integer
- *                       example: 3
- *                     users:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           telegram_id:
- *                             type: string
- *                             example: "123456789"
- *                           wallet_address:
- *                             type: string
- *                             example: "EQBc...abc"
- *                           fullname:
- *                             type: string
- *                             example: "John Doe"
- *                           current_pig:
- *                             type: integer
- *                             example: 0
- *                           inviter_id:
- *                             type: string
- *                             example: "12"
- *                           total_invited:
- *                             type: integer
- *                             example: 3
- *                           total_under:
- *                             type: integer
- *                             example: 7
- *                 total_under:
- *                   type: integer
- *                   example: 11
- *                   description: Total number of people under the user across all levels (only present when referrals=11 or less)
+ *                     referral_id:
+ *                       type: string
+ *                       example: "ref123"
+ *                 - type: object
+ *                   description: Returned when referrals > 0
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       count:
+ *                         type: integer
+ *                         example: 3
+ *                       total:
+ *                         type: integer
+ *                         example: 9
+ *                       users:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             telegram_id:
+ *                               type: string
+ *                               example: "123456789"
+ *                             wallet_address:
+ *                               type: string
+ *                               example: "EQBc...abc"
+ *                             fullname:
+ *                               type: string
+ *                               example: "John Doe"
+ *                             current_pig:
+ *                               type: integer
+ *                               example: 0
+ *                             inviter_id:
+ *                               type: string
+ *                               example: "12"
+ *                             total_invited:
+ *                               type: integer
+ *                               example: 3
+ *                             total_under:
+ *                               type: integer
+ *                               example: 7
  *       400:
- *         description: Bad request due to invalid or missing telegramId or referrals parameter.
+ *         description: Missing or invalid query parameters
  *         content:
  *           application/json:
  *             schema:
@@ -178,9 +197,9 @@ const countReferralsByLevel = async (
  *               properties:
  *                 error:
  *                   type: string
- *                   example: "Invalid or missing id"
+ *                   example: "Invalid or missing telegram id"
  *       404:
- *         description: User not found if the user with the provided telegramId does not exist.
+ *         description: User not found
  *         content:
  *           application/json:
  *             schema:
@@ -189,8 +208,18 @@ const countReferralsByLevel = async (
  *                 error:
  *                   type: string
  *                   example: "User not found"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
  *       500:
- *         description: Internal server error if there was an issue fetching the referral data.
+ *         description: Server error
  *         content:
  *           application/json:
  *             schema:
@@ -201,6 +230,7 @@ const countReferralsByLevel = async (
  *                   example: "Failed to fetch referrals"
  */
 
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -209,9 +239,10 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { telegramId, referrals } = req.query;
+  const { telegram_id, referrals, wallet_address } =
+    req.query as ReferralRequest;
 
-  if (!telegramId || typeof telegramId !== "string") {
+  if (!telegram_id || typeof telegram_id !== "string") {
     return res.status(400).json({ error: "Invalid or missing telegram id" });
   }
 
@@ -219,6 +250,12 @@ export default async function handler(
     return res
       .status(400)
       .json({ error: "Invalid or missing referrals parameter" });
+  }
+
+  if (!wallet_address || typeof wallet_address !== "string") {
+    return res
+      .status(400)
+      .json({ error: "Invalid or missing referrals wallet address parameter" });
   }
 
   const referralsNum = parseInt(referrals, 10);
@@ -231,7 +268,8 @@ export default async function handler(
   const { data: userExists, error: userError } = await supabase
     .from("users")
     .select("id")
-    .eq("telegram_id", telegramId)
+    .eq("telegram_id", telegram_id)
+    .eq("wallet_address", wallet_address)
     .single();
 
   if (userError || !userExists) {
@@ -245,7 +283,7 @@ export default async function handler(
       const { data: referral_id, error } = await supabase
         .from("users")
         .select("referral_id")
-        .eq("telegram_id", telegramId);
+        .eq("telegram_id", telegram_id);
 
       if (error || !referral_id) {
         return res.status(404).json({ error: "User not found" });

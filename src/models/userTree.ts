@@ -28,3 +28,8 @@ export type SetWalletRequest = {
   wallet_address: string;
 };
 
+export type ReferralRequest = {
+  telegram_id: string;
+  referrals: string;
+  wallet_address: string
+};
