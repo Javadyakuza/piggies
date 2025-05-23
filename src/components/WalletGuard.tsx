@@ -38,44 +38,26 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
     : null;
 
   const userTelegramId = initDataState?.user?.id;
-
-  useEffect(() => {
-    if (userTelegramId) {
-      const fetchUserData = async () => {
-        try {
-          const response: AxiosResponse<{
-            referral_id: string;
-            wallet_address: string;
-          }> = await axios.get(`/api/user-tree/${userTelegramId}`);
-
-          if (response.data.referral_id) {
-            setIsUserRegistered(true);
-          }
-
-          if (response.data.wallet_address) {
-            setUserWalletAddress(response.data.wallet_address || null);
-          }
-        } catch (err) {
-          const error = err as AxiosError;
-          if (error.status === 404) setIsUserRegistered(false);
-        }
-      };
-
-      fetchUserData();
-    }
-  }, [userTelegramId]);
+  let userTelegramFullName =
+    initDataState?.user?.firstName || initDataState?.user?.lastName
+      ? `${initDataState?.user?.firstName || ""} 
+    ${initDataState?.user?.lastName || ""}`
+      : initDataState?.user?.username || initDataState?.user?.id;
+  userTelegramFullName = String(userTelegramFullName).replace(/\n/g, " ");
 
   useEffect(() => {
     if (userWalletAddress !== undefined && wallet && userTelegramId) {
       if (userWalletAddress !== wallet.account.address) {
-        axios.post(`/api/user-tree/setWallet`, {
+        axios.post(`/api/register`, {
           wallet_address: wallet.account.address,
           telegram_id: userTelegramId,
+          referral_id: refId,
+          fullname: userTelegramFullName,
         });
         setIsWalletChangedModalOpen(true);
       }
     }
-  }, [userWalletAddress, wallet, userTelegramId]);
+  }, [userWalletAddress, wallet, userTelegramId, userTelegramFullName, refId]);
 
   useEffect(() => {
     tonConnectUI.connectionRestored.then(() => {
@@ -83,39 +65,39 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
     });
   }, [tonConnectUI]);
 
-  // useEffect(() => {
-  //   if (!initialized || isUserRegistered === null) return;
+  useEffect(() => {
+    if (!initialized) return;
 
-  //   if (isUserRegistered) {
-  //     if (pathname === "/register") {
-  //       router.replace("/");
-  //     }
-  //   } else if (refId) {
-  //     if (pathname !== "/register") {
-  //       router.replace("/register");
-  //     }
-  //     return;
-  //   } else {
-  //     if (pathname !== "/no-ref-link") {
-  //       router.replace("/no-ref-link");
-  //     }
-  //     return;
-  //   }
+    // if (isUserRegistered) {
+    //   if (pathname === "/register") {
+    //     router.replace("/");
+    //   }
+    // } else if (refId) {
+    //   if (pathname !== "/register") {
+    //     router.replace("/register");
+    //   }
+    //   return;
+    // } else {
+    //   if (pathname !== "/no-ref-link") {
+    //     router.replace("/no-ref-link");
+    //   }
+    //   return;
+    // }
 
-  //   const connected = !!wallet;
+    const connected = !!wallet;
 
-  //   if (connected) {
-  //     if (pathname === "/wallet-connect") {
-  //       router.replace("/");
-  //     }
-  //   } else {
-  //     if (pathname !== "/wallet-connect") {
-  //       router.replace("/wallet-connect");
-  //     }
-  //   }
-  // }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
+    if (connected) {
+      if (pathname === "/wallet-connect") {
+        router.replace("/");
+      }
+    } else {
+      if (pathname !== "/wallet-connect") {
+        router.replace("/wallet-connect");
+      }
+    }
+  }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
 
-  if (!initialized || isUserRegistered === null) {
+  if ((!initialized || !wallet ) && pathname !== "/wallet-connect") {
     return (
       <div className="root__loading">
         <Spinner size="l" />
@@ -126,7 +108,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <Modal
+      {/* <Modal
         header={<ModalHeader>{t("walletAddressChanged")}</ModalHeader>}
         open={isWalletChangedModalOpen}
       >
@@ -145,7 +127,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
             {t("understood")}
           </Button>
         </div>
-      </Modal>
+      </Modal> */}
     </>
   );
 }

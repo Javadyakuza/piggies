@@ -7,7 +7,7 @@ import "./styles.css";
 import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
-import { pigsMap } from "@/utils/pigs_map";
+import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
@@ -22,83 +22,129 @@ type PigData = {
 
 export default function StorePage() {
   const t = useTranslations("i18n");
+  const [earnings] = useState(0);
+  const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
+  const [pigsData, setPigsData] = useState<PigData>();
+  const [selectedItemIndex, setSelectedItemIndex] = useState(0);
 
+  const initDataState = useSignal(initData.state);
+  const userTelegramId = initDataState?.user?.id;
+
+  const [wallet] = useTonConnectUI();
+
+  const pigsMap = pigsMapNew(t);
+
+  const fetchPigsData = async () => {
+    if (!wallet) return;
+
+    const response = await axios
+      .get(`/api/pigs/${userTelegramId}`)
+      .catch((err) => {
+        return null;
+      });
+    const pigsDataToSet = response?.data || undefined;
+    setPigsData(pigsDataToSet);
+  };
+
+  useEffect(() => {
+    fetchPigsData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallet]);
+
+  useEffect(() => {
+    if (!pigsData) return;
+    setCurrentPigCode(pigsData.pig_level);
+    const buyablePigIndex = pigsMap.findIndex(
+      (item) => item.code === pigsData?.buyable_pigs
+    );
+
+    setSelectedItemIndex(buyablePigIndex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pigsData]);
+
+  const currentPig =
+    currentPigCode || currentPigCode === 0
+      ? pigsMap.find((item) => item.code === currentPigCode)
+      : undefined;
+
+  const nextPig =
+    currentPigCode || currentPigCode === 0
+      ? pigsMap.find((item) => item.code === currentPigCode + 1)
+      : undefined;
+  console.log(nextPig);
+  const placeholderSlide = {
+    title: (
+      <span className="slide-title-container">
+        <span className="thick">Buy the </span>{" "}
+        <span className="slide-title">Bronze Pig</span>
+      </span>
+    ),
+    hint: (
+      <>
+        <span className="yellow">Begin journey towards the Dream</span>
+      </>
+    ),
+    cover: "/imgs/pigs/placeholder.png",
+  };
   const slides = [
-    {
+    placeholderSlide,
+    ...pigsMap.map((pigData) => ({
       title: (
         <>
-          <span className="normal">Buy the </span>{" "}
-          <span className="bold">Bronze Pig</span>
-        </>
-      ),
-      hint: (
-        <>
-          <span className="yellow">Begin journey towards the Dream</span>
-        </>
-      ),
-      cover: "/imgs/pigs/placeholder.png",
-    },
-    {
-      title: (
-        <>
-          <span className="bold">Bronze Pig</span>
+          <span className="slide-title">{pigData.title}</span>
         </>
       ),
       caption: (
         <>
-          <span className="normal-bold">7 Levels</span>{" "}
-          <span className="thick">(147 slots)</span>
+          <span className="normal-bold">{pigData.level} Levels</span>{" "}
+          <span className="thick">({pigData.slots} Slots)</span>
         </>
       ),
-      cover: "/imgs/pigs/bronze.png",
-    },
-    {
-      title: (
-        <>
-          <span className="bold">Silver Pig</span>
-        </>
-      ),
-      caption: (
-        <>
-          <span className="normal-bold">7 Levels</span>{" "}
-          <span className="thick">(147 slots)</span>
-        </>
-      ),
-      cover: "/imgs/pigs/silver.png",
-    },
-    {
-      title: (
-        <>
-          <span className="bold">Gold Pig</span>
-        </>
-      ),
-      caption: (
-        <>
-          <span className="normal-bold">7 Levels</span>{" "}
-          <span className="thick">(147 slots)</span>
-        </>
-      ),
-      cover: "/imgs/pigs/gold.png",
-    },
-    {
-      title: (
-        <>
-          <span className="bold">Diamond Pig</span>
-        </>
-      ),
-      caption: (
-        <>
-          <span className="normal-bold">7 Levels</span>{" "}
-          <span className="thick">(147 slots)</span>
-        </>
-      ),
-      cover: "/imgs/pigs/diamond.png",
-    },
+      cover: pigData.cover,
+    })),
   ];
+
+  const suggestionData = {
+    title: nextPig?.code === 1 ? "Buy" : "Upgrade to",
+    description: nextPig?.code === 1 ? "to start earning" : "to earn more",
+    buttonText: nextPig?.code === 1 ? "Purchase" : "Upgrade",
+  };
 
   return (
     <Page>
-      <ImageSlider slides={slides} />
+      <div className="bank-container">
+        <div className="balance-container">
+          <div className="balance-info">
+            <img
+              src="/imgs/icons/ton.png"
+              alt="ton-icon"
+              className="ton-icon"
+            />
+            <span className="text">
+              <h4 className="earning">{earnings}</h4>{" "}
+              <h4 className="total">/ {currentPig?.price || 0} TON</h4>
+            </span>
+          </div>
+          <Button className="withdraw-btn normal">{t("withdraw")}</Button>
+        </div>
+        <ImageSlider slides={slides} />
+        <div className="suggestion-container">
+          <div className="text">
+            <h2>{suggestionData.title}</h2>
+            <h2 className="bold">{nextPig?.title}</h2>
+            <h3>{suggestionData.description}</h3>
+          </div>
+          <div className="action">
+            <img
+              className="action-img"
+              src="/imgs/pigs/bronze.png"
+              alt="action-img"
+            />
+            <Button className="action-btn">{suggestionData.buttonText}</Button>
+          </div>
+        </div>
+      </div>
     </Page>
   );
   // const [earnings] = useState(0);
