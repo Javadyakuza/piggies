@@ -49,7 +49,7 @@ const usdToTon = (usd: number, tonPrice: number) => (usd / tonPrice).toFixed(2);
 
 export const pigsMapNew = (t: any, tonPrice: number) => [
   {
-    title: t?.("storePage.bronzePig"),
+    title: t?.("storePage.bronzePig") as string,
     code: 1,
     slots: 27,
     level: 3,
@@ -61,7 +61,7 @@ export const pigsMapNew = (t: any, tonPrice: number) => [
     capacityInTon: usdToTon(100, tonPrice),
   },
   {
-    title: t?.("storePage.silverPig"),
+    title: t?.("storePage.silverPig") as string,
     code: 2,
     slots: 147,
     level: 7,
@@ -73,7 +73,7 @@ export const pigsMapNew = (t: any, tonPrice: number) => [
     capacityInTon: usdToTon(250, tonPrice),
   },
   {
-    title: t?.("storePage.goldPig"),
+    title: t?.("storePage.goldPig") as string,
     code: 3,
     slots: 377,
     level: 10,
@@ -85,7 +85,7 @@ export const pigsMapNew = (t: any, tonPrice: number) => [
     capacityInTon: usdToTon(500, tonPrice),
   },
   {
-    title: t?.("storePage.diamondPig"),
+    title: t?.("storePage.diamondPig") as string,
     code: 4,
     slots: 1000,
     level: 11,

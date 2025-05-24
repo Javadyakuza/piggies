@@ -40,7 +40,14 @@
     "friendsPage": {
       "title": "Invite Friends!",
       "hint": "Earn from Pigs your referrals Buy & Upgrade,  and get a share from people they refer",
-      "yourReferrals": "Your Referrals"
+      "yourReferrals": "Your Referrals",
+      "levelReferrals": "Level {level}",
+      "slots": "{current}/{total} Slots",
+      "bronzePigs": "Bronze Pigs: {number}",
+      "silverPigs": "Silver Pigs: {number}",
+      "goldPigs": "Gold Pigs: {number}",
+      "diamondPigs": "Diamond Pigs: {number}",
+      "yourRefs": "{number} your refs"
     },
     "balance": "Balance",
     "earnings": "Earnings",
