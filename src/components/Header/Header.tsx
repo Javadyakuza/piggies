@@ -87,27 +87,9 @@ export default function Header() {
           </h4>
         </div>
         <div className="actions-container">
-          <div className="ref-link">
-            <Button
-              disabled={!referralId}
-              onClick={handleCopyRefLink}
-              className="copy-ref-link-Button primary-btn"
-            >
-              <span>
-                {isRefLinkCopied ? t("refLinkCopied") : t("action.copyRefLink")}
-              </span>{" "}
-              <FontAwesomeIcon
-                icon={isRefLinkCopied ? faCheck : faCopy}
-                size="lg"
-              />
-            </Button>
-          </div>
-          <IconButton mode="plain" onClick={handleOpenStore}>
-            <FontAwesomeIcon icon={faCartShopping} size="lg" />
-          </IconButton>
+          <div></div>
         </div>
       </div>
-      <hr />
     </div>
   );
 }

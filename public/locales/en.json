@@ -49,6 +49,16 @@
       "diamondPigs": "Diamond Pigs: {number}",
       "yourRefs": "{number} your refs"
     },
+    "historiesPage": {
+      "noHistories": "No history yet...",
+      "level": "Level {level}",
+      "got": "Got",
+      "balance": "Balance",
+      "reachedEnd": "You’ve reached the end."
+    },
+    "profilePage": {
+      "connectedWallet": "Connected Wallet"
+    },
     "balance": "Balance",
     "earnings": "Earnings",
     "earningsAmount": "{amount} / {currentPigPrice} $",

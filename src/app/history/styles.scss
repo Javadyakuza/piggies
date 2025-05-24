@@ -1,2 +1,75 @@
 .history-container {
+  height: 78vh;
+  overflow: scroll;
+  .empty-state-container {
+    margin-top: 20vh;
+    text-align: center;
+    .empty {
+      font-size: 24px;
+      font-weight: 200;
+      color: #facefd;
+    }
+    .mag-pic {
+      width: 30%;
+      min-width: 200px;
+    }
+    .empty-text h2 {
+      font-weight: 100;
+    }
+  }
+
+  .reached-end {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 200;
+    color: #fff;
+  }
+  .history-item {
+    display: flex;
+    padding: 4px 14px;
+    justify-content: space-between;
+    align-items: center;
+
+    &:not(:last-child) {
+      border-bottom: 2px solid #a1a1a16b;
+    }
+    .details {
+      h2 {
+        margin: 0;
+      }
+      .head {
+        margin-bottom: 4px;
+        h2 {
+          font-size: 24px;
+          .level {
+            font-size: 20px;
+            font-weight: 100;
+          }
+        }
+      }
+      .middle {
+        margin-bottom: 4px;
+        h2 {
+          color: #facefd;
+          font-size: 16px;
+          font-weight: 100;
+          .pig-title {
+            font-weight: 800;
+          }
+        }
+      }
+      .footer {
+        margin-bottom: 4px;
+        h2 {
+          font-size: 20px;
+          .balance {
+            color: #2cc48f;
+          }
+        }
+      }
+    }
+    .cover img {
+      width: 68px;
+    }
+  }
 }
