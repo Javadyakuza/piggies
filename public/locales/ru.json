@@ -18,6 +18,7 @@
     },
     "storePage": {
       "buyThing": "Купить пиг",
+      "buy": "Купить",
       "upgradeTo": "Улучшить до",
       "purchase": "Купить",
       "upgrade": "Улучшить",
@@ -32,7 +33,14 @@
       "numberOfSlots": "Слотов: {slots}",
       "withdraw": "Вывод",
       "tonCapacity": "{capacity} TON Capacity",
-      "cancel": "Cancel"
+      "cancel": "Отмена",
+      "toUnlock": "чтобы разблокировать",
+      "locked": "Заблокировано"
+    },
+    "friendsPage": {
+      "title": "Пригласите друзей!",
+      "hint": "Зарабатывайте от пигов вашими рефералами, купите и улучшайте, и получайте доход от людей, которые вам рефереруют",
+      "yourReferrals": "Ваши рефералы"
     },
     "balance": "Баланс",
     "earnings": "Доходы",

@@ -16,6 +16,7 @@ export function Footer() {
       icon: "/imgs/icons/bank.png",
       link: "/",
       key: "/store",
+      altKey: "/",
     },
     {
       title: t("footerContent.friends"),
@@ -42,7 +43,11 @@ export function Footer() {
           onClick={() => {
             handlePageChange(item.key);
           }}
-          className={`footer-item ${activePage === item.key ? "--active" : ""}`}
+          className={`footer-item ${
+            activePage === item.key || activePage === item.altKey
+              ? "--active"
+              : ""
+          }`}
           key={i}
         >
           <Image src={item.icon} alt={item.title} width={24} height={24} />

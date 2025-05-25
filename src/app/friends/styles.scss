@@ -1,4 +1,7 @@
 .friends-container {
+  height: 78vh;
+  overflow: scroll;
+
   .invite-container {
     width: 360px;
     margin: auto;
@@ -47,7 +50,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-
+      margin-bottom: 8px;
+      &.level.locked {
+        background-color: #691d82;
+        h2,
+        h5 {
+          color: #fff;
+        }
+      }
+      &.level {
+        background-color: #fd83fb;
+      }
       &.your-refs {
         background-color: #2cc48f;
       }
@@ -56,13 +69,88 @@
         font-weight: bold;
         font-size: 20px;
       }
+      .locked-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .locked-img {
+          width: 24px;
+        }
+      }
 
       .arrow {
         width: 32px;
         img {
           height: 26px;
         }
+        transition: transform 0.3s ease-in-out; /* Add this to smoothly animate transform */
+
+        &.--open {
+          transform: rotate(90deg);
+          margin-bottom: -14px;
+          margin-left: -5px;
+          margin-right: 9px;
+        }
       }
     }
+    .ref-accordion-content {
+      .empty-container {
+        text-align: center;
+
+        .empty {
+          font-size: 24px;
+          font-weight: 200;
+          color: #facefd;
+        }
+      }
+      .invites-container {
+        margin-bottom: 8px;
+        .invite-item {
+          &:not(:last-child) {
+            border-bottom: 2px solid #2cc48f;
+          }
+          padding: 4px 14px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          h2,
+          h5 {
+            margin: 0;
+          }
+
+          .head {
+            .level {
+              font-weight: 100;
+              font-size: 20px;
+            }
+            margin-bottom: 3px;
+          }
+
+          .pig-pic {
+            img {
+              width: 48px;
+            }
+          }
+        }
+      }
+    }
+    .level-accordion-content {
+      text-align: center;
+      .your-refs {
+        color: #2cc48f !important;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(90deg);
   }
 }
