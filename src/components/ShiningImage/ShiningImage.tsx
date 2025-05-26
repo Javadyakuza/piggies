@@ -13,7 +13,7 @@ const ShiningImage = () => {
 
       shiningRef.current.style.position = "fixed";
       // shiningRef.current.style.left = `${(vw - shiningRef.current.offsetWidth) / 2}px`;
-      shiningRef.current.style.top = `${(vh - shiningRef.current.offsetHeight) / 2 + 30}px`;
+      shiningRef.current.style.top = `${(vh - shiningRef.current.offsetHeight) / 2 - 70}px`;
     };
 
     window.addEventListener("resize", updatePosition);
