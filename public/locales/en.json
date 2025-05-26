@@ -47,7 +47,8 @@
       "silverPigs": "Silver Pigs: {number}",
       "goldPigs": "Gold Pigs: {number}",
       "diamondPigs": "Diamond Pigs: {number}",
-      "yourRefs": "{number} your refs"
+      "yourRefs": "{number} your refs",
+      "invitationSomeone": "You should invite someone"
     },
     "historiesPage": {
       "noHistories": "No history yet...",
