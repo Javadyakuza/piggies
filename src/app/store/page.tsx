@@ -11,11 +11,12 @@ import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
-import { getUpgradePigTx } from "../../../scripts/upgradePig";
+import { getUpgradePigTx } from "../../scripts/upgradePig";
 import { UpgradePigTx } from "@/models/purchase";
 import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import ShiningImage from "@/components/ShiningImage/ShiningImage";
+import { logger } from "../../../logger";
 
 type PigData = {
   pig_level: number;
@@ -38,9 +39,11 @@ export default function StorePage() {
   const handlePurchasePig = async () => {
     if (!walletAddress || isPurchaseInProgress) return;
 
-    let tx = await getUpgradePigTx(walletAddress);
 
     try {
+
+      let tx = await getUpgradePigTx(walletAddress);
+      console.log("tx", tx);
       const result = await wallet.sendTransaction(
         (tx.message as UpgradePigTx).tx
       );
@@ -59,8 +62,8 @@ export default function StorePage() {
       // show the rest to the user
     } catch (error) {
       console.error("Transaction failed or was rejected:", error);
-
-      alert("⚠️ Transaction was cancelled or failed.");
+      logger.error("Transaction failed or was rejected:", error);
+      alert(`⚠️ Transaction was cancelled or failed. ${error}`);
     }
     await fetchPigsData();
 

@@ -56,6 +56,9 @@ importers:
       axios:
         specifier: ^1.9.0
         version: 1.9.0
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
       eruda:
         specifier: ^3.0.1
         version: 3.0.1
@@ -2507,6 +2510,10 @@ packages:
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
+  dotenv@16.5.0:
+    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
   drange@1.1.1:
@@ -7847,7 +7854,7 @@ snapshots:
       arg: 5.0.2
       axios: 1.9.0
       chalk: 4.1.2
-      dotenv: 16.4.7
+      dotenv: 16.5.0
       inquirer: 8.2.6
       qrcode-terminal: 0.12.0
       ts-node: 10.9.2(@types/node@22.15.17)(typescript@5.5.2)
@@ -8999,7 +9006,10 @@ snapshots:
       dotenv: 16.4.7
     optional: true
 
-  dotenv@16.4.7: {}
+  dotenv@16.4.7:
+    optional: true
+
+  dotenv@16.5.0: {}
 
   drange@1.1.1: {}
 

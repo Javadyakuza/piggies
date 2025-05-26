@@ -2,7 +2,7 @@
 import { TonClient, WalletContractV4, WalletContractV5R1, internal, toNano } from "@ton/ton";
 import { beginCell, Address, Dictionary, OpenedContract } from "@ton/core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
-import { PigApproval, PigShop, storePigApproval } from "../build/PigShop/tact_PigShop";
+import { PigApproval, PigShop, storePigApproval } from "../../build/PigShop/tact_PigShop";
 import { bountyHuntersResponse } from "@/models/purchase";
 import { keyPairFromEnv } from "./helpers";
 

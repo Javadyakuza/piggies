@@ -23,7 +23,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const isDev =
   // false;
-  process.env.NODE_ENV === "development";
+  process.env.NEXT_PUBLIC_NODE_ENV === "development";
 
 function RootInner({ children }: PropsWithChildren) {
   const router = useRouter();
