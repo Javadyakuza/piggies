@@ -11,12 +11,15 @@ import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
 import { usePathname, useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
-import { getUpgradePigTx } from "../../scripts/upgradePig";
-import { UpgradePigTx } from "@/models/purchase";
+import { getUpgradePigParams } from "../../scripts/upgradePig";
 import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
+import { Address, Sender, SenderArguments, toNano, TonClient } from "@ton/ton";
+import { PigShop } from "../../../wrappers/PigShop";
+import { getTonClient } from "@/utils/tonClients";
+import { UpgradePigParams } from "@/models/purchase";
 
 type PigData = {
   pig_level: number;
@@ -33,22 +36,50 @@ export default function StorePage() {
   const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
 
   const [wallet] = useTonConnectUI();
+  const tonClient = getTonClient();
+
   const walletAddress = wallet?.account?.address;
   const pigsMap = pigsMapNew(t, tonPrice);
+  const txRequestLifetime = Date.now() + 3 * 60 * 1000; // 3 minutes for user to approve
 
   const handlePurchasePig = async () => {
     if (!walletAddress || isPurchaseInProgress) return;
 
-
     try {
+      const sender_ = {
+        send: async (args: SenderArguments) => {
+          console.log("args", args, args.to.toString());
+          await wallet!.sendTransaction({
+            messages: [
+              {
+                address: args.to.toString(),
+                amount: args.value.toString(),
+                payload: args.body?.toBoc()?.toString("base64"),
+              },
+            ],
+            validUntil: txRequestLifetime,
+          });
+        },
+        address: walletAddress,
+      } as unknown as Sender;
 
-      let tx = await getUpgradePigTx(walletAddress);
-      console.log("tx", tx);
-      const result = await wallet.sendTransaction(
-        (tx.message as UpgradePigTx).tx
+      let params = await getUpgradePigParams(walletAddress);
+
+      let pigShop = tonClient.open(
+        PigShop.fromAddress(
+          Address.parse(process.env.NEXT_PUBLIC_PIGSHOP_ADDRESS!)
+        )
       );
 
-      console.log("Transaction sent, result:", result);
+      await pigShop.send(
+        sender_,
+        {
+          value: (params.message as UpgradePigParams).amount,
+        },
+        (params.message as UpgradePigParams).operation
+      );
+
+      console.log("Transaction sent");
 
       alert("✅ UpgradePig transaction sent successfully!");
 

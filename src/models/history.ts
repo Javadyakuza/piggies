@@ -37,3 +37,10 @@ export interface txRewardHistoryRequest {
   tx_hash : string; 
   telegram_id: string;
 }
+
+export interface UserHistory {
+  fullname: string;
+  upgraded_pig_level: PigLevel;
+  self_balance_change: number;
+  referral_depth: number;
+}

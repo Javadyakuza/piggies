@@ -99,7 +99,6 @@ import { PurchasePigResponse } from "@/models/purchase";
  *                   example: "internal server error"
  */
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PurchasePigResponse>
@@ -131,26 +130,36 @@ export default async function handler(
         .status(404)
         .json({ success: false, message: "Wallet is not connected !" });
     }
-    const { data: tx, error } = await supabase
+    const { data: tx, error: txError } = await supabase
       .from("txHistory")
       .select(
         "tx_id, tx_hash, wallet_address, request_status, upgradedPigLevel"
       )
       .eq("wallet_address", wallet_address);
 
-    const [userData] = tx || [];
+    const [userTxs] = tx || [];
 
-    if (error) {
+    const { data: rewards, error: RewardsError } = await supabase
+      .from("rewardsHistory")
+      .select("wallet_address, reward, referral, related_tx")
+      .eq("wallet_address", wallet_address);
+
+    const userRewards = rewards || [];
+
+
+    if (txError || RewardsError) { 
       throw new Error(error.message);
     }
 
-    if (!userData) {
+    if (!userTxs || !userRewards) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "Failed to fetch txs or rewards !" }); 
     }
 
-    return res.status(200).json({ success: true, message: userData });
+    
+
+    return res.status(200).json({ success: true, message: userTxs });
   } catch (error) {
     console.error("Error fetching user:", error);
     return res
