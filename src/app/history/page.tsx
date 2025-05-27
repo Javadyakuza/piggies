@@ -6,68 +6,99 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import "./styles.css";
 import { pigsMapNew } from "@/utils/pigs_map";
+import axios from "axios";
+import { useTonWallet } from "@tonconnect/ui-react";
 
+type Reward = {
+  created_at: Date;
+  fullname: string;
+  upgraded_pig_level: number;
+  self_balance_change: number;
+  referral_depth: number;
+};
 export default function HistoryPage() {
   const t = useTranslations("i18n");
+  const [histories, setHistories] = useState<Reward[]>([]);
 
-  const histories = [
-    {
-      id: 1,
-      name: "Andrew",
-      level: 1,
-      pig: 2,
-      date: "2023-01-01",
-      balance: 3,
-    },
-    {
-      id: 2,
-      name: "Jack",
-      level: 1,
-      pig: 1,
-      date: "2023-01-02",
-      balance: 2,
-    },
-    {
-      id: 3,
-      name: "John",
-      level: 2,
-      pig: 3,
-      date: "2023-01-03",
-      balance: 1,
-    },
-    {
-      id: 4,
-      name: "Jack",
-      level: 1,
-      pig: 1,
-      date: "2023-01-04",
-      balance: 2,
-    },
-    {
-      id: 5,
-      name: "John",
-      level: 2,
-      pig: 3,
-      date: "2023-01-05",
-      balance: 1,
-    },
-    {
-      id: 6,
-      name: "Jack",
-      level: 1,
-      pig: 1,
-      date: "2023-01-06",
-      balance: 2,
-    },
-    {
-      id: 7,
-      name: "John",
-      level: 2,
-      pig: 3,
-      date: "2023-01-07",
-      balance: 1,
-    },
-  ];
+  const wallet = useTonWallet();
+  const walletAddress = wallet?.account?.address;
+
+  useEffect(() => {
+    const fetchRewards = async () => {
+      if (!walletAddress) return;
+
+      const response = await axios
+        .get<{
+          message: Reward[];
+        }>(`/api/history/${walletAddress}`)
+        .catch((err) => {
+          return null;
+        });
+
+      const historiesToSet = response?.data.message || [];
+      setHistories(historiesToSet);
+    };
+
+    fetchRewards();
+  }, [walletAddress]);
+  // const histories = [
+  //   {
+  //     id: 1,
+  //     name: "Andrew",
+  //     level: 1,
+  //     pig: 2,
+  //     date: "2023-01-01",
+  //     balance: 3,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Jack",
+  //     level: 1,
+  //     pig: 1,
+  //     date: "2023-01-02",
+  //     balance: 2,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "John",
+  //     level: 2,
+  //     pig: 3,
+  //     date: "2023-01-03",
+  //     balance: 1,
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Jack",
+  //     level: 1,
+  //     pig: 1,
+  //     date: "2023-01-04",
+  //     balance: 2,
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "John",
+  //     level: 2,
+  //     pig: 3,
+  //     date: "2023-01-05",
+  //     balance: 1,
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "Jack",
+  //     level: 1,
+  //     pig: 1,
+  //     date: "2023-01-06",
+  //     balance: 2,
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "John",
+  //     level: 2,
+  //     pig: 3,
+  //     date: "2023-01-07",
+  //     balance: 1,
+  //   },
+  // ];
 
   const emptyState = (
     <div className="empty-state-container">
@@ -87,13 +118,21 @@ export default function HistoryPage() {
   const findPig = (code: number) => {
     return pigsMap.find((item) => item.code === code);
   };
+
+  function formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0"); // months are 0-indexed
+    const day = `${date.getDate()}`.padStart(2, "0");
+    return `${year}.${month}.${day}`;
+  }
+
   return (
     <Page>
       <div className="history-container">
         {histories.length ? (
           <>
             {histories.map((history, i) => {
-              const targetPig = findPig(history.pig);
+              const targetPig = findPig(history.upgraded_pig_level);
               const pigClassName = targetPig?.title
                 .replace(" Pig", "")
                 .toLowerCase();
@@ -102,15 +141,22 @@ export default function HistoryPage() {
                   <div className="details">
                     <div className="head">
                       <h2>
-                        {history.name}{" "}
+                        {history.fullname}{" "}
                         <span className="level">
-                          ({t("historiesPage.level", { level: history.level })})
+                          (
+                          {t("historiesPage.level", {
+                            level: history.referral_depth,
+                          })}
+                          )
                         </span>
                       </h2>
                     </div>
                     <div className="middle">
                       <h2>
-                        <span className="date">{history.date}:</span>{" "}
+                        {/* format of history.created_at in YYYY.MM.DD */}
+                        <span className="date">
+                          {formatDate(new Date(history.created_at))}:
+                        </span>{" "}
                         <span>{t("historiesPage.got")}</span>{" "}
                         <span className={`pig-title ${pigClassName}`}>
                           {targetPig?.title}
@@ -120,7 +166,9 @@ export default function HistoryPage() {
                     <div className="footer">
                       <h2>
                         {t("historiesPage.balance")}:{" "}
-                        <span className="balance">+{history.balance} TON</span>
+                        <span className="balance">
+                          +{history.self_balance_change} TON
+                        </span>
                       </h2>
                     </div>
                   </div>
