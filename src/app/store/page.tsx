@@ -358,54 +358,61 @@ export default function StorePage() {
   let nextPigClassName = (nextPig?.title || "").replace(" Pig", "") as string;
   nextPigClassName = nextPigClassName.toLowerCase();
   const confirmModal = (
-    <div className="confirm-modal-container">
-      <div className="title-container">
-        <span className="yellow">{suggestionData.title} </span>{" "}
-        <span className={`bold ${nextPigClassName}`}>{nextPig?.title}</span>
-        <br />
-        <span className="normal">{suggestionData.description}</span>{" "}
-      </div>
-      <div className="cover-container">
-        {/* <img
+    <div className="bank-container">
+      <div className="confirm-modal-container">
+        <div className="title-container">
+          <span className="yellow">{suggestionData.title} </span>{" "}
+          <span className={`bold ${nextPigClassName}`}>{nextPig?.title}</span>
+          <br />
+          <span className="normal">{suggestionData.description}</span>{" "}
+        </div>
+        <div className="cover-container">
+          {/* <img
           className="shining-image"
           src="/imgs/common/shining.png"
           alt="cover-container"
         /> */}
-        <ShiningImage />
-        <img
-          className="pig-image"
-          src="/imgs/pigs/bronze.png"
-          alt="pig-cover"
-        />
-      </div>
-      <div className="details-container">
-        <div className="detail-item">
-          <span>
-            {t("storePage.numberOfLevels", { level: nextPig?.level })}
-          </span>
+          <ShiningImage />
+          <img
+            className="pig-image"
+            src="/imgs/pigs/bronze.png"
+            alt="pig-cover"
+          />
         </div>
-        <div className="detail-item">
-          <span>{t("storePage.numberOfSlots", { slots: nextPig?.slots })}</span>
+        <div className="details-container">
+          <div className="detail-item">
+            <span>
+              {t("storePage.numberOfLevels", { level: nextPig?.level })}
+            </span>
+          </div>
+          <div className="detail-item">
+            <span>
+              {t("storePage.numberOfSlots", { slots: nextPig?.slots })}
+            </span>
+          </div>
+          <div className="detail-item">
+            <span>
+              {t("storePage.tonCapacity", { capacity: nextPig?.capacityInTon })}
+            </span>
+          </div>
         </div>
-        <div className="detail-item">
-          <span>
-            {t("storePage.tonCapacity", { capacity: nextPig?.capacityInTon })}
-          </span>
-        </div>
-      </div>
-      <div className="action-container">
-        <div className="btns">
-          <button
-            onClick={handlePurchasePig}
-            className="action-btn purchase-btn"
-          >
-            <div>
-              <span className="price">{nextPig?.priceInTon}</span> TON
-            </div>
-          </button>
-          <button onClick={toggleConfirmModal} className="action-btn close-btn">
-            <div>{t("storePage.cancel")}</div>
-          </button>
+        <div className="action-container">
+          <div className="btns">
+            <button
+              onClick={handlePurchasePig}
+              className="action-btn purchase-btn"
+            >
+              <div>
+                <span className="price">{nextPig?.priceInTon}</span> TON
+              </div>
+            </button>
+            <button
+              onClick={toggleConfirmModal}
+              className="action-btn close-btn"
+            >
+              <div>{t("storePage.cancel")}</div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -419,10 +426,14 @@ export default function StorePage() {
   //   );
 
   return (
-    <Page>
-      <div className="bank-container">
-        {isConfirmModalOpen ? confirmModal : mainPage}
-      </div>
-    </Page>
+    <>
+      {isConfirmModalOpen ? (
+        confirmModal
+      ) : (
+        <Page>
+          <div className="bank-container">{mainPage}</div>
+        </Page>
+      )}
+    </>
   );
 }
