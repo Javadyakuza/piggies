@@ -40,7 +40,25 @@
     "friendsPage": {
       "title": "Пригласите друзей!",
       "hint": "Зарабатывайте от пигов вашими рефералами, купите и улучшайте, и получайте доход от людей, которые вам рефереруют",
-      "yourReferrals": "Ваши рефералы"
+      "yourReferrals": "Ваши рефералы",
+      "levelReferrals": "Уровень {level}",
+      "slots": "{current}/{total} Слотов",
+      "bronzePigs": "Бронзовые пиги: {number}",
+      "silverPigs": "Серебряные пиги: {number}",
+      "goldPigs": "Золотые пиги: {number}",
+      "diamondPigs": "Алмазные пиги: {number}",
+      "yourRefs": "{number} ваших рефералов",
+      "invitationSomeone": "Вы должны пригласить кого-то"
+    },
+    "historiesPage": {
+      "noHistories": "Пока нет истории...",
+      "level": "Уровень {level}",
+      "got": "Получено",
+      "balance": "Баланс",
+      "reachedEnd": "Вы достигли конца."
+    },
+    "profilePage": {
+      "connectedWallet": "Подключенный кошелек"
     },
     "balance": "Баланс",
     "earnings": "Доходы",

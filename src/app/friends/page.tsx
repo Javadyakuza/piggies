@@ -3,44 +3,125 @@
 import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import "./styles.css";
-import {
-  faCheck,
-  faCopy,
-  faSignOut,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Accordion, Button, IconButton } from "@telegram-apps/telegram-ui";
-import { DisplayData } from "@/components/DisplayData/DisplayData";
-import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
+import { useTonWallet } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
-import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
-import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
-import { useSignal, initData } from "@telegram-apps/sdk-react";
+import { pigsMapNew } from "@/utils/pigs_map";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
+import { useSignal, initData } from "@telegram-apps/sdk-react";
 
 type PigData = {
   pig_level: number;
   buyable_pigs: number;
 };
 
+type DataPerLevel = Record<
+  string,
+  {
+    totalSlots: number;
+    slots: number;
+    pig: number;
+    bronze: number;
+    silver: number;
+    gold: number;
+    diamond: number;
+  }
+>;
+
+type ReferralResponse = {
+  [key: string]: {
+    count: number;
+    total: number;
+    users: {
+      telegram_id: string;
+      wallet_address: string;
+      current_pig: number;
+      fullname: string;
+      inviter_id: number;
+      total_invited: number;
+      user_type: number;
+      total_under: number;
+    }[];
+  };
+};
+
 export default function FriendsPage() {
   const t = useTranslations("i18n");
   const [referralId, setReferralId] = useState("");
+  const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [openedAccordion, setOpenedAccordion] = useState<
     "ref" | number | undefined
   >();
+  const [pigsData, setPigsData] = useState<PigData>();
+  const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
 
   const wallet = useTonWallet();
   const walletAddress = wallet?.account?.address;
+
+  const initDataState = useSignal(initData.state);
+  const userTelegramId = initDataState?.user?.id;
 
   const truncate = (str: string, maxLength: number) => {
     if (str.length <= maxLength) return str;
     return str.slice(0, maxLength) + "...";
   };
+
+  const fetchPigsData = async () => {
+    if (!walletAddress) return;
+
+    const response = await axios
+      .get(`/api/pigs/${walletAddress}`)
+      .catch((err) => {
+        return null;
+      });
+    const pigsDataToSet = response?.data || undefined;
+    setPigsData(pigsDataToSet);
+  };
+
+  useEffect(() => {
+    fetchPigsData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletAddress]);
+
+  const handleFetchReferralPerLevel = async (pigCode: number) => {
+    const pig = pigsMap.find((item) => item.code === pigCode);
+    if (!walletAddress || !pig) return;
+    const pigsDataToSet: DataPerLevel = {};
+
+    const response: AxiosResponse<ReferralResponse> = await axios.get(
+      `/api/user-tree/referrals?wallet_address=${walletAddress}&telegram_id=${userTelegramId}&referrals=${pig.level}`
+    );
+
+    const referrals = response.data;
+
+    Object.keys(referrals).forEach((key) => {
+      const referral = referrals[key];
+      const getPigsNumber = (pigLevel: number) =>
+        referral.users.filter((user) => user.current_pig === pigLevel).length;
+
+      pigsDataToSet[key] = {
+        totalSlots: referral.total,
+        slots: referral.count,
+        pig: pig.code,
+        bronze: getPigsNumber(1),
+        silver: getPigsNumber(2),
+        gold: getPigsNumber(3),
+        diamond: getPigsNumber(4),
+      };
+    });
+
+    setPigsDataPerLevel(pigsDataToSet);
+  };
+
+  useEffect(() => {
+    if (!pigsData) return;
+    setCurrentPigCode(pigsData.pig_level);
+    handleFetchReferralPerLevel(pigsData.pig_level);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pigsData]);
 
   useEffect(() => {
     if (!walletAddress && referralId) return;
@@ -70,7 +151,17 @@ export default function FriendsPage() {
 
   const pigsMap = pigsMapNew(t, 0);
 
-  const levels = 3; // mock
+  const currentPig =
+    currentPigCode || currentPigCode === 0
+      ? pigsMap.find((item) => item.code === currentPigCode)
+      : undefined;
+
+  const nextPig =
+    currentPigCode || currentPigCode === 0
+      ? pigsMap.find((item) => item.code === currentPigCode + 1)
+      : undefined;
+
+  const levels = currentPig?.level || 0;
   const invites = [
     // mock
     {
@@ -93,7 +184,7 @@ export default function FriendsPage() {
     },
   ];
 
-  const lockedLevels = [4, 7];
+  const lockedLevels = [(currentPig?.level || 0) + 1, nextPig?.level || 0];
 
   const toggleLevelAccordion = (level: number) => {
     setOpenedAccordion(openedAccordion === level ? undefined : level);
@@ -101,7 +192,7 @@ export default function FriendsPage() {
 
   const EmptyState = (
     <div className="empty-container">
-      <span className="empty">You should invite someone</span>
+      <span className="empty">{t("friendsPage.invitationSomeone")}</span>
     </div>
   );
 
@@ -151,41 +242,42 @@ export default function FriendsPage() {
     );
   };
 
-  const LevelAccordionContent = () => {
+  const LevelAccordionContent = (level: number) => {
+    const targetLevel = pigsDataPerLevel[`level_${level}`];
     return (
       <div className="level-accordion-content">
         <h3 className="slots">
           {t("friendsPage.slots", {
-            current: 1,
-            total: 2,
+            current: targetLevel.slots,
+            total: targetLevel.totalSlots,
           })}
         </h3>
         <h3 className="bronze">
-          {t("friendsPage.bronzePigs", { number: 1 })}
+          {t("friendsPage.bronzePigs", { number: targetLevel.bronze })}
           <span className="your-refs">
-            {" "}
-            ({t("friendsPage.yourRefs", { number: 1 })})
+            {/* {" "}
+            ({t("friendsPage.yourRefs", { number: 1 })}) */}
           </span>
         </h3>
         <h3 className="silver">
-          {t("friendsPage.silverPigs", { number: 1 })}
+          {t("friendsPage.silverPigs", { number: targetLevel.silver })}
           <span className="your-refs">
-            {" "}
-            ({t("friendsPage.yourRefs", { number: 1 })})
+            {/* {" "}
+            ({t("friendsPage.yourRefs", { number: 1 })}) */}
           </span>
         </h3>
         <h3 className="gold">
-          {t("friendsPage.goldPigs", { number: 1 })}
+          {t("friendsPage.goldPigs", { number: targetLevel.gold })}
           <span className="your-refs">
-            {" "}
-            ({t("friendsPage.yourRefs", { number: 1 })})
+            {/* {" "}
+            ({t("friendsPage.yourRefs", { number: 1 })}) */}
           </span>
         </h3>
         <h3 className="diamond">
-          {t("friendsPage.diamondPigs", { number: 1 })}
+          {t("friendsPage.diamondPigs", { number: targetLevel.diamond })}
           <span className="your-refs">
-            {" "}
-            ({t("friendsPage.yourRefs", { number: 1 })})
+            {/* {" "}
+            ({t("friendsPage.yourRefs", { number: 1 })}) */}
           </span>
         </h3>
       </div>
@@ -237,7 +329,7 @@ export default function FriendsPage() {
                     <img src="/imgs/icons/arrow-right.png" alt="arrow-icon" />
                   </div>
                 </div>
-                {openedAccordion === level && <LevelAccordionContent />}
+                {openedAccordion === level && LevelAccordionContent(level)}
               </>
             );
           })}
