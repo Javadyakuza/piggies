@@ -33,3 +33,8 @@ export type ReferralRequest = {
   referrals: string;
   wallet_address: string
 };
+
+
+export type batchReferralsRequest = {
+  wallet_address: string;
+}
