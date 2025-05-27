@@ -16,13 +16,15 @@ async function updatePigPricesInTON() {
 
       const { error } = await supabase
         .from("appData")
-        .update({ price_in_ton: priceInTON.toFixed(2) })
+        .update({ price_in_ton: Number(priceInTON).toFixed(2) })
         .eq("tier", tier);
 
       if (error) {
         console.error(`Failed to update ${tier}:`, error.message);
       } else {
-        console.log(`✅ Updated ${tier} to ${priceInTON.toFixed(2)} TON`);
+        console.log(
+          `✅ Updated ${tier} to ${Number(priceInTON).toFixed(2)} TON`
+        );
       }
     } catch (err) {
       console.error(`❌ Error updating ${tier}:`, err);

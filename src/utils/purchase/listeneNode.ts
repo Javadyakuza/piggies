@@ -110,7 +110,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         );
 
         // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
-        await sendPigApproval(bh, adminWallet, pigShop);
+        await sendPigApproval(bh, adminWallet, pigShop, event.userAddress.toString());
 
         // update users transaction history
         await initTxHistory({
