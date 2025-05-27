@@ -148,7 +148,7 @@ export default async function handler(
     const { data: tx, error } = await supabase
       .from("rewardsHistory")
       .select("wallet_address, reward, referral, related_tx")
-      .eq("tx_hash", tx_hash);
+      .eq("related_tx", tx_hash);
 
     const userData = tx || [];
 

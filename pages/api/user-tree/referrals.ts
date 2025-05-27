@@ -12,7 +12,7 @@ const calculateTotalPossible = (level: number): number => {
   return Math.pow(3, level);
 };
 
-const countReferralsByLevel = async (
+export const countReferralsByLevel = async (
   userId: string
 ): Promise<ReferralLevel[]> => {
   const countTotalUnder = (

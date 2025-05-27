@@ -18,7 +18,7 @@ import { findUsersBountyHunters } from "./bountyHunters";
 import { getAdminWallet } from "../admin";
 import { getTonApiClient, getTonClient } from "../tonClients";
 import { get } from "http";
-import { sendPigApproval } from "../../../scripts/pigApproval";
+import { sendPigApproval } from "../../scripts/pigApproval";
 import {
   getPigs,
   initTxHistory,
@@ -35,7 +35,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
   const tac = getTonApiClient();
   const adminWallet = await getAdminWallet(tc);
   const pigShop = tc.open(
-    PigShop.fromAddress(Address.parse(process.env.PIG_SHOP_ADDRESS!))
+    PigShop.fromAddress(Address.parse(process.env.NEXT_PUBLIC_PIG_SHOP_ADDRESS!))
   );
 
   const txs = await tac.blockchain.getBlockchainAccountTransactions(
@@ -110,7 +110,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         );
 
         // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
-        await sendPigApproval(bh, adminWallet, pigShop);
+        await sendPigApproval(bh, adminWallet, pigShop, event.userAddress.toString());
 
         // update users transaction history
         await initTxHistory({
@@ -161,7 +161,7 @@ export async function listenForever() {
   let lastLt = BigInt(0);
   while (true) {
     lastLt = await catchEvents(
-      Address.parse(process.env.PIG_SHOP_ADDRESS!),
+      Address.parse(process.env.NEXT_PUBLIC_PIG_SHOP_ADDRESS!),
       lastLt
     );
   }

@@ -2,14 +2,15 @@
 import { TonClient, WalletContractV4, WalletContractV5R1, internal, toNano } from "@ton/ton";
 import { beginCell, Address, Dictionary, OpenedContract } from "@ton/core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
-import { PigApproval, PigShop, storePigApproval } from "../build/PigShop/tact_PigShop";
+import { PigApproval, PigShop, storePigApproval } from "../../build/PigShop/tact_PigShop";
 import { bountyHuntersResponse } from "@/models/purchase";
 import { keyPairFromEnv } from "./helpers";
 
 export async function sendPigApproval(
   bh: bountyHuntersResponse,
   wallet: OpenedContract<WalletContractV5R1>,
-  pigShop: OpenedContract<PigShop>
+  pigShop: OpenedContract<PigShop>,
+  mainUser: string,
 ) {
   let secretKey = (await keyPairFromEnv()).secretKey;
 
@@ -17,6 +18,7 @@ export async function sendPigApproval(
     $$type: "PigApproval",
     userBountyHunters: bh.users,
     adminsShares: bh.admins,
+    userAddress: Address.parse(mainUser) 
   };
 
   await pigShop.send(

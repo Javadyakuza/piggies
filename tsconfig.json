@@ -24,7 +24,6 @@
     "plugins": [
       {
         "name": "next"
-        
       }
     ],
     "paths": {
@@ -36,7 +35,9 @@
       ]
     },
     "moduleResolution": "node",
-    "types": ["jest"]
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -45,8 +46,10 @@
     ".next/types/**/*.ts",
     "pages/**/*.ts",
     "pages/api/pigs/distribute.ts.suspended",
-    "jest.config.ts"
-, "src/utils/networkProvider.ts_not_using"  ],
+    "jest.config.ts",
+    "src/utils/networkProvider.ts_not_using",
+    ".env"
+  ],
   "exclude": [
     "node_modules"
   ]

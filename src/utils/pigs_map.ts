@@ -1,3 +1,5 @@
+import { toNano } from "@ton/core";
+
 export const pigsMap = (t: any) => [
   {
     title: "Bronze Pig",

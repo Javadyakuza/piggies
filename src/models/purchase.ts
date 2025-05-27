@@ -1,11 +1,12 @@
 import { Address, Dictionary } from "@ton/ton";
+import { SenderArguments, TonClient, type Sender } from "@ton/ton";
 
 import {
   PigApproval,
   PigApprovalEvent,
   UpgradePig,
 } from "../../wrappers/PigShop";
-import { txHistory } from "./history";
+import { txHistory, UserHistory } from "./history";
 import { PigLevel } from "./pigs";
 
 export type PurchasePigRequest = {
@@ -15,7 +16,7 @@ export type PurchasePigRequest = {
 
 export type PurchasePigResponse = {
   success: boolean;
-  message: txHistory | UpgradePigTx | string;
+  message: txHistory | UpgradePigParams | UserHistory[] |string;
 };
 
 export interface bountyHuntersResponse {
@@ -36,14 +37,7 @@ export interface extendedPigApprovalEvent extends PigApprovalEvent {
   tx_hash: string;
 }
 
-export interface UpgradePigTx {
-  tx: {
-    validUntil: number;
-    messages: {
-      address: string;
-      amount: string;
-      payload: string;
-    }[];
-  };
-  pigLevel: PigLevel;
+export interface UpgradePigParams {
+  amount: bigint;
+  operation: "UpgradePig";
 }

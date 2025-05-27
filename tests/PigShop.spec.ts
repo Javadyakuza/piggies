@@ -1,6 +1,6 @@
 import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
 import { Address, Dictionary, toNano } from "@ton/core";
-import { loadPurchaseEvent, PigShop } from "../wrappers/PigShop";
+import { PigShop } from "../wrappers/PigShop";
 import "@ton/test-utils";
 
 describe("PigShop", () => {
