@@ -4,6 +4,7 @@ message UpgradePig {
   userAddress: Address;
 }
 message PigApproval {
+  userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
@@ -59,7 +60,7 @@ contract PigShop {
     }
     // emit the approval event
     emit(PigApprovalEvent{
-        userAddress: sender(),
+        userAddress: msg.userAddress,
         userBountyHunters: msg.userBountyHunters,
         adminsShares: msg.adminsShares
       }.toCell()

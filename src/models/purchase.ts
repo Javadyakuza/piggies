@@ -6,7 +6,7 @@ import {
   PigApprovalEvent,
   UpgradePig,
 } from "../../wrappers/PigShop";
-import { txHistory } from "./history";
+import { txHistory, UserHistory } from "./history";
 import { PigLevel } from "./pigs";
 
 export type PurchasePigRequest = {
@@ -16,7 +16,7 @@ export type PurchasePigRequest = {
 
 export type PurchasePigResponse = {
   success: boolean;
-  message: txHistory | UpgradePigParams | string;
+  message: txHistory | UpgradePigParams | UserHistory[] |string;
 };
 
 export interface bountyHuntersResponse {

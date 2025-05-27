@@ -39,6 +39,7 @@ export interface txRewardHistoryRequest {
 }
 
 export interface UserHistory {
+  created_at: string;
   fullname: string;
   upgraded_pig_level: PigLevel;
   self_balance_change: number;
