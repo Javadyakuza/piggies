@@ -14,19 +14,22 @@ import { PigLevel } from "@/models/pigs";
  * @swagger
  * /api/history/{walletAddr}:
  *   get:
- *     summary: Retrieve transaction history for a user by wallet address
- *     description: Resolves the user's wallet address from the given wallet address and fetches associated transaction history from the txHistory table.
+ *     summary: Get combined transaction and rewards history for a user
+ *     description: >
+ *       Retrieves a combined, time-sorted history of transactions and rewards for a user 
+ *       identified by their wallet address. Fetches data from the `txHistory` and `rewardsHistory` tables, 
+ *       and returns an array of history objects.
  *     parameters:
- *       - name: walletAddr
- *         in: path
+ *       - in: path
+ *         name: walletAddr
  *         required: true
- *         description: The wallet address of the user
+ *         description: Wallet address of the user to retrieve history for
  *         schema:
  *           type: string
- *           example: "123456789"
+ *           example: "0xabc123...789"
  *     responses:
  *       200:
- *         description: Transaction history successfully retrieved.
+ *         description: User history retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -36,25 +39,41 @@ import { PigLevel } from "@/models/pigs";
  *                   type: boolean
  *                   example: true
  *                 message:
- *                   type: object
- *                   properties:
- *                     tx_id:
- *                       type: string
- *                       example: "abc123"
- *                     tx_hash:
- *                       type: string
- *                       example: "0xdef...456"
- *                     wallet_address:
- *                       type: string
- *                       example: "0xabc...123"
- *                     request_status:
- *                       type: string
- *                       example: "approved"
- *                     upgradedPigLevel:
- *                       type: integer
- *                       example: 2
+ *                   type: array
+ *                   description: Array of transaction and reward history items, sorted by date
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       tx_id:
+ *                         type: string
+ *                         example: "abc123"
+ *                       tx_hash:
+ *                         type: string
+ *                         example: "0xdef456"
+ *                       wallet_address:
+ *                         type: string
+ *                         example: "0xabc123"
+ *                       request_status:
+ *                         type: string
+ *                         example: "approved"
+ *                       upgradedPigLevel:
+ *                         type: integer
+ *                         example: 2
+ *                       reward:
+ *                         type: number
+ *                         example: 3
+ *                       referral:
+ *                         type: string
+ *                         example: "0xreferrer123"
+ *                       related_tx:
+ *                         type: string
+ *                         example: "tx456"
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-05-01T14:48:00.000Z"
  *       400:
- *         description: Invalid or missing wallet address provided.
+ *         description: Invalid or missing wallet address
  *         content:
  *           application/json:
  *             schema:
@@ -67,7 +86,7 @@ import { PigLevel } from "@/models/pigs";
  *                   type: string
  *                   example: "Invalid or missing wallet address"
  *       404:
- *         description: Wallet not connected or user data not found.
+ *         description: Wallet not found or data missing
  *         content:
  *           application/json:
  *             schema:
@@ -80,7 +99,7 @@ import { PigLevel } from "@/models/pigs";
  *                   type: string
  *                   example: "Wallet is not connected !"
  *       405:
- *         description: Method not allowed.
+ *         description: Method not allowed
  *         content:
  *           application/json:
  *             schema:
@@ -93,7 +112,7 @@ import { PigLevel } from "@/models/pigs";
  *                   type: string
  *                   example: "Method not allowed"
  *       500:
- *         description: Internal server error during request.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -106,6 +125,7 @@ import { PigLevel } from "@/models/pigs";
  *                   type: string
  *                   example: "internal server error"
  */
+
 
 export default async function handler(
   req: NextApiRequest,

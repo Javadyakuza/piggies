@@ -17,8 +17,11 @@ export async function getUser(wallet_address: string) {
   return user;
 }
 
-export async function findDepth(wallet_address: string): Promise<number> {
-  let user = await getUser(wallet_address);
+export async function findDepth(
+  upper_user: string,
+  wallet_address: string
+): Promise<number> {
+  let user = await getUser(upper_user);
 
   const referralNum = parseInt("10", 10);
 
@@ -40,12 +43,12 @@ export async function findDepth(wallet_address: string): Promise<number> {
 
   for (const [key, value] of Object.entries(response)) {
     if (typeof value === "object" && "users" in value) {
-      const level = parseInt(key);
+      console.log(value);
       const userFound = value.users.find(
         (user) => user.wallet_address === wallet_address
       );
       if (userFound) {
-        return level;
+        return levelsMap(value.total);
       }
     }
   }
@@ -55,18 +58,19 @@ export async function findDepth(wallet_address: string): Promise<number> {
 export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
   const { data: user, error: fetchError } = await supabase
     .from("txHistory")
-    .select("upgraded_pig_level")
+    .select("upgradedPigLevel")
     .eq("tx_hash", tx_hash)
     .single();
 
   if (fetchError) {
     console.error("Error fetching user:", fetchError);
   }
-  return user?.upgraded_pig_level || 0;
+  return user?.upgradedPigLevel || 0;
 }
 
 export async function prepareUserHistoryObj(tx: any): Promise<any> {
-  if (tx["reward"]) {
+  if (tx.reward) {
+    console.log("tx.referral", tx.referral);
     return {
       created_at: tx.created_at,
       fullname: (await getUser(tx.wallet_address)).fullname,
@@ -74,7 +78,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
         tx.related_tx
       )) as PigLevel,
       self_balance_change: tx.reward,
-      referral_depth: await findDepth(tx.wallet_address),
+      referral_depth: await findDepth(tx.referral, tx.wallet_address),
     };
   } else {
     return {
@@ -86,3 +90,32 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
     };
   }
 }
+
+const levelsMap = (level: number) => {
+  switch (level) {
+    case 3:
+      return 1;
+    case 9:
+      return 2;
+    case 27:
+      return 3;
+    case 81:
+      return 4;
+    case 243:
+      return 5;
+    case 729:
+      return 6;
+    case 2187:
+      return 7;
+    case 6561:
+      return 8;
+    case 19683:
+      return 9;
+    case 59049:
+      return 10;
+    case 177147:
+      return 11;
+    default:
+      return 0;
+  }
+};

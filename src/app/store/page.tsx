@@ -9,16 +9,15 @@ import React from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { pigsMapNew } from "@/utils/pigs_map";
 import axios, { AxiosResponse } from "axios";
-import { getUpgradePigTx } from "../../../scripts/upgradePig";
-import { UpgradePigTx } from "@/models/purchase";
 import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
-import { Address, Sender, SenderArguments, toNano, TonClient } from "@ton/ton";
+import { Address, Sender, SenderArguments } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { getTonClient } from "@/utils/tonClients";
 import { UpgradePigParams } from "@/models/purchase";
+import { getUpgradePigParams } from "@/scripts/upgradePig";
 
 type PigData = {
   pig_level: number;
