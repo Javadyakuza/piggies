@@ -235,10 +235,11 @@ export default async function handler(
     }
 
     return res.status(200).json({ success: true, message: histories });
+
   } catch (error) {
     console.error("Error fetching user:", error);
     return res
       .status(500)
-      .json({ success: false, message: "internal server error" });
+      .json({ success: false, message: [] });
   }
 }
