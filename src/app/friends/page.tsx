@@ -173,6 +173,7 @@ export default function FriendsPage() {
       }
     };
     fetchBatchReferrals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
 
   const refLink = generateRefLink(referralId);

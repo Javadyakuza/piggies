@@ -41,64 +41,6 @@ export default function HistoryPage() {
 
     fetchRewards();
   }, [walletAddress]);
-  // const histories = [
-  //   {
-  //     id: 1,
-  //     name: "Andrew",
-  //     level: 1,
-  //     pig: 2,
-  //     date: "2023-01-01",
-  //     balance: 3,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jack",
-  //     level: 1,
-  //     pig: 1,
-  //     date: "2023-01-02",
-  //     balance: 2,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "John",
-  //     level: 2,
-  //     pig: 3,
-  //     date: "2023-01-03",
-  //     balance: 1,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Jack",
-  //     level: 1,
-  //     pig: 1,
-  //     date: "2023-01-04",
-  //     balance: 2,
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "John",
-  //     level: 2,
-  //     pig: 3,
-  //     date: "2023-01-05",
-  //     balance: 1,
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "Jack",
-  //     level: 1,
-  //     pig: 1,
-  //     date: "2023-01-06",
-  //     balance: 2,
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "John",
-  //     level: 2,
-  //     pig: 3,
-  //     date: "2023-01-07",
-  //     balance: 1,
-  //   },
-  // ];
 
   const emptyState = (
     <div className="empty-state-container">
@@ -144,9 +86,11 @@ export default function HistoryPage() {
                         {history.fullname}{" "}
                         <span className="level">
                           (
-                          {t("historiesPage.level", {
-                            level: history.referral_depth,
-                          })}
+                          {history.self_balance_change
+                            ? t("historiesPage.level", {
+                                level: history.referral_depth,
+                              })
+                            : t("historiesPage.you")}
                           )
                         </span>
                       </h2>
@@ -165,10 +109,14 @@ export default function HistoryPage() {
                     </div>
                     <div className="footer">
                       <h2>
-                        {t("historiesPage.balance")}:{" "}
-                        <span className="balance">
-                          +{history.self_balance_change} TON
-                        </span>
+                        {(history.self_balance_change && (
+                          <>
+                            {t("historiesPage.balance")}:{" "}
+                            <span className="balance">
+                              +{history.self_balance_change} TON
+                            </span>
+                          </>
+                        )) || <></>}
                       </h2>
                     </div>
                   </div>
