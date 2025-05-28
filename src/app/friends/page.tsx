@@ -47,34 +47,37 @@ type ReferralLevelResponse = {
 };
 
 export type BatchReferrals = {
-  id: number;
-  telegram_id: string;
-  inviter_id: number;
-  parent_id: number;
-  created_at: string;
-  referral_id: string;
-  wallet_address: string;
-  current_pig: number;
-  fullname: string;
-  piggy_bank_balance: number;
-  user_type: number;
-  pig_address: string;
+  [level: string]: {
+    id: number;
+    telegram_id: string;
+    inviter_id: number;
+    parent_id: number;
+    created_at: string;
+    referral_id: string;
+    wallet_address: string;
+    current_pig: number;
+    fullname: string;
+    piggy_bank_balance: number;
+    user_type: number;
+    pig_address: string;
+  }[];
 };
 
 export default function FriendsPage() {
   const t = useTranslations("i18n");
   const [referralId, setReferralId] = useState("");
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
-  const [rawReferrals, setRawReferrals] = useState<ReferralLevelResponse>({});
   const [openedAccordion, setOpenedAccordion] = useState<
     "ref" | number | undefined
   >();
   const [pigsData, setPigsData] = useState<PigData>();
   const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
-  const [batchReferrals, setBatchReferrals] = useState<BatchReferrals[]>([]);
+  const [batchReferrals, setBatchReferrals] = useState<BatchReferrals>({});
 
   const wallet = useTonWallet();
-  const walletAddress = wallet?.account?.address;
+  const walletAddress =
+    "0:656086d563785e2017419371ee481604a931dd019dc8e0111490664af348dc4f";
+  // wallet?.account?.address;
 
   const initDataState = useSignal(initData.state);
   const userTelegramId = initDataState?.user?.id;
@@ -112,7 +115,6 @@ export default function FriendsPage() {
     );
 
     const referrals = response.data;
-    setRawReferrals(referrals);
 
     Object.keys(referrals).forEach((key) => {
       const referral = referrals[key];
@@ -163,8 +165,8 @@ export default function FriendsPage() {
 
     const fetchBatchReferrals = async () => {
       try {
-        const response: AxiosResponse<BatchReferrals[]> = await axios.get(
-          `/api/user-tree/batchReferrals?wallet_address=${walletAddress}`
+        const response: AxiosResponse<BatchReferrals> = await axios.get(
+          `/api/user-tree/referrals?wallet_address=${walletAddress}&referrals=batch&telegram_id=${userTelegramId}`
         );
         const referrals = response.data;
         setBatchReferrals(referrals);
@@ -214,12 +216,17 @@ export default function FriendsPage() {
     return pigsMap.find((item) => item.code === code);
   };
 
+  const formattedReferrals = Object.entries(batchReferrals).flatMap((entry) => {
+    const [key, value] = entry;
+    return value.flatMap((v) => ({ ...v, level: key }));
+  });
+
   const RefAccordionContent = () => {
     return (
       <div className="ref-accordion-content">
-        {batchReferrals.length ? (
+        {formattedReferrals.length ? (
           <div className="invites-container">
-            {batchReferrals.map((invite, i) => {
+            {formattedReferrals.map((invite, i) => {
               const targetPig = findPig(invite.current_pig);
               const pigClassName = targetPig?.title
                 .replace(" Pig", "")
@@ -230,13 +237,13 @@ export default function FriendsPage() {
                     <div className="head">
                       <h2>
                         {invite.fullname}{" "}
-                        {/* <span className="level">
+                        <span className="level">
                           (
                           {t("friendsPage.levelReferrals", {
-                            level: invite.id,
+                            level: invite.level,
                           })}
                           )
-                        </span> */}
+                        </span>
                       </h2>
                     </div>
                     <div className="footer">
@@ -244,7 +251,10 @@ export default function FriendsPage() {
                     </div>
                   </div>
                   <div className="pig-pic">
-                    <img src={targetPig?.cover} alt="pig-cover" />
+                    <img
+                      src={targetPig?.cover || "/imgs/pigs/placeholder.png"}
+                      alt="pig-cover"
+                    />
                   </div>
                 </div>
               );
