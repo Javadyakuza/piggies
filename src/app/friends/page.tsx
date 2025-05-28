@@ -75,9 +75,7 @@ export default function FriendsPage() {
   const [batchReferrals, setBatchReferrals] = useState<BatchReferrals>({});
 
   const wallet = useTonWallet();
-  const walletAddress =
-    "0:656086d563785e2017419371ee481604a931dd019dc8e0111490664af348dc4f";
-  // wallet?.account?.address;
+  const walletAddress = wallet?.account?.address;
 
   const initDataState = useSignal(initData.state);
   const userTelegramId = initDataState?.user?.id;
