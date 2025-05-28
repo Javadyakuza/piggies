@@ -55,7 +55,8 @@
       "level": "Уровень {level}",
       "got": "Получено",
       "balance": "Баланс",
-      "reachedEnd": "Вы достигли конца."
+      "reachedEnd": "Вы достигли конца.",
+      "you": "ты"
     },
     "profilePage": {
       "connectedWallet": "Подключенный кошелек"
