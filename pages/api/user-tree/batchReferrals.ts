@@ -118,9 +118,9 @@ export default async function handler(
     const { data: referrals, error: referralsError } = await supabase
       .from("users")
       .select()
-      .eq("inviter_id", id.id)
-      ;
+      .eq("inviter_id", id.id);
 
+      
     if (referralsError) {
       throw new Error(referralsError.message);
     }

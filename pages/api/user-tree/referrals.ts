@@ -114,10 +114,16 @@ export const countReferralsByLevel = async (
  * @swagger
  * /api/user-tree/referrals:
  *   get:
- *     summary: Fetch referral data by Telegram ID and wallet address
- *     description: Retrieves referral tree data for a user. Returns levels 1–N based on the `referrals` query param (up to level 11). Use "0" to fetch only the user's referral ID.
+ *     summary: Fetch referral tree data for a user
+ *     description: >
+ *       Returns the referral data for a user based on their Telegram ID and wallet address.
+ *       The `referrals` query param controls depth:
+ *
+ *       - `0` returns only the user's `referral_id`.
+ *       - `1` to `11` returns level-by-level referral stats.
+ *       - `"batch"` returns a simplified map of levels to user arrays.
  *     parameters:
- *       - name: telegramId
+ *       - name: telegram_id
  *         in: query
  *         required: true
  *         description: Telegram ID of the user
@@ -127,7 +133,7 @@ export const countReferralsByLevel = async (
  *       - name: referrals
  *         in: query
  *         required: true
- *         description: Referral depth level (0–11)
+ *         description: Depth of referrals to return (0–11 or "batch")
  *         schema:
  *           type: string
  *           example: "3"
@@ -146,13 +152,13 @@ export const countReferralsByLevel = async (
  *             schema:
  *               oneOf:
  *                 - type: object
- *                   description: Returned when referrals = 0
+ *                   description: Returned when referrals=0
  *                   properties:
  *                     referral_id:
  *                       type: string
  *                       example: "ref123"
  *                 - type: object
- *                   description: Returned when referrals > 0
+ *                   description: Returned when referrals=1–11
  *                   additionalProperties:
  *                     type: object
  *                     properties:
@@ -175,19 +181,40 @@ export const countReferralsByLevel = async (
  *                               example: "EQBc...abc"
  *                             fullname:
  *                               type: string
- *                               example: "John Doe"
+ *                               example: "Jane Doe"
  *                             current_pig:
  *                               type: integer
- *                               example: 0
+ *                               example: 1
  *                             inviter_id:
  *                               type: string
- *                               example: "12"
+ *                               example: "abc456"
  *                             total_invited:
  *                               type: integer
- *                               example: 3
+ *                               example: 4
  *                             total_under:
  *                               type: integer
- *                               example: 7
+ *                               example: 10
+ *                 - type: object
+ *                   description: Returned when referrals="batch"
+ *                   additionalProperties:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         telegram_id:
+ *                           type: string
+ *                         wallet_address:
+ *                           type: string
+ *                         fullname:
+ *                           type: string
+ *                         current_pig:
+ *                           type: integer
+ *                         inviter_id:
+ *                           type: string
+ *                         total_invited:
+ *                           type: integer
+ *                         total_under:
+ *                           type: integer
  *       400:
  *         description: Missing or invalid query parameters
  *         content:
@@ -219,7 +246,7 @@ export const countReferralsByLevel = async (
  *                   type: string
  *                   example: "Method not allowed"
  *       500:
- *         description: Server error
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -229,7 +256,6 @@ export const countReferralsByLevel = async (
  *                   type: string
  *                   example: "Failed to fetch referrals"
  */
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -258,7 +284,7 @@ export default async function handler(
       .json({ error: "Invalid or missing referrals wallet address parameter" });
   }
 
-  const referralsNum = parseInt(referrals, 10);
+  const referralsNum = parseInt(referrals == "batch" ? "11" : referrals, 10);
   if (isNaN(referralsNum) || referralsNum < 0 || referralsNum > 11) {
     return res
       .status(400)
@@ -304,7 +330,16 @@ export default async function handler(
       };
       totalUnder += level.count;
     }
-
+    if (referrals == "batch") {
+      let users = new Map<Number, User[]>();
+      let counter = 1;
+      Object.entries(response).forEach(([_, value]) => {
+        users.set(counter, value.users);
+        counter += 1;
+      });
+      console.log(users);
+      return res.status(200).json(Object.fromEntries(users));
+    }
     return res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching referrals:", error);

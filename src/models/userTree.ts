@@ -16,7 +16,7 @@ export interface ReferralLevel {
 }
 
 export interface ReferralResponse {
-  [key: string]: ReferralLevel | number;
+  [key: string]: ReferralLevel;
 }
 
 export interface SelfReferralId {
