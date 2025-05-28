@@ -29,7 +29,7 @@ type DataPerLevel = Record<
   }
 >;
 
-type ReferralResponse = {
+type ReferralLevelResponse = {
   [key: string]: {
     count: number;
     total: number;
@@ -46,15 +46,32 @@ type ReferralResponse = {
   };
 };
 
+export type BatchReferrals = {
+  id: number;
+  telegram_id: string;
+  inviter_id: number;
+  parent_id: number;
+  created_at: string;
+  referral_id: string;
+  wallet_address: string;
+  current_pig: number;
+  fullname: string;
+  piggy_bank_balance: number;
+  user_type: number;
+  pig_address: string;
+};
+
 export default function FriendsPage() {
   const t = useTranslations("i18n");
   const [referralId, setReferralId] = useState("");
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
+  const [rawReferrals, setRawReferrals] = useState<ReferralLevelResponse>({});
   const [openedAccordion, setOpenedAccordion] = useState<
     "ref" | number | undefined
   >();
   const [pigsData, setPigsData] = useState<PigData>();
   const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
+  const [batchReferrals, setBatchReferrals] = useState<BatchReferrals[]>([]);
 
   const wallet = useTonWallet();
   const walletAddress = wallet?.account?.address;
@@ -90,11 +107,12 @@ export default function FriendsPage() {
     if (!walletAddress || !pig) return;
     const pigsDataToSet: DataPerLevel = {};
 
-    const response: AxiosResponse<ReferralResponse> = await axios.get(
+    const response: AxiosResponse<ReferralLevelResponse> = await axios.get(
       `/api/user-tree/referrals?wallet_address=${walletAddress}&telegram_id=${userTelegramId}&referrals=${pig.level}`
     );
 
     const referrals = response.data;
+    setRawReferrals(referrals);
 
     Object.keys(referrals).forEach((key) => {
       const referral = referrals[key];
@@ -140,6 +158,23 @@ export default function FriendsPage() {
     fetchUserData();
   }, [walletAddress, referralId]);
 
+  useEffect(() => {
+    if (!walletAddress) return;
+
+    const fetchBatchReferrals = async () => {
+      try {
+        const response: AxiosResponse<BatchReferrals[]> = await axios.get(
+          `/api/user-tree/batchReferrals?wallet_address=${walletAddress}`
+        );
+        const referrals = response.data;
+        setBatchReferrals(referrals);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+    fetchBatchReferrals();
+  }, [walletAddress]);
+
   const refLink = generateRefLink(referralId);
 
   const handleCopyAddress = () => {
@@ -162,27 +197,6 @@ export default function FriendsPage() {
       : undefined;
 
   const levels = currentPig?.level || 0;
-  const invites = [
-    // mock
-    {
-      id: 1,
-      name: "Andrew",
-      level: 1,
-      pig: 2,
-    },
-    {
-      id: 2,
-      name: "Jack",
-      level: 1,
-      pig: 1,
-    },
-    {
-      id: 3,
-      name: "John",
-      level: 2,
-      pig: 3,
-    },
-  ];
 
   const lockedLevels = [(currentPig?.level || 0) + 1, nextPig?.level || 0];
 
@@ -199,13 +213,14 @@ export default function FriendsPage() {
   const findPig = (code: number) => {
     return pigsMap.find((item) => item.code === code);
   };
+
   const RefAccordionContent = () => {
     return (
       <div className="ref-accordion-content">
-        {invites.length ? (
+        {batchReferrals.length ? (
           <div className="invites-container">
-            {invites.map((invite, i) => {
-              const targetPig = findPig(invite.pig);
+            {batchReferrals.map((invite, i) => {
+              const targetPig = findPig(invite.current_pig);
               const pigClassName = targetPig?.title
                 .replace(" Pig", "")
                 .toLowerCase();
@@ -214,14 +229,14 @@ export default function FriendsPage() {
                   <div className="details">
                     <div className="head">
                       <h2>
-                        {invite.name}{" "}
-                        <span className="level">
+                        {invite.fullname}{" "}
+                        {/* <span className="level">
                           (
                           {t("friendsPage.levelReferrals", {
-                            level: invite.level,
+                            level: invite.id,
                           })}
                           )
-                        </span>
+                        </span> */}
                       </h2>
                     </div>
                     <div className="footer">
