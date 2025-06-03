@@ -8,24 +8,14 @@ export async function findUsersBountyHunters(
 ): Promise<bountyHuntersResponse> {
   try {
     // Step 1: Fetch the user by telegramId to get their ID
-    const { data: telegramId, error: tgIdError } = await supabase
+    const { data: user, error: tgIdError } = await supabase
       .from("users")
-      .select("telegram_id")
+      .select()
       .eq("wallet_address", walletAddress)
       .single();
 
-    if (tgIdError || !telegramId) {
-      throw new Error("User not found");
-    }
-
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("id, parent_id")
-      .eq("telegram_id", telegramId)
-      .single();
-
-    if (userError || !user) {
-      throw new Error("User not found");
+    if (tgIdError || !user) {
+      throw new Error("User not found via Addr");
     }
 
     const upperUsers: User[] = [];
@@ -78,29 +68,35 @@ export async function findUsersBountyHunters(
         });
       }
     }
-    const { data: users, error: usersError } = await supabase
+
+    const { data: wholeAdmins, error: usersError } = await supabase
       .from("users")
       .select(
         "id, telegram_id, wallet_address, current_pig, fullname, inviter_id, user_type"
       )
       .eq("user_type", 0);
 
-    if (!users) {
+    if (!wholeAdmins) {
       console.error("No Admins found");
       throw new Error("No Admins found");
     }
     // Return the upper users in the order they were found (closest to furthest)
-    for (let user of users) {
-      admins.push({ ...user, total_invited: await calcTotalInvited(user.id) });
+    for (const admin of wholeAdmins) {
+      admins.push({
+        ...admin,
+        total_invited: await calcTotalInvited(admin.id),
+      });
     }
     let usersDic = Dictionary.empty<Address, bigint>();
     let adminsDic = Dictionary.empty<Address, bigint>();
-    upperUsers.map((user) =>
-      usersDic.set(Address.parse(user.wallet_address), BigInt(3))
-    );
-    admins.map((admin) =>
-      adminsDic.set(Address.parse(admin.wallet_address), BigInt(2))
-    );
+    upperUsers.map((user) => {
+      console.log(user);
+      return usersDic.set(Address.parse(user.wallet_address), BigInt(3));
+    });
+    admins.map((admin) => {
+      console.log(admin);
+      adminsDic.set(Address.parse(admin.wallet_address), BigInt(2));
+    });
     return {
       users: usersDic,
       admins: adminsDic,
@@ -116,10 +112,7 @@ async function calcTotalInvited(userId: string): Promise<number> {
     const totalInvited =
       (await supabase.from("users").select("id").eq("inviter_id", userId)).data
         ?.length || 0;
-    if (!totalInvited) {
-      console.error("how can he earn rewards without invited people ???!!!");
-      throw new Error(`No invites found ${userId}`);
-    }
+
     return totalInvited;
   } catch (error) {
     console.error("Error calculating total invited:", error);

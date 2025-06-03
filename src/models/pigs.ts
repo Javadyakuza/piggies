@@ -15,4 +15,4 @@ export interface UserPigs {
   buyable_pigs: PigLevels;
 }
 
-export type PigLevel = 1 | 2 | 3 | 4;
+export type PigLevel = 0 | 1 | 2 | 3 | 4 ;

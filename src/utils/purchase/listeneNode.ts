@@ -89,18 +89,18 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
   if (event && event.userAddress) {
     // finding the relative user and its reward receiver
     let bh: bountyHuntersResponse = await findUsersBountyHunters(
-      event.userAddress.toString()
+      event.userAddress.toRawString()
     );
-    let pig_data = await getPigs(event.userAddress.toString());
+    let pig_data = await getPigs(event.userAddress.toRawString());
     // identifying the event type
     if (event.$$type == "UpgradePig") {
       let tx_id = TxId.create(
-        event.userAddress.toString(),
+        event.userAddress.toRawString(),
         pig_data.old_pig_level
       );
       if (
         !(await isDuplicatePurchase(
-          event.userAddress.toString(),
+          event.userAddress.toRawString(),
           pig_data.old_pig_level
         ))
       ) {
@@ -110,13 +110,13 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         );
 
         // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
-        await sendPigApproval(bh, adminWallet, pigShop, event.userAddress.toString());
+        await sendPigApproval(bh, adminWallet, pigShop, event.userAddress.toRawString());
 
         // update users transaction history
         await initTxHistory({
           tx_id,
           tx_hash: event.tx_hash,
-          wallet_address: event.userAddress.toString(),
+          wallet_address: event.userAddress.toRawString(),
           request_status: "PigUpgradePending",
           upgradedPigLevel: pig_data.new_pig_level,
         });
@@ -131,16 +131,16 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       await updateBountyHuntersBalances(bh);
 
       // the user current pig should be upgraded
-      await upgradeUserPig(event.userAddress.toString());
+      await upgradeUserPig(event.userAddress.toRawString());
 
       // update users transaction history
       await updateTxHistory({
         tx_id: TxId.create(
-          event.userAddress.toString(),
+          event.userAddress.toRawString(),
           pig_data.old_pig_level
         ),
         tx_hash: event.tx_hash,
-        wallet_address: event.userAddress.toString(),
+        wallet_address: event.userAddress.toRawString(),
         request_status: "PigPurchaseApproved",
         upgradedPigLevel: pig_data.new_pig_level,
       });

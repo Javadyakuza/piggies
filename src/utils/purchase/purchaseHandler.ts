@@ -3,6 +3,7 @@ import { txHistory, TxId } from "@/models/history";
 import { supabase } from "../supebase";
 import { PigLevel } from "@/models/pigs";
 import { isDuplicatePurchase } from "./dbOps";
+import { Address } from "@ton/core";
 
 // export const client = createClient(); // not used yet
 
@@ -16,8 +17,9 @@ export async function handlePigPurchase(
       message: "your pig is already maxed out",
     };
   }
-  let tx_id = TxId.create(userAddress.toString(), pigLevel);
-  let isDuplicate = await isDuplicatePurchase(userAddress, pigLevel);
+  let userAddr = Address.parse(userAddress);
+  let tx_id = TxId.create(userAddr.toRawString(), pigLevel);
+  let isDuplicate = await isDuplicatePurchase(userAddr.toRawString(), pigLevel);
 
   if (isDuplicate) {
     return {

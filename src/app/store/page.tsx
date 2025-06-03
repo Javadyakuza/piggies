@@ -13,11 +13,12 @@ import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
-import { Address, Sender, SenderArguments } from "@ton/ton";
+import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { getTonClient } from "@/utils/tonClients";
 import { UpgradePigParams } from "@/models/purchase";
 import { getUpgradePigParams } from "@/scripts/upgradePig";
+import { useSignal, initData } from "@telegram-apps/sdk-react";
 
 type PigData = {
   pig_level: number;
@@ -33,11 +34,15 @@ export default function StorePage() {
   const [tonPrice, setTonPrice] = useState(0);
   const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
 
+  const initDataState = useSignal(initData.state);
+  const userTelegramId = initDataState?.user?.id;
+
   const [wallet] = useTonConnectUI();
   const tonClient = getTonClient();
 
   const walletAddress = wallet?.account?.address;
   const pigsMap = pigsMapNew(t, tonPrice);
+
   const txRequestLifetime = Date.now() + 3 * 60 * 1000; // 3 minutes for user to approve
 
   const handlePurchasePig = async () => {
@@ -51,7 +56,7 @@ export default function StorePage() {
             messages: [
               {
                 address: args.to.toString(),
-                amount: args.value.toString(),
+                amount: toNano("0.1").toString(), // args.value.toString(),
                 payload: args.body?.toBoc()?.toString("base64"),
               },
             ],
@@ -84,8 +89,10 @@ export default function StorePage() {
       console.log("Waiting for transaction to be confirmed...");
 
       setIsPurchaseInProgress(true);
+
       await axios.post(`/api/pigs/upgradePig`, {
         wallet_address: walletAddress,
+        telegram_id: userTelegramId,
       });
 
       // show the rest to the user
@@ -97,6 +104,7 @@ export default function StorePage() {
     await fetchPigsData();
 
     setIsPurchaseInProgress(false);
+    setIsConfirmModalOpen(false);
   };
 
   const fetchTonPrice = async () => {
@@ -397,22 +405,29 @@ export default function StorePage() {
           </div>
         </div>
         <div className="action-container">
-          <div className="btns">
-            <button
-              onClick={handlePurchasePig}
-              className="action-btn purchase-btn"
-            >
-              <div>
-                <span className="price">{nextPig?.priceInTon}</span> TON
-              </div>
-            </button>
-            <button
-              onClick={toggleConfirmModal}
-              className="action-btn close-btn"
-            >
-              <div>{t("storePage.cancel")}</div>
-            </button>
-          </div>
+          {isPurchaseInProgress ? (
+            <div className="loader-container">
+              <div className="loader" />
+              <span>{t("storePage.transactionInProgress")}</span>
+            </div>
+          ) : (
+            <div className="btns">
+              <button
+                onClick={handlePurchasePig}
+                className="action-btn purchase-btn"
+              >
+                <div>
+                  <span className="price">{nextPig?.priceInTon}</span> TON
+                </div>
+              </button>
+              <button
+                onClick={toggleConfirmModal}
+                className="action-btn close-btn"
+              >
+                <div>{t("storePage.cancel")}</div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

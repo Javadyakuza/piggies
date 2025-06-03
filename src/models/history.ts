@@ -1,11 +1,14 @@
-import { hash } from "crypto";
+import crypto from "crypto";
 import { PigApprovalEvent, UpgradePig } from "../../wrappers/PigShop";
 import { PigLevel } from "./pigs";
 export type txId = string;
 
 export class TxId {
   static create(wallet_address: string, current_pig_level: number): txId {
-    return hash("sha256", `${wallet_address}_${current_pig_level}`, "hex");
+    
+    const data = `${wallet_address}_${current_pig_level}`;
+    const hash = crypto.createHash("sha256").update(data).digest("hex");
+    return hash;
   }
 }
 
@@ -34,7 +37,7 @@ export interface rewardsHistoryRequest {
 }
 
 export interface txRewardHistoryRequest {
-  tx_hash : string; 
+  tx_hash: string;
   telegram_id: string;
 }
 

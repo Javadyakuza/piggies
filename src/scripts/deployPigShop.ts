@@ -19,6 +19,6 @@ export async function run(provider: NetworkProvider) {
 
   console.log(
     "PigShop contract deployed successfully at:",
-    pigShop.address.toString()
+    pigShop.address.toRawString()
   );
 }

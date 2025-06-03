@@ -32,6 +32,7 @@
       "numberOfLevels": "{level} Levels",
       "numberOfSlots": "{slots} Slots",
       "withdraw": "Withdraw",
+      "transactionInProgress": "Transaction in progress ...",
       "tonCapacity": "{capacity} TON Capacity",
       "cancel": "Cancel",
       "toUnlock": "to unlock",

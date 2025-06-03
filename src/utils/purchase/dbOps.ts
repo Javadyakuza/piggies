@@ -14,51 +14,70 @@ export const updateBountyHuntersBalances = async (
 ) => {
   const { data: users, error: fetchUsersError } = await supabase
     .from("users")
-    .select("id, pig_balance")
+    .select("id, piggy_bank_balance")
     .in(
       "wallet_address",
-      bh.users.keys().map((userAddr) => userAddr.toString())
+      bh.users.keys().map((userAddr) => userAddr.toRawString())
     );
   if (fetchUsersError) throw fetchUsersError;
 
   const { data: admins, error: fetchAdminsError } = await supabase
     .from("users")
-    .select("pig_balance")
+    .select("id, piggy_bank_balance")
     .in(
       "wallet_address",
-      bh.users.keys().map((adminAddr) => adminAddr.toString())
+      bh.users.keys().map((adminAddr) => adminAddr.toRawString())
     );
 
   if (fetchAdminsError) throw fetchAdminsError;
 
   const usersUpdates = users.map((user) => ({
     id: user.id,
-    pig_balance: Number(user.pig_balance ?? 0) + 3,
+    pig_balance: Number(user.piggy_bank_balance ?? 0) + 3,
   }));
 
-  const adminsUpdates = users.map((admin) => ({
+  const adminsUpdates = admins.map((admin) => ({
     id: admin.id,
-    pig_balance: Number(admin.pig_balance ?? 0) + 2,
+    pig_balance: Number(admin.piggy_bank_balance ?? 0) + 2,
   }));
 
   // 3. Send updates in bulk (same `pig_balance` for all is fine)
-  const { error: updateError } = await supabase.rpc("batch_update_balances", {
-    updates: usersUpdates.concat(adminsUpdates),
-  });
+  for (const update of usersUpdates.concat(adminsUpdates)) {
+    const { error } = await supabase
+      .from("users")
+      .update({ piggy_bank_balance: update.pig_balance })
+      .eq("id", update.id);
 
-  if (updateError) throw updateError;
+    if (error) {
+      console.error(`Failed to update user ${update.id}:`, error);
+      // You can choose to continue or stop here
+    }
+  }
 };
 
 export const upgradeUserPig = async (userAddress: string) => {
-  const { data: current_pig, error: userError } = await supabase
+  const { data, error: pigError } = await supabase
     .from("users")
     .select("current_pig")
     .eq("wallet_address", userAddress)
     .single();
 
+  if (pigError || !data) {
+    console.error(`Failed to fetch user ${userAddress}:`, pigError);
+    return;
+  }
+
+  let currentPig = Number(data.current_pig ?? 0);
+
+  // Cap at 4
+  if (currentPig >= 4) {
+    console.log(`User ${userAddress} is already at max pig level.`);
+    return;
+  }
+
   const { error: updateError } = await supabase
     .from("users")
-    .update({ current_pig: current_pig?.current_pig ?? 0 + 1 })
+    .update({ current_pig: currentPig + 1 })
     .eq("wallet_address", userAddress);
 
   if (updateError) {
@@ -77,9 +96,10 @@ export const getPigs = async (
 
   return {
     old_pig_level: current_pig?.current_pig ?? 0,
-    new_pig_level: current_pig?.current_pig ?? 0 + 1,
+    new_pig_level: (current_pig?.current_pig ?? 0) + 1,
   };
 };
+
 export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
   const { data: tx, error: insertError } = await supabase
     .from("txHistory")
@@ -88,7 +108,7 @@ export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
     .single();
 
   if (insertError) {
-    console.error("Wallet update error:", insertError);
+    console.error("Wallet update error (initTxHistory):", insertError);
   }
   return tx as txHistory;
 };
@@ -99,11 +119,12 @@ export const updateTxHistory = async (
   const { data: tx, error: insertError } = await supabase
     .from("txHistory")
     .update(txData)
+    .eq("tx_hash", txData.tx_hash)
     .select()
     .single();
 
   if (insertError) {
-    console.error("Wallet update error:", insertError);
+    console.error("Wallet update error(updateTxHistory):", insertError);
   }
   return tx as txHistory;
 };
@@ -115,9 +136,9 @@ export async function updateReferralsRewardsHistory(
     const { data: tx, error: insertError } = await supabase
       .from("rewardsHistory")
       .insert({
-        wallet_address: user.toString(),
-        reward: event_data.userBountyHunters.get(user) ?? 3,
-        referral: event_data.userAddress.toString(),
+        wallet_address: user.toRawString(),
+        reward: Number(event_data.userBountyHunters.get(user)) ?? 3,
+        referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
       })
       .select()
@@ -132,9 +153,9 @@ export async function updateReferralsRewardsHistory(
     const { data: tx, error: insertError } = await supabase
       .from("rewardsHistory")
       .insert({
-        wallet_address: admin.toString(),
-        reward: event_data.adminsShares.get(admin) ?? 3,
-        referral: event_data.userAddress.toString(),
+        wallet_address: admin.toRawString(),
+        reward: Number(event_data.adminsShares.get(admin)) ?? 2,
+        referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
       })
       .select()
@@ -151,7 +172,7 @@ export async function isDuplicatePurchase(
   userAddress: string,
   pigLevel: PigLevel
 ): Promise<boolean> {
-  let tx_id = TxId.create(userAddress.toString(), pigLevel);
+  let tx_id = TxId.create(userAddress, pigLevel);
   const { data: req, error: fetchError } = await supabase
     .from("txHistory")
     .select("request_status")
