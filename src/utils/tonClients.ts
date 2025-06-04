@@ -4,7 +4,6 @@ import { TonClient } from "@ton/ton";
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET === "true";
 
 export function getTonApiClient(): TonApiClient {
-  console.log(process.env.NEXT_PUBLIC_TONAPI_API_KEY);
   return new TonApiClient({
     baseUrl: `https://${TESTNET ? "testnet." : ""}tonapi.io`,
     apiKey: process.env.NEXT_PUBLIC_TONAPI_API_KEY,

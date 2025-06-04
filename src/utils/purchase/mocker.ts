@@ -18,10 +18,8 @@ import { PigLevel } from "@/models/pigs";
 import { init } from "@/core/init";
 
 export async function mockPigPurchase(wallet_address: string) {
-  console.log(wallet_address);
   let walletAddr = Address.parse(wallet_address).toRawString();
   let bh: bountyHuntersResponse = await findUsersBountyHunters(walletAddr);
-  console.log(bh);
 
   let pig_data = await getPigs(walletAddr);
   

@@ -110,7 +110,7 @@ export default async function handler(
   // Optional: Check if user with this telegram_id already exists to prevent duplicates
   const { data: user } = await supabase
     .from("users")
-    .select("")
+    .select()
     .eq("wallet_address", wallet_address)
     .maybeSingle();
 
@@ -161,14 +161,7 @@ export default async function handler(
     inviterId = genesisUser.id;
   }
 
-  console.log({
-    telegram_id: telegram_id,
-    inviter_id: inviterId,
-    parent_id: parentId,
-    fullname: fullname,
-    wallet_address: wallet_address,
-    user_type: 1,
-  });
+
   const { data: insertData, error } = await supabase
     .from("users")
     .insert({

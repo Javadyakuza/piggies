@@ -88,7 +88,7 @@ export default async function handler(
     }
     return res.status(200).json(pigData);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching user(pigs/app-data):", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }

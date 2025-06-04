@@ -5,16 +5,21 @@ import { error } from "console";
 import { PigLevel } from "@/models/pigs";
 
 export async function getUser(wallet_address: string) {
-  const { data: user, error: fetchError } = await supabase
+  const { data, error: fetchError } = await supabase
     .from("users")
-    .select()
-    .eq("wallet_address", wallet_address)
+    .select("id, wallet_address, fullname")
+    .eq("wallet_address", wallet_address.trim().toLowerCase())
     .single();
 
   if (fetchError) {
-    console.error("Error fetching user:", fetchError);
+    console.error(
+      "Error fetching user(getUser):",
+      fetchError.message,
+      wallet_address.trim().toLowerCase()
+    );
   }
-  return user;
+
+  return data!;
 }
 
 export async function findDepth(
@@ -23,16 +28,25 @@ export async function findDepth(
 ): Promise<number> {
   let user = await getUser(upper_user);
 
+  if (!user?.wallet_address) {
+    console.error("❌ No wallet_address found for upper_user");
+    throw new Error("Invalid upper_user (no wallet address)");
+  }
+
   const referralNum = parseInt("10", 10);
 
-  let referralLevels = await countReferralsByLevel(user.id);
+  let referralLevels = await countReferralsByLevel(user.wallet_address);
 
   let response: ReferralResponse = {};
   let totalUnder = 0;
 
-  // Loop through levels based on referralsNum
   for (let i = 0; i < referralNum; i++) {
     const level = referralLevels[i];
+    if (!level) {
+      console.warn(`⚠️ Level ${i + 1} is undefined.`);
+      continue;
+    }
+
     response[`level_${i + 1}`] = {
       count: level.count,
       total: level.total,
@@ -43,15 +57,18 @@ export async function findDepth(
 
   for (const [key, value] of Object.entries(response)) {
     if (typeof value === "object" && "users" in value) {
-      console.log(value);
       const userFound = value.users.find(
         (user) => user.wallet_address === wallet_address
       );
+
       if (userFound) {
-        return levelsMap(value.total);
+        const levelScore = levelsMap(value.total);
+        return levelScore;
       }
     }
   }
+
+  console.error("❌ User not found in referral tree.");
   throw new Error("User not found");
 }
 
@@ -63,12 +80,16 @@ export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
     .single();
 
   if (fetchError) {
-    console.error("Error fetching user:", fetchError);
+    console.error(
+      "Error fetching user (getUpgradedPigLevel):",
+      fetchError.message
+    );
   }
   return user?.upgradedPigLevel || 0;
 }
 
 export async function prepareUserHistoryObj(tx: any): Promise<any> {
+  console.log("tx in pre", tx);
   if (tx.reward) {
     console.log("tx.referral", tx.referral);
     return {
@@ -78,7 +99,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
         tx.related_tx
       )) as PigLevel,
       self_balance_change: tx.reward,
-      referral_depth: await findDepth(tx.referral, tx.wallet_address),
+      referral_depth: await findDepth(tx.wallet_address, tx.referral),
     };
   } else {
     return {

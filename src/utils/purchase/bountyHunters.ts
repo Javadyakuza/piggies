@@ -90,11 +90,9 @@ export async function findUsersBountyHunters(
     let usersDic = Dictionary.empty<Address, bigint>();
     let adminsDic = Dictionary.empty<Address, bigint>();
     upperUsers.map((user) => {
-      console.log(user);
       return usersDic.set(Address.parse(user.wallet_address), BigInt(3));
     });
     admins.map((admin) => {
-      console.log(admin);
       adminsDic.set(Address.parse(admin.wallet_address), BigInt(2));
     });
     return {

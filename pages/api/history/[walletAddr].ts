@@ -163,9 +163,7 @@ export default async function handler(
       .from("rewardsHistory")
       .select("wallet_address, reward, referral, related_tx, created_at")
       .eq("wallet_address", wallet_address.wallet_address);
-    console.log(rewards, tx);
     const userRewards = rewards || [];
-
     if (txError) {
       throw new Error(txError.message);
     }
@@ -179,19 +177,20 @@ export default async function handler(
         .status(404)
         .json({ success: false, message: "Failed to fetch txs or rewards !" });
     }
-    console.log(userRewards, userTxs);
     let histories: UserHistory[] = [];
 
-    if (userTxs.length == 1) {
+    if (userTxs.length === 1) {
       console.log("userTxs.length == 1");
       histories.push(await prepareUserHistoryObj(userTxs[0]));
     }
-    if (userRewards.length == 1) {
+
+    if (userRewards.length === 1) {
       console.log("userRewards.length == 1");
       histories.push(await prepareUserHistoryObj(userRewards[0]));
     }
+
     if (userTxs.length > 1) {
-      console.log("userTxs.length == 1");
+      console.log("userTxs.length > 1");
       // sorting the arrays
       userTxs.sort(
         (a, b) =>
@@ -199,9 +198,9 @@ export default async function handler(
       );
 
       // crating the histories array
-      userTxs.forEach(async (tx) => {
+      for (const tx of userTxs) {
         histories.push(await prepareUserHistoryObj(tx));
-      });
+      }
 
       histories.sort(
         (a, b) =>
@@ -209,25 +208,24 @@ export default async function handler(
       );
     }
     if (userRewards.length > 1) {
-      console.log("userRewards.length == 1");
+      console.log("userRewards.length > 1");
       userRewards.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
-      userRewards.forEach(async (reward) => {
+      for (const reward of userRewards) {
         histories.push(await prepareUserHistoryObj(reward));
-      });
+      }
 
       histories.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
     }
-
     return res.status(200).json({ success: true, message: histories });
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("(Error fetching user(history/user)):", error);
     return res.status(500).json({ success: false, message: [] });
   }
 }

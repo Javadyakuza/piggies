@@ -381,11 +381,7 @@ export default function StorePage() {
           alt="cover-container"
         /> */}
           <ShiningImage />
-          <img
-            className="pig-image"
-            src="/imgs/pigs/bronze.png"
-            alt="pig-cover"
-          />
+          <img className="pig-image" src={nextPig?.cover} alt="pig-cover" />
         </div>
         <div className="details-container">
           <div className="detail-item">

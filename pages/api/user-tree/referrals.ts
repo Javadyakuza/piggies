@@ -12,8 +12,9 @@ const calculateTotalPossible = (level: number): number => {
   return Math.pow(3, level);
 };
 
+
 export const countReferralsByLevel = async (
-  userId: string
+  wallet_address: string
 ): Promise<ReferralLevel[]> => {
   const countTotalUnder = (
     referralMap: { [key: string]: string[] },
@@ -38,6 +39,14 @@ export const countReferralsByLevel = async (
     throw new Error("Failed to fetch users: " + error?.message);
   }
 
+  const targetUser = allUsers.find(
+    (u) => u.wallet_address === wallet_address
+  );
+
+  if (!targetUser) {
+    throw new Error("User not found with the given wallet address");
+  }
+
   const referralMap: { [key: string]: string[] } = {};
   const userMap: { [key: string]: User } = {};
 
@@ -57,6 +66,7 @@ export const countReferralsByLevel = async (
         user_type: user.user_type,
       };
     }
+
     const parent = user.parent_id;
     if (parent) {
       if (!referralMap[parent]) {
@@ -66,8 +76,10 @@ export const countReferralsByLevel = async (
     }
   });
 
-  const levels: string[][] = [[], []];
-  const queue: { userId: string; level: number }[] = [{ userId, level: 0 }];
+  const levels: string[][] = [[]]; // Level 0 is skipped in result
+  const queue: { userId: string; level: number }[] = [
+    { userId: targetUser.id, level: 0 },
+  ];
   const visited: Set<string> = new Set();
 
   while (queue.length > 0) {
@@ -303,7 +315,9 @@ export default async function handler(
   }
 
   try {
-    const referralLevels = await countReferralsByLevel(userExists.id);
+    const referralLevels = await countReferralsByLevel(
+      wallet_address
+    );
 
     if (referralsNum === 0) {
       const { data: referral_id, error } = await supabase
@@ -337,7 +351,6 @@ export default async function handler(
         users.set(counter, value.users);
         counter += 1;
       });
-      console.log(users);
       return res.status(200).json(Object.fromEntries(users));
     }
     return res.status(200).json(response);
