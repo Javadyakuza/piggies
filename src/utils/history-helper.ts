@@ -94,7 +94,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
     console.log("tx.referral", tx.referral);
     return {
       created_at: tx.created_at,
-      fullname: (await getUser(tx.wallet_address)).fullname,
+      fullname: (await getUser(tx.referral)).fullname,
       upgraded_pig_level: (await getUpgradedPigLevel(
         tx.related_tx
       )) as PigLevel,
