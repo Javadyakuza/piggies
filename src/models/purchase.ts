@@ -16,7 +16,7 @@ export type PurchasePigRequest = {
 
 export type PurchasePigResponse = {
   success: boolean;
-  message: txHistory | UpgradePigParams | UserHistory[] |string;
+  message: txHistory | UpgradePigParams | UserHistory[] | string | any;
 };
 
 export interface bountyHuntersResponse {
@@ -38,6 +38,6 @@ export interface extendedPigApprovalEvent extends PigApprovalEvent {
 }
 
 export interface UpgradePigParams {
-  amount: bigint;
+  amount: bigint | string ;
   operation: "UpgradePig";
 }

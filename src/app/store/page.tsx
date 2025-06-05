@@ -16,7 +16,7 @@ import { logger } from "../../../logger";
 import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { getTonClient } from "@/utils/tonClients";
-import { UpgradePigParams } from "@/models/purchase";
+import { PurchasePigResponse, UpgradePigParams } from "@/models/purchase";
 import { getUpgradePigParams } from "@/scripts/upgradePig";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 
@@ -66,7 +66,9 @@ export default function StorePage() {
         address: walletAddress,
       } as unknown as Sender;
 
-      let params = await getUpgradePigParams(walletAddress);
+      const params: AxiosResponse<PurchasePigResponse> = await axios.get(
+        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`
+      );
 
       let pigShop = tonClient.open(
         PigShop.fromAddress(
@@ -77,9 +79,9 @@ export default function StorePage() {
       await pigShop.send(
         sender_,
         {
-          value: (params.message as UpgradePigParams).amount,
+          value: BigInt((params.data.message as UpgradePigParams).amount),
         },
-        (params.message as UpgradePigParams).operation
+        (params.data.message as UpgradePigParams).operation
       );
 
       console.log("Transaction sent");

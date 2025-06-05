@@ -1,4 +1,22 @@
+-- 1. Users table
+CREATE TABLE public.users (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  telegram_id text NOT NULL,
+  inviter_id bigint,
+  parent_id bigint,
+  created_at timestamp with time zone DEFAULT now(),
+  referral_id uuid DEFAULT gen_random_uuid() UNIQUE,
+  wallet_address text UNIQUE,
+  current_pig smallint NOT NULL DEFAULT 0,
+  fullname text DEFAULT '',
+  piggy_bank_balance bigint DEFAULT 0,
+  user_type smallint NOT NULL DEFAULT 1,
+  pig_address text,
+  CONSTRAINT users_inviter_id_fkey FOREIGN KEY (inviter_id) REFERENCES public.users(id),
+  CONSTRAINT users_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.users(id)
+);
 
+-- 2. appData table (no foreign keys)
 CREATE TABLE public.appData (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
@@ -7,6 +25,8 @@ CREATE TABLE public.appData (
   price_in_ton text NOT NULL,
   CONSTRAINT appData_pkey PRIMARY KEY (id)
 );
+
+-- 3. rewardsHistory table (references users)
 CREATE TABLE public.rewardsHistory (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
@@ -18,6 +38,8 @@ CREATE TABLE public.rewardsHistory (
   CONSTRAINT rewardHistory_referral_fkey FOREIGN KEY (referral) REFERENCES public.users(wallet_address),
   CONSTRAINT rewardHistory_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
 );
+
+-- 4. txHistory table (references users)
 CREATE TABLE public.txHistory (
   tx_id text NOT NULL,
   tx_hash text NOT NULL UNIQUE,
@@ -27,21 +49,4 @@ CREATE TABLE public.txHistory (
   upgradedPigLevel integer,
   CONSTRAINT txHistory_pkey PRIMARY KEY (tx_id, tx_hash),
   CONSTRAINT txHistory_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
-);
-CREATE TABLE public.users (
-  id bigint NOT NULL DEFAULT nextval('users_id_seq'::regclass),
-  telegram_id text NOT NULL,
-  inviter_id bigint,
-  parent_id bigint,
-  created_at timestamp with time zone DEFAULT now(),
-  referral_id uuid DEFAULT gen_random_uuid() UNIQUE,
-  wallet_address text UNIQUE,
-  current_pig smallint NOT NULL DEFAULT '0'::smallint,
-  fullname text DEFAULT ''::text,
-  piggy_bank_balance bigint DEFAULT '0'::bigint,
-  user_type smallint NOT NULL DEFAULT '1'::smallint,
-  pig_address text,
-  CONSTRAINT users_pkey PRIMARY KEY (id),
-  CONSTRAINT users_inviter_id_fkey FOREIGN KEY (inviter_id) REFERENCES public.users(id),
-  CONSTRAINT users_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.users(id)
 );

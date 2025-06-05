@@ -8,6 +8,7 @@ export async function getUpgradePigParams(
   wallet_address: string
 ): Promise<PurchasePigResponse> {
   try {
+    
     // Check if the user exists
     const { data: user, error: userError } = await supabase
       .from("users")
