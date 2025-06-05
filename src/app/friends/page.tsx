@@ -175,16 +175,6 @@ export default function FriendsPage() {
     fetchBatchReferrals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
-
-  const refLink = generateRefLink(referralId);
-
-  const handleCopyAddress = () => {
-    copyToClipboard(refLink);
-  };
-  const toggleRefAccordion = () => {
-    setOpenedAccordion(openedAccordion === "ref" ? undefined : "ref");
-  };
-
   const pigsMap = pigsMapNew(t, 0);
 
   const currentPig =
@@ -196,6 +186,14 @@ export default function FriendsPage() {
     currentPigCode || currentPigCode === 0
       ? pigsMap.find((item) => item.code === currentPigCode + 1)
       : undefined;
+  const refLink = !currentPigCode || currentPigCode === 0 ? "buy a pig first 🐷" : generateRefLink(referralId);    
+
+  const handleCopyAddress = () => {
+    copyToClipboard(refLink);
+  };
+  const toggleRefAccordion = () => {
+    setOpenedAccordion(openedAccordion === "ref" ? undefined : "ref");
+  };
 
   const levels = currentPig?.level || 0;
 
