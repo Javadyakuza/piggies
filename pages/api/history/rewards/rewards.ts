@@ -138,7 +138,7 @@ export default async function handler(
         .json({ success: false, message: "Wallet is not connected !" });
     }
     const { data: rewards, error } = await supabase
-      .from("rewardsHistory")
+      .from("rewards_history")
       .select("wallet_address, reward, referral, related_tx")
       .eq("wallet_address", wallet_address);
 

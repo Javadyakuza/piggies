@@ -74,7 +74,7 @@ export async function findDepth(
 
 export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
   const { data: user, error: fetchError } = await supabase
-    .from("txHistory")
+    .from("tx_history")
     .select("upgradedPigLevel")
     .eq("tx_hash", tx_hash)
     .single();

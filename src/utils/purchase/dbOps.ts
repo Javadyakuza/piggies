@@ -102,7 +102,7 @@ export const getPigs = async (
 
 export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
   const { data: tx, error: insertError } = await supabase
-    .from("txHistory")
+    .from("tx_history")
     .insert(txData)
     .select()
     .single();
@@ -117,7 +117,7 @@ export const updateTxHistory = async (
   txData: txHistory
 ): Promise<txHistory> => {
   const { data: tx, error: insertError } = await supabase
-    .from("txHistory")
+    .from("tx_history")
     .update(txData)
     .eq("tx_hash", txData.tx_hash)
     .select()
@@ -134,7 +134,7 @@ export async function updateReferralsRewardsHistory(
 ): Promise<boolean> {
   event_data.userBountyHunters.keys().forEach(async (user) => {
     const { data: tx, error: insertError } = await supabase
-      .from("rewardsHistory")
+      .from("rewards_history")
       .insert({
         wallet_address: user.toRawString(),
         reward: Number(event_data.userBountyHunters.get(user)) ?? 3,
@@ -151,7 +151,7 @@ export async function updateReferralsRewardsHistory(
 
   event_data.adminsShares.keys().forEach(async (admin) => {
     const { data: tx, error: insertError } = await supabase
-      .from("rewardsHistory")
+      .from("rewards_history")
       .insert({
         wallet_address: admin.toRawString(),
         reward: Number(event_data.adminsShares.get(admin)) ?? 2,
@@ -174,7 +174,7 @@ export async function isDuplicatePurchase(
 ): Promise<boolean> {
   let tx_id = TxId.create(userAddress, pigLevel);
   const { data: req, error: fetchError } = await supabase
-    .from("txHistory")
+    .from("tx_history")
     .select("request_status")
     .eq("tx_id", tx_id)
     .single();

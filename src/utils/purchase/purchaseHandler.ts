@@ -38,7 +38,7 @@ export async function handlePigPurchase(
   while (!found) {
     await new Promise((resolve) => setTimeout(resolve, backoff_secs));
     const { data: tx, error: fetchError } = await supabase
-      .from("txHistory")
+      .from("tx_history")
       .select()
       .eq("tx_id", tx_id)
       .single();

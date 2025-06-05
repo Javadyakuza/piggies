@@ -151,7 +151,7 @@ export default async function handler(
     }
 
     const { data: tx, error: txError } = await supabase
-      .from("txHistory")
+      .from("tx_history")
       .select(
         "tx_id, tx_hash, wallet_address, request_status, upgradedPigLevel, created_at"
       )
@@ -160,7 +160,7 @@ export default async function handler(
     const userTxs = tx || [];
 
     const { data: rewards, error: RewardsError } = await supabase
-      .from("rewardsHistory")
+      .from("rewards_history")
       .select("wallet_address, reward, referral, related_tx, created_at")
       .eq("wallet_address", wallet_address.wallet_address);
     const userRewards = rewards || [];
