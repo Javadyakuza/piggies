@@ -17,7 +17,7 @@ import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { getTonClient } from "@/utils/tonClients";
 import { PurchasePigResponse, UpgradePigParams } from "@/models/purchase";
-import { getUpgradePigParams } from "@/scripts/upgradePig";
+
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 
 type PigData = {
@@ -415,7 +415,7 @@ export default function StorePage() {
                 className="action-btn purchase-btn"
               >
                 <div>
-                  <span className="price">{nextPig?.priceInTon}</span> TON
+                  <span className="price">{nextPig?.rawPriceInTon}</span> TON
                 </div>
               </button>
               <button

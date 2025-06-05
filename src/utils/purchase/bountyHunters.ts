@@ -127,7 +127,7 @@ export async function findUsersBountyHunters(
     let usersDic = Dictionary.empty<Address, bigint>();
     let adminsDic = Dictionary.empty<Address, bigint>();
     let referrerDic = Dictionary.empty<Address, bigint>();
-    const pigCostInTon = pigsMapV2("", 1)[upgradedPigLevel - 1].rawPriceInTon;
+    const pigCostInTon = pigsMapV2(undefined, 1)[upgradedPigLevel - 1].rawPriceInTon;
 
     upperUsers.map((user) => {
       return usersDic.set(

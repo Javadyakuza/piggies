@@ -143,7 +143,7 @@ export async function updateReferralsRewardsHistory(
       })
       .select()
       .single();
-
+      console.log(`rewarded ${user.toRawString()} with ${Number(event_data.userBountyHunters.get(user))} TON`);
     if (insertError) {
       console.error("Update users reward error:", insertError);
     }
@@ -160,7 +160,7 @@ export async function updateReferralsRewardsHistory(
       })
       .select()
       .single();
-
+    console.log(`rewarded ${admin.toRawString()} with ${Number(event_data.adminsShares.get(admin))} TON`);
     if (insertError) {
       console.error("Update admins reward error:", insertError);
     }
@@ -177,7 +177,7 @@ export async function updateReferralsRewardsHistory(
       })
       .select()
       .single();
-
+      console.log(`rewarded ${referrer.toRawString()} with ${Number(event_data.referrer?.get(referrer))} TON`);
     if (insertError) {
       console.error("Update admins reward error:", insertError);
     }
