@@ -5,7 +5,7 @@ import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import "./styles.css";
-import { pigsMapNew } from "@/utils/pigs_map";
+import { pigsMapV2 } from "@/utils/pigs_map";
 import axios from "axios";
 import { useTonWallet } from "@tonconnect/ui-react";
 
@@ -55,7 +55,7 @@ export default function HistoryPage() {
     </div>
   );
 
-  const pigsMap = pigsMapNew(t, 0);
+  const pigsMap = pigsMapV2(t, 0);
 
   const findPig = (code: number) => {
     return pigsMap.find((item) => item.code === code);

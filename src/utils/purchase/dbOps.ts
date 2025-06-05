@@ -137,7 +137,7 @@ export async function updateReferralsRewardsHistory(
       .from("rewardsHistory")
       .insert({
         wallet_address: user.toRawString(),
-        reward: Number(event_data.userBountyHunters.get(user)) ?? 3,
+        reward: Number(event_data.userBountyHunters.get(user)),
         referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
       })
@@ -154,7 +154,24 @@ export async function updateReferralsRewardsHistory(
       .from("rewardsHistory")
       .insert({
         wallet_address: admin.toRawString(),
-        reward: Number(event_data.adminsShares.get(admin)) ?? 2,
+        reward: Number(event_data.adminsShares.get(admin)),
+        referral: event_data.userAddress.toRawString(),
+        related_tx: event_data.tx_hash,
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("Update admins reward error:", insertError);
+    }
+  });
+
+    event_data.referrer?.keys().forEach(async (referrer) => {
+    const { data: tx, error: insertError } = await supabase
+      .from("rewardsHistory")
+      .insert({
+        wallet_address: referrer.toRawString(),
+        reward: Number(event_data.referrer?.get(referrer)), 
         referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
       })

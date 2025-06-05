@@ -19,10 +19,12 @@ import { init } from "@/core/init";
 
 export async function mockPigPurchase(wallet_address: string) {
   let walletAddr = Address.parse(wallet_address).toRawString();
-  let bh: bountyHuntersResponse = await findUsersBountyHunters(walletAddr);
-
   let pig_data = await getPigs(walletAddr);
-  
+  let bh: bountyHuntersResponse = await findUsersBountyHunters(
+    walletAddr,
+    pig_data.new_pig_level
+  );
+
   let tx_id = TxId.create(walletAddr, pig_data.new_pig_level);
 
   // the tokens have been distributed, updating the db

@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
 import { AccordionSummary } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary";
-import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
+import { pigsMap, pigsMapV2 } from "@/utils/pigs_map";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";

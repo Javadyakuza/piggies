@@ -7,7 +7,7 @@ import "./styles.css";
 import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
-import { pigsMapNew } from "@/utils/pigs_map";
+import { pigsMapV2 } from "@/utils/pigs_map";
 import axios, { AxiosResponse } from "axios";
 import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
@@ -41,7 +41,7 @@ export default function StorePage() {
   const tonClient = getTonClient();
 
   const walletAddress = wallet?.account?.address;
-  const pigsMap = pigsMapNew(t, tonPrice);
+  const pigsMap = pigsMapV2(t, tonPrice);
 
   const txRequestLifetime = Date.now() + 3 * 60 * 1000; // 3 minutes for user to approve
 
