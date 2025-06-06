@@ -46,7 +46,7 @@ CREATE TABLE public.tx_history (
   wallet_address text NOT NULL,
   request_status text NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  upgradedPigLevel integer,
+  upgraded_pig_level integer,
   CONSTRAINT tx_history_pkey PRIMARY KEY (tx_id, tx_hash),
   CONSTRAINT tx_history_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
 );

@@ -352,7 +352,7 @@ export default function StorePage() {
           <span className="text">
             <h4 className="earning">{piggyBankBalance}</h4>{" "}
             <h4 className="total">
-              / {currentPig?.capacityInTon || 0} TON v2.8
+              / {currentPig?.capacityInTon || 0} TON
             </h4>
           </span>
         </div>

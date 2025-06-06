@@ -85,6 +85,7 @@ export default function Header() {
           <h4 className="full-name">
             {userData?.firstName} {userData?.lastName}
           </h4>
+          <span style={{ fontSize: "1rem"}}> v2.9 dev </span>
         </div>
         <div className="actions-container">
           <div></div>

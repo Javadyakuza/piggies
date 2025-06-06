@@ -153,7 +153,7 @@ export default async function handler(
     const { data: tx, error: txError } = await supabase
       .from("tx_history")
       .select(
-        "tx_id, tx_hash, wallet_address, request_status, upgradedPigLevel, created_at"
+        "tx_id, tx_hash, wallet_address, request_status, upgraded_pig_level, created_at"
       )
       .eq("wallet_address", wallet_address.wallet_address);
 
