@@ -64,7 +64,7 @@ export const upgradeUserPig = async (userAddress: string) => {
     .single();
 
   if (pigError || !data) {
-    throw new Error(`Failed to fetch user ${userAddress}: ${pigError}`);
+    throw new Error(`Failed to fetch user ${userAddress}: ${pigError.message}`);
     return;
   }
 
@@ -82,7 +82,7 @@ export const upgradeUserPig = async (userAddress: string) => {
     .eq("wallet_address", userAddress);
 
   if (updateError) {
-    throw new Error(`Wallet update error: ${updateError}`);
+    throw new Error(`Wallet update error: ${updateError.message}`);
   }
 };
 
@@ -109,7 +109,7 @@ export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
     .single();
 
   if (insertError) {
-    throw new Error(`Wallet update error (initTxHistory): ${insertError}`);
+    throw new Error(`Wallet update error (initTxHistory): ${insertError.message}`);
   }
   return tx as txHistory;
 };
@@ -125,7 +125,7 @@ export const updateTxHistory = async (
     .single();
 
   if (insertError) {
-    throw new Error(`Wallet update error(updateTxHistory): ${insertError}`);
+    throw new Error(`Wallet update error(updateTxHistory): ${insertError.message}`);
   }
   return tx as txHistory;
 };
@@ -146,7 +146,7 @@ export async function updateReferralsRewardsHistory(
       .single();
 
     if (insertError) {
-      throw new Error(`Update users reward error: ${insertError}`);
+      throw new Error(`Update users reward error: ${insertError.message}`);
     }
   });
 
@@ -163,7 +163,7 @@ export async function updateReferralsRewardsHistory(
       .single();
 
     if (insertError) {
-      throw new Error(`Update admins reward error: ${insertError}`);
+      throw new Error(`Update admins reward error: ${insertError.message}`);
     }
   });
   return true;
@@ -181,7 +181,7 @@ export async function isDuplicatePurchase(
     .single();
 
   if (fetchError) {
-    throw new Error(`Error fetching tx history: ${fetchError}`);
+    throw new Error(`Error fetching tx history: ${fetchError.message}`);
   }
   if (req?.request_status && req.request_status === "PigPurchaseApproved") {
     return true;
