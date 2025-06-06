@@ -103,7 +103,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
     return {
       created_at: tx.created_at,
       fullname: (await getUser(tx.wallet_address)).fullname,
-      upgraded_pig_level: tx.upgradedPigLevel,
+      upgraded_pig_level: tx.upgraded_pig_level,
       self_balance_change: 0,
       referral_depth: 0,
     };

@@ -38,7 +38,7 @@ export async function mockPigPurchase(wallet_address: string) {
     tx_hash: txHash,
     wallet_address: walletAddr,
     request_status: "PigPurchaseApproved",
-    upgradedPigLevel: pig_data.new_pig_level,
+    upgraded_pig_level: pig_data.new_pig_level,
   };
 
   // init the tx history

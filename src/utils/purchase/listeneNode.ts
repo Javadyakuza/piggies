@@ -118,7 +118,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
           tx_hash: event.tx_hash,
           wallet_address: event.userAddress.toRawString(),
           request_status: "PigUpgradePending",
-          upgradedPigLevel: pig_data.new_pig_level,
+          upgraded_pig_level: pig_data.new_pig_level,
         });
       }
     }
@@ -142,7 +142,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toRawString(),
         request_status: "PigPurchaseApproved",
-        upgradedPigLevel: pig_data.new_pig_level,
+        upgraded_pig_level: pig_data.new_pig_level,
       });
 
       // update the referrals rewards history
