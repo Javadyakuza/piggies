@@ -179,7 +179,7 @@ export default async function handler(
     console.error("Error inserting user:", error);
     return res
       .status(500)
-      .json({ success: false, message: "Database insert error" });
+      .json({ success: false, message: `Database insert error ${error}` });
   }
 
   // Successfully inserted

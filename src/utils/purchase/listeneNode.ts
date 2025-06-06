@@ -149,7 +149,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       let updateRes = await updateReferralsRewardsHistory(event);
 
       if (!updateRes) {
-        console.error("Failed to update referrals rewards history!");
+        throw new Error("Failed to update referrals rewards history!");
       }
     }
   }

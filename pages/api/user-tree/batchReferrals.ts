@@ -131,6 +131,6 @@ export default async function handler(
     return res.status(200).json(referrals);
   } catch (error) {
     console.error("Error fetching user(batchReferrals):", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: String(error) });
   }
 }

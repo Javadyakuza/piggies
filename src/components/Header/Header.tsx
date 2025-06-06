@@ -59,7 +59,7 @@ export default function Header() {
         const referralId = response.data.referral_id;
         setReferralId(referralId);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        throw new Error(`Error fetching user data: ${err}`);
       }
     };
     fetchUserData();

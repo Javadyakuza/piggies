@@ -12,10 +12,10 @@ export async function getUser(wallet_address: string) {
     .single();
 
   if (fetchError) {
-    console.error(
-      "Error fetching user(getUser):",
-      fetchError.message,
-      wallet_address.trim().toLowerCase()
+    throw new Error(
+      `Error fetching user(getUser):
+      ${fetchError.message}
+      ${wallet_address.trim().toLowerCase()}`
     );
   }
 
@@ -29,7 +29,6 @@ export async function findDepth(
   let user = await getUser(upper_user);
 
   if (!user?.wallet_address) {
-    console.error("❌ No wallet_address found for upper_user");
     throw new Error("Invalid upper_user (no wallet address)");
   }
 
@@ -68,8 +67,7 @@ export async function findDepth(
     }
   }
 
-  console.error("❌ User not found in referral tree.");
-  throw new Error("User not found");
+  throw new Error("User not found in referral tree.");
 }
 
 export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
@@ -80,9 +78,9 @@ export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
     .single();
 
   if (fetchError) {
-    console.error(
-      "Error fetching user (getUpgradedPigLevel):",
-      fetchError.message
+    throw new Error(
+      `Error fetching user (getUpgradedPigLevel):
+      ${fetchError.message}`
     );
   }
   return user?.upgradedPigLevel || 0;

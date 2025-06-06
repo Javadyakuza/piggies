@@ -167,6 +167,6 @@ export default async function handler(
     console.error("Error fetching user(history/user):", error);
     return res
       .status(500)
-      .json({ success: false, message: "internal server error" });
+      .json({ success: false, message: `internal server error ${error}` });
   }
 }

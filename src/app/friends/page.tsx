@@ -152,7 +152,7 @@ export default function FriendsPage() {
         const referralId = response.data.referral_id;
         setReferralId(referralId);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        throw new Error(`Error fetching user data: ${err}`);
       }
     };
     fetchUserData();
@@ -169,7 +169,7 @@ export default function FriendsPage() {
         const referrals = response.data;
         setBatchReferrals(referrals);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        throw new Error(`Error fetching user data: ${err}`);
       }
     };
     fetchBatchReferrals();

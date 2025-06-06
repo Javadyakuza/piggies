@@ -50,6 +50,7 @@ export const updateBountyHuntersBalances = async (
 
     if (error) {
       console.error(`Failed to update user ${update.id}:`, error);
+      throw new Error(`Failed to update user ${update.id}: ${error}`);
       // You can choose to continue or stop here
     }
   }
@@ -63,7 +64,7 @@ export const upgradeUserPig = async (userAddress: string) => {
     .single();
 
   if (pigError || !data) {
-    console.error(`Failed to fetch user ${userAddress}:`, pigError);
+    throw new Error(`Failed to fetch user ${userAddress}: ${pigError}`);
     return;
   }
 
@@ -81,7 +82,7 @@ export const upgradeUserPig = async (userAddress: string) => {
     .eq("wallet_address", userAddress);
 
   if (updateError) {
-    console.error("Wallet update error:", updateError);
+    throw new Error(`Wallet update error: ${updateError}`);
   }
 };
 
@@ -108,7 +109,7 @@ export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
     .single();
 
   if (insertError) {
-    console.error("Wallet update error (initTxHistory):", insertError);
+    throw new Error(`Wallet update error (initTxHistory): ${insertError}`);
   }
   return tx as txHistory;
 };
@@ -124,7 +125,7 @@ export const updateTxHistory = async (
     .single();
 
   if (insertError) {
-    console.error("Wallet update error(updateTxHistory):", insertError);
+    throw new Error(`Wallet update error(updateTxHistory): ${insertError}`);
   }
   return tx as txHistory;
 };
@@ -145,7 +146,7 @@ export async function updateReferralsRewardsHistory(
       .single();
 
     if (insertError) {
-      console.error("Update users reward error:", insertError);
+      throw new Error(`Update users reward error: ${insertError}`);
     }
   });
 
@@ -162,7 +163,7 @@ export async function updateReferralsRewardsHistory(
       .single();
 
     if (insertError) {
-      console.error("Update admins reward error:", insertError);
+      throw new Error(`Update admins reward error: ${insertError}`);
     }
   });
   return true;
@@ -180,7 +181,7 @@ export async function isDuplicatePurchase(
     .single();
 
   if (fetchError) {
-    console.error("Error fetching tx history:", fetchError);
+    throw new Error(`Error fetching tx history: ${fetchError}`);
   }
   if (req?.request_status && req.request_status === "PigPurchaseApproved") {
     return true;

@@ -15,13 +15,11 @@ export async function calculatePigPrice(pig_level: PigLevel): Promise<bigint> {
     const pigsMap = pigsMapNew(undefined, tonPriceInUSD);
 
     const targetPig = pigsMap.find((pig) => pig.code === pig_level);
-    
-    const priceInUSD = targetPig?.price || 0;
 
+    const priceInUSD = targetPig?.price || 0;
 
     return toNano(String(targetPig?.priceInTon || "0"));
   } catch (error) {
-    console.error("Error fetching coin price:", error);
     throw new Error(`Error fetching coin price ${error}`);
   }
 }
