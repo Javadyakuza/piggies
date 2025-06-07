@@ -46,10 +46,7 @@ export default function ProfilePage() {
   }, [isDisconnectConfirmVisible]);
 
   const handleDisconnectWallet = () => {
-    if (isDisconnectConfirmVisible) tonConnectUI.disconnect();
-    else {
-      setIsDisconnectConfirmVisible(true);
-    }
+    tonConnectUI.disconnect();
   };
 
   const truncate = (str: string, maxLength: number) => {
@@ -84,13 +81,9 @@ export default function ProfilePage() {
             mode="filled"
             onClick={handleDisconnectWallet}
           >
-            {isDisconnectConfirmVisible
-              ? t("areYouSure")
-              : t("disconnectWallet")}
+            {t("disconnectWallet")}
           </Button>
         </div>
-          
-      
       </div>
     </Page>
   );
