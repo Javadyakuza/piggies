@@ -67,13 +67,13 @@ export default function StorePage() {
       } as unknown as Sender;
 
       const params: AxiosResponse<PurchasePigResponse> = await axios.get(
-        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`
+        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`,
       );
 
       let pigShop = tonClient.open(
         PigShop.fromAddress(
-          Address.parse(process.env.NEXT_PUBLIC_PIGSHOP_ADDRESS!)
-        )
+          Address.parse(process.env.NEXT_PUBLIC_PIGSHOP_ADDRESS!),
+        ),
       );
 
       await pigShop.send(
@@ -81,7 +81,7 @@ export default function StorePage() {
         {
           value: BigInt((params.data.message as UpgradePigParams).amount),
         },
-        (params.data.message as UpgradePigParams).operation
+        (params.data.message as UpgradePigParams).operation,
       );
 
       console.log("Transaction sent");
@@ -111,7 +111,7 @@ export default function StorePage() {
 
   const fetchTonPrice = async () => {
     const res = await axios.get(
-      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
+      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`,
     );
     const tonPriceToSet = res?.data?.quotes?.USD.price.toFixed(2);
 
@@ -140,7 +140,7 @@ export default function StorePage() {
       const referralId = response.data.piggy_bank_balance;
       setPiggyBankBalance(referralId);
     } catch (err) {
-      console.error("Error fetching user data:", err);
+      throw new Error(`Error fetching user data: ${err}`);
     }
   };
 
@@ -221,7 +221,7 @@ export default function StorePage() {
 
   const filteredSlides = slides.filter(
     (slide) =>
-      (currentPigCode && slide.code >= currentPigCode) || !currentPigCode
+      (currentPigCode && slide.code >= currentPigCode) || !currentPigCode,
   );
 
   const suggestionData = {
@@ -342,7 +342,7 @@ export default function StorePage() {
   ];
 
   const filteredSuggestionSlides = suggestionSlides.filter(
-    (slide) => slide.code > (currentPigCode || 0)
+    (slide) => slide.code > (currentPigCode || 0),
   );
   const mainPage = (
     <div className="main-container">
@@ -351,7 +351,9 @@ export default function StorePage() {
           <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
           <span className="text">
             <h4 className="earning">{piggyBankBalance}</h4>{" "}
-            <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
+            <h4 className="total">
+              / {currentPig?.capacityInTon || 0} TON
+            </h4>
           </span>
         </div>
         <Button className="withdraw-btn normal">

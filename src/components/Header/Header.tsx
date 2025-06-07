@@ -59,7 +59,7 @@ export default function Header() {
         const referralId = response.data.referral_id;
         setReferralId(referralId);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        throw new Error(`Error fetching user data: ${err}`);
       }
     };
     fetchUserData();
@@ -85,6 +85,7 @@ export default function Header() {
           <h4 className="full-name">
             {userData?.firstName} {userData?.lastName}
           </h4>
+          <span style={{ fontSize: "1rem"}}> v2.9.3 dev </span>
         </div>
         <div className="actions-container">
           <div></div>

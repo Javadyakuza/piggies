@@ -25,7 +25,7 @@ export const getApiDocs = async () => {
     });
     return spec;
   } catch (error) {
-    console.error("Error generating Swagger spec:", error);
-    throw error;
+    
+    throw new Error(`Error generating Swagger spec: ${error}`);
   }
 };

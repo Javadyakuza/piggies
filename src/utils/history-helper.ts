@@ -12,10 +12,10 @@ export async function getUser(wallet_address: string) {
     .single();
 
   if (fetchError) {
-    console.error(
-      "Error fetching user(getUser):",
-      fetchError.message,
-      wallet_address.trim().toLowerCase()
+    throw new Error(
+      `Error fetching user(getUser):
+      ${fetchError.message}
+      ${wallet_address.trim().toLowerCase()}`
     );
   }
 
@@ -29,7 +29,6 @@ export async function findDepth(
   let user = await getUser(upper_user);
 
   if (!user?.wallet_address) {
-    console.error("❌ No wallet_address found for upper_user");
     throw new Error("Invalid upper_user (no wallet address)");
   }
 
@@ -68,24 +67,23 @@ export async function findDepth(
     }
   }
 
-  console.error("❌ User not found in referral tree.");
-  throw new Error("User not found");
+  throw new Error("User not found in referral tree.");
 }
 
 export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
   const { data: user, error: fetchError } = await supabase
-    .from("txHistory")
-    .select("upgradedPigLevel")
+    .from("tx_history")
+    .select("upgraded_pig_level")
     .eq("tx_hash", tx_hash)
     .single();
 
   if (fetchError) {
-    console.error(
-      "Error fetching user (getUpgradedPigLevel):",
-      fetchError.message
+    throw new Error(
+      `Error fetching user (getUpgradedPigLevel):
+      ${fetchError.message}`
     );
   }
-  return user?.upgradedPigLevel || 0;
+  return user?.upgraded_pig_level || 0;
 }
 
 export async function prepareUserHistoryObj(tx: any): Promise<any> {
@@ -105,7 +103,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
     return {
       created_at: tx.created_at,
       fullname: (await getUser(tx.wallet_address)).fullname,
-      upgraded_pig_level: tx.upgradedPigLevel,
+      upgraded_pig_level: tx.upgraded_pig_level,
       self_balance_change: 0,
       referral_depth: 0,
     };

@@ -356,6 +356,6 @@ export default async function handler(
     return res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching referrals:", error);
-    return res.status(500).json({ error: "Failed to fetch referrals" });
+    return res.status(500).json({ error: `Failed to fetch referrals ${error}` });
   }
 }

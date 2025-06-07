@@ -152,7 +152,7 @@ export default function FriendsPage() {
         const referralId = response.data.referral_id;
         setReferralId(referralId);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        throw new Error(`Error fetching user data: ${err}`);
       }
     };
     fetchUserData();
@@ -169,23 +169,13 @@ export default function FriendsPage() {
         const referrals = response.data;
         setBatchReferrals(referrals);
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        throw new Error(`Error fetching user data: ${err}`);
       }
     };
     fetchBatchReferrals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
-
-  const refLink = generateRefLink(referralId);
-
-  const handleCopyAddress = () => {
-    copyToClipboard(refLink);
-  };
-  const toggleRefAccordion = () => {
-    setOpenedAccordion(openedAccordion === "ref" ? undefined : "ref");
-  };
-
-  const pigsMap = pigsMapV2(t, 0);
+  const pigsMap = pigsMapNew(t, 0);
 
   const currentPig =
     currentPigCode || currentPigCode === 0
@@ -196,6 +186,14 @@ export default function FriendsPage() {
     currentPigCode || currentPigCode === 0
       ? pigsMap.find((item) => item.code === currentPigCode + 1)
       : undefined;
+  const refLink = !currentPigCode || currentPigCode === 0 ? "buy a pig first 🐷" : generateRefLink(referralId);    
+
+  const handleCopyAddress = () => {
+    copyToClipboard(refLink);
+  };
+  const toggleRefAccordion = () => {
+    setOpenedAccordion(openedAccordion === "ref" ? undefined : "ref");
+  };
 
   const levels = currentPig?.level || 0;
 

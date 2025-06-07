@@ -5,7 +5,6 @@ export type txId = string;
 
 export class TxId {
   static create(wallet_address: string, current_pig_level: number): txId {
-    
     const data = `${wallet_address}_${current_pig_level}`;
     const hash = crypto.createHash("sha256").update(data).digest("hex");
     return hash;
@@ -17,7 +16,7 @@ export type txHistory = {
   tx_hash: string;
   wallet_address: string;
   request_status: "PigPurchaseApproved" | "PigUpgradePending";
-  upgradedPigLevel: PigLevel;
+  upgraded_pig_level: PigLevel;
 };
 
 export type rewardHistory = {

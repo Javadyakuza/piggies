@@ -151,16 +151,16 @@ export default async function handler(
     }
 
     const { data: tx, error: txError } = await supabase
-      .from("txHistory")
+      .from("tx_history")
       .select(
-        "tx_id, tx_hash, wallet_address, request_status, upgradedPigLevel, created_at"
+        "tx_id, tx_hash, wallet_address, request_status, upgraded_pig_level, created_at"
       )
       .eq("wallet_address", wallet_address.wallet_address);
 
     const userTxs = tx || [];
 
     const { data: rewards, error: RewardsError } = await supabase
-      .from("rewardsHistory")
+      .from("rewards_history")
       .select("wallet_address, reward, referral, related_tx, created_at")
       .eq("wallet_address", wallet_address.wallet_address);
     const userRewards = rewards || [];
@@ -226,6 +226,6 @@ export default async function handler(
     return res.status(200).json({ success: true, message: histories });
   } catch (error) {
     console.error("(Error fetching user(history/user)):", error);
-    return res.status(500).json({ success: false, message: [] });
+    return res.status(500).json({ success: false, message: String(error) });
   }
 }

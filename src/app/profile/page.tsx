@@ -89,6 +89,8 @@ export default function ProfilePage() {
               : t("disconnectWallet")}
           </Button>
         </div>
+          
+      
       </div>
     </Page>
   );

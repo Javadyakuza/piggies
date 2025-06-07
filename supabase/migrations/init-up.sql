@@ -27,26 +27,26 @@ CREATE TABLE public.appData (
 );
 
 -- 3. rewardsHistory table (references users)
-CREATE TABLE public.rewardsHistory (
+CREATE TABLE public.rewards_history (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   wallet_address text NOT NULL,
   reward integer NOT NULL,
   referral text NOT NULL,
   related_tx text NOT NULL,
-  CONSTRAINT rewardsHistory_pkey PRIMARY KEY (id),
-  CONSTRAINT rewardHistory_referral_fkey FOREIGN KEY (referral) REFERENCES public.users(wallet_address),
-  CONSTRAINT rewardHistory_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
+  CONSTRAINT rewards_history_pkey PRIMARY KEY (id),
+  CONSTRAINT reward_history_referral_fkey FOREIGN KEY (referral) REFERENCES public.users(wallet_address),
+  CONSTRAINT reward_history_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
 );
 
 -- 4. txHistory table (references users)
-CREATE TABLE public.txHistory (
+CREATE TABLE public.tx_history (
   tx_id text NOT NULL,
   tx_hash text NOT NULL UNIQUE,
   wallet_address text NOT NULL,
   request_status text NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  upgradedPigLevel integer,
-  CONSTRAINT txHistory_pkey PRIMARY KEY (tx_id, tx_hash),
-  CONSTRAINT txHistory_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
+  upgraded_pig_level integer,
+  CONSTRAINT tx_history_pkey PRIMARY KEY (tx_id, tx_hash),
+  CONSTRAINT tx_history_wallet_address_fkey FOREIGN KEY (wallet_address) REFERENCES public.users(wallet_address)
 );

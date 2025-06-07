@@ -109,7 +109,6 @@ export async function findUsersBountyHunters(
       .eq("user_type", 0);
 
     if (!wholeAdmins) {
-      console.error("No Admins found");
       throw new Error("No Admins found");
     }
 
@@ -169,7 +168,6 @@ export async function findUsersBountyHunters(
       admins: adminsDic,
     };
   } catch (error) {
-    console.error("Error fetching upper users and admins:", error);
     throw new Error(`Error fetching upper users and admins${error}`);
   }
 }
@@ -182,7 +180,6 @@ async function calcTotalInvited(userId: string): Promise<number> {
 
     return totalInvited;
   } catch (error) {
-    console.error("Error calculating total invited:", error);
     throw new Error(`Error calculating total invited ${userId}`);
   }
 }

@@ -19,18 +19,18 @@
 //         .update({ price_in_ton: Number(priceInTON).toFixed(2) })
 //         .eq("tier", tier);
 
-//       if (error) {
-//         console.error(`Failed to update ${tier}:`, error.message);
-//       } else {
-//         console.log(
-//           `✅ Updated ${tier} to ${Number(priceInTON).toFixed(2)} TON`
-//         );
-//       }
-//     } catch (err) {
-//       console.error(`❌ Error updating ${tier}:`, err);
-//     }
-//   }
-// }
+      if (error) {
+        throw new Error(`Failed to update ${tier}: ${error.message}`);
+      } else {
+        console.log(
+          `✅ Updated ${tier} to ${Number(priceInTON).toFixed(2)} TON`
+        );
+      }
+    } catch (err) {
+      throw new Error(`❌ Error updating ${tier}: ${err}`);
+    }
+  }
+}
 
 // export function startPigPriceUpdater() {
 //   // Run once immediately

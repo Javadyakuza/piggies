@@ -126,7 +126,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
           tx_hash: event.tx_hash,
           wallet_address: event.userAddress.toRawString(),
           request_status: "PigUpgradePending",
-          upgradedPigLevel: pig_data.new_pig_level,
+          upgraded_pig_level: pig_data.new_pig_level,
         });
       }
     }
@@ -150,7 +150,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         tx_hash: event.tx_hash,
         wallet_address: event.userAddress.toRawString(),
         request_status: "PigPurchaseApproved",
-        upgradedPigLevel: pig_data.new_pig_level,
+        upgraded_pig_level: pig_data.new_pig_level,
       });
 
       event.referrer = bh.referrer;
@@ -158,7 +158,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       let updateRes = await updateReferralsRewardsHistory(event);
 
       if (!updateRes) {
-        console.error("Failed to update referrals rewards history!");
+        throw new Error("Failed to update referrals rewards history!");
       }
     }
   }
