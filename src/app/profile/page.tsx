@@ -21,6 +21,7 @@ import { pigsMap, pigsMapNew } from "@/utils/pigs_map";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
+import Image from "next/image";
 
 type PigData = {
   pig_level: number;
@@ -77,7 +78,15 @@ export default function ProfilePage() {
           </div>
           <Button
             className="disconnect-btn"
-            before={<FontAwesomeIcon icon={faSignOut} />}
+            before={
+              // <FontAwesomeIcon icon={faSignOut} />
+              <Image
+                src="/imgs/icons/ton-blue.png"
+                width={28}
+                height={28}
+                alt="ton"
+              />
+            }
             mode="filled"
             onClick={handleDisconnectWallet}
           >
