@@ -28,7 +28,7 @@ export interface bountyHuntersResponse {
 export type upgradeUserPigsInternalResponse = {
   old_pig_level: PigLevel;
   new_pig_level: PigLevel;
-};
+};  
 
 export interface extendedPigUpgradeEvent extends UpgradePig {
   tx_hash: string;

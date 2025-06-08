@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/supebase";
 import { User } from "@/models/userTree";
 import { bountyHuntersResponse } from "@/models/purchase";
-import { Address, Dictionary } from "@ton/core";
+import { Address, Dictionary, toNano } from "@ton/core";
 import { PigLevel } from "@/models/pigs";
 import { pigsMapV2 } from "../pigs_map";
 
@@ -13,9 +13,11 @@ export async function findUsersBountyHunters(
     if (upgradedPigLevel === 0) {
       throw new Error("upgradedPigLevel must be greater than 0");
     }
+
     // ----------------------------------------------------
     // Step 1: Fetch the user it self
     // ----------------------------------------------------
+
     const { data: user, error: tgIdError } = await supabase
       .from("users")
       .select()
@@ -126,24 +128,25 @@ export async function findUsersBountyHunters(
     let usersDic = Dictionary.empty<Address, bigint>();
     let adminsDic = Dictionary.empty<Address, bigint>();
     let referrerDic = Dictionary.empty<Address, bigint>();
-    const pigCostInTon = pigsMapV2(undefined, 1)[upgradedPigLevel - 1].rawPriceInTon;
+    const pigCostInTon = pigsMapV2(undefined, 1)[upgradedPigLevel - 1]
+      .rawPriceInTon;
 
     upperUsers.map((user) => {
       return usersDic.set(
         Address.parse(user.wallet_address),
-        calcShares("user", upgradedPigLevel, pigCostInTon)
+        BigInt(toNano(calcShares("user", upgradedPigLevel, pigCostInTon)))
       );
     });
     admins.map((admin) => {
       adminsDic.set(
         Address.parse(admin.wallet_address),
-        calcShares("admin", upgradedPigLevel, pigCostInTon)
+        BigInt(toNano(calcShares("admin", upgradedPigLevel, pigCostInTon)))
       );
     });
-
+    console.log(adminsDic);
     referrerDic.set(
       Address.parse(referrer.wallet_address),
-      calcShares("referrer", upgradedPigLevel, pigCostInTon)
+      BigInt(toNano(calcShares("referrer", upgradedPigLevel, pigCostInTon)))
     );
 
     // ----------------------------------------------------
@@ -154,11 +157,14 @@ export async function findUsersBountyHunters(
       .concat(usersDic.values())
       .concat(adminsDic.values());
     let totalPaymentsSum = totalPayments.reduce((a, b) => a + b, BigInt(0));
-    let change = totalPaymentsSum - BigInt(pigCostInTon);
+    console.log("totalPaymentsSum", totalPaymentsSum);
+    let change = BigInt(toNano(pigCostInTon)) - totalPaymentsSum;
     if (change > BigInt(0)) {
       const eachAdminShare = change / BigInt(adminsDic.keys().length);
+      console.log("eachAdminShare", eachAdminShare);
       for (const key of adminsDic.keys()) {
         const currentValue = adminsDic.get(key) || BigInt(0);
+        console.log("currentValue", currentValue);
         adminsDic.set(key, currentValue + eachAdminShare);
       }
     }
@@ -188,16 +194,16 @@ function calcShares(
   role: "admin" | "user" | "referrer",
   upgradedPigLevel: PigLevel,
   pigCostInTon: number
-) {
+): number {
   const userSharePercentage = upgradedPigLevel === 1 ? 20 : 5;
   switch (role) {
     case "admin":
-      return (BigInt(pigCostInTon) * BigInt(20)) / BigInt(100);
+      return (pigCostInTon * 20) / 100;
     case "referrer":
-      return (BigInt(pigCostInTon) * BigInt(20)) / BigInt(100);
+      return (pigCostInTon * 20) / 100;
     case "user":
-      return (BigInt(pigCostInTon) * BigInt(userSharePercentage)) / BigInt(100);
+      return (pigCostInTon * userSharePercentage) / 100;
     default:
-      return BigInt(0);
+      return 0;
   }
 }

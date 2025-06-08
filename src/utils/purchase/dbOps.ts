@@ -7,14 +7,19 @@ import {
 import { supabase } from "../supebase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
+import { Address, fromNano } from "@ton/core";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (
-  bh: bountyHuntersResponse
+  bounty_hunters: bountyHuntersResponse
 ) => {
+  let bh = bounty_hunters;
+  //----------------------------------------------------
+  // Step 1: Fetch the user stats (previous piggy bank balance)
+  //----------------------------------------------------
   const { data: users, error: fetchUsersError } = await supabase
     .from("users")
-    .select("id, piggy_bank_balance")
+    .select("wallet_address, piggy_bank_balance")
     .in(
       "wallet_address",
       bh.users.keys().map((userAddr) => userAddr.toRawString())
@@ -23,35 +28,102 @@ export const updateBountyHuntersBalances = async (
 
   const { data: admins, error: fetchAdminsError } = await supabase
     .from("users")
-    .select("id, piggy_bank_balance")
+    .select("wallet_address, piggy_bank_balance")
     .in(
       "wallet_address",
-      bh.users.keys().map((adminAddr) => adminAddr.toRawString())
+      bh.admins.keys().map((adminAddr) => adminAddr.toRawString())
     );
 
   if (fetchAdminsError) throw fetchAdminsError;
 
-  const usersUpdates = users.map((user) => ({
-    id: user.id,
-    pig_balance: Number(user.piggy_bank_balance ?? 0) + 3,
-  }));
+  const { data: referrer, error: fetchReferrerError } = await supabase
+    .from("users")
+    .select("wallet_address, piggy_bank_balance")
+    .in(
+      "wallet_address",
+      bh.referrer.keys().map((referrerAddr) => referrerAddr.toRawString())
+    );
 
-  const adminsUpdates = admins.map((admin) => ({
-    id: admin.id,
-    pig_balance: Number(admin.piggy_bank_balance ?? 0) + 2,
-  }));
+  if (fetchReferrerError) throw fetchReferrerError;
 
-  // 3. Send updates in bulk (same `pig_balance` for all is fine)
-  for (const update of usersUpdates.concat(adminsUpdates)) {
+  //----------------------------------------------------
+  // Step 2: updating the user balances to update the db
+  //----------------------------------------------------
+
+  users.forEach((user) =>
+    bh.users.set(
+      Address.parse(user.wallet_address),
+      BigInt(user.piggy_bank_balance) +
+        bh.users.get(Address.parse(user.wallet_address))!
+    )
+  );
+
+  admins.forEach((admin) =>
+    bh.admins.set(
+      Address.parse(admin.wallet_address),
+      BigInt(admin.piggy_bank_balance) +
+        bh.admins.get(Address.parse(admin.wallet_address))!
+    )
+  );
+
+  referrer.forEach((referrer) =>
+    bh.referrer.set(
+      Address.parse(referrer.wallet_address),
+      BigInt(referrer.piggy_bank_balance) +
+        bh.referrer.get(Address.parse(referrer.wallet_address))!
+    )
+  );
+
+  //----------------------------------------------------
+  // Step 3: updating the user balances on the DB
+  //----------------------------------------------------
+
+  for (const userAddr of bh.users.keys()) {
+
     const { error } = await supabase
       .from("users")
-      .update({ piggy_bank_balance: update.pig_balance })
-      .eq("id", update.id);
+      .update({ piggy_bank_balance: Number(bh.users.get(userAddr)) })
+      .eq("wallet_address", userAddr.toRawString());
 
     if (error) {
-      console.error(`Failed to update user ${update.id}:`, error);
-      throw new Error(`Failed to update user ${update.id}: ${error}`);
-      // You can choose to continue or stop here
+      console.error(`Failed to update user ${userAddr.toRawString()}:`, error);
+      throw new Error(
+        `Failed to update user ${userAddr.toRawString()}: ${error}`
+      );
+    }
+  }
+
+  for (const adminAddr of bh.admins.keys()) {
+    const { error } = await supabase
+      .from("users")
+      .update({ piggy_bank_balance: Number(bh.admins.get(adminAddr)) })
+      .eq("wallet_address", adminAddr.toRawString());
+
+    if (error) {
+      console.error(
+        `Failed to update admin ${adminAddr.toRawString()}:`,
+        error
+      );
+      throw new Error(
+        `Failed to update admin ${adminAddr.toRawString()}: ${error}`
+      );
+    }
+  }
+
+  for (const referrerAddr of bh.referrer.keys()) {
+    const { error } = await supabase
+      .from("users")
+      .update({ piggy_bank_balance: Number(bh.referrer.get(referrerAddr)) })
+      .eq("wallet_address", referrerAddr.toRawString());
+
+    if (error) {
+      console.error(
+        `Failed to update referrer ${referrerAddr.toRawString()}:`,
+        error
+      );
+      throw new Error(
+        `Failed to update referrer ${referrerAddr.toRawString()}: ${error}`
+      );
     }
   }
 };
@@ -109,7 +181,9 @@ export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
     .single();
 
   if (insertError) {
-    throw new Error(`Wallet update error (initTxHistory): ${insertError.message}`);
+    throw new Error(
+      `Wallet update error (initTxHistory): ${insertError.message}`
+    );
   }
   return tx as txHistory;
 };
@@ -125,7 +199,9 @@ export const updateTxHistory = async (
     .single();
 
   if (insertError) {
-    throw new Error(`Wallet update error(updateTxHistory): ${insertError.message}`);
+    throw new Error(
+      `Wallet update error(updateTxHistory): ${insertError.message}`
+    );
   }
   return tx as txHistory;
 };
@@ -133,58 +209,77 @@ export const updateTxHistory = async (
 export async function updateReferralsRewardsHistory(
   event_data: extendedPigApprovalEvent
 ): Promise<boolean> {
-  event_data.userBountyHunters.keys().forEach(async (user) => {
-    const { data: tx, error: insertError } = await supabase
+  for (const user of Array.from(event_data.userBountyHunters.keys())) {
+    const reward = event_data.userBountyHunters.get(user);
+    const { error: insertError } = await supabase
       .from("rewards_history")
       .insert({
         wallet_address: user.toRawString(),
-        reward: Number(event_data.userBountyHunters.get(user)),
+        reward: Number(reward),
         referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
       })
       .select()
       .single();
-      console.log(`rewarded ${user.toRawString()} with ${Number(event_data.userBountyHunters.get(user))} TON`);
+
+    console.log(
+      `rewarded user ${user.toRawString()} with ${Number(fromNano(reward!))} TON`
+    );
+
     if (insertError) {
       throw new Error(`Update users reward error: ${insertError.message}`);
     }
-  });
+  }
 
-  event_data.adminsShares.keys().forEach(async (admin) => {
-    const { data: tx, error: insertError } = await supabase
+  for (const admin of Array.from(event_data.adminsShares.keys())) {
+    const reward = event_data.adminsShares.get(admin);
+    const { error: insertError } = await supabase
       .from("rewards_history")
       .insert({
         wallet_address: admin.toRawString(),
-        reward: Number(event_data.adminsShares.get(admin)),
+        reward: Number(reward),
         referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
       })
       .select()
       .single();
-    console.log(`rewarded ${admin.toRawString()} with ${Number(event_data.adminsShares.get(admin))} TON`);
+
+    console.log(
+      `rewarded admin ${admin.toRawString()} with ${Number(fromNano(reward!))} TON`
+    );
+
     if (insertError) {
       console.error("Update admins reward error:", insertError);
     }
-  });
+  }
 
-    event_data.referrer?.keys().forEach(async (referrer) => {
-    const { data: tx, error: insertError } = await supabase
-      .from("rewardsHistory")
-      .insert({
-        wallet_address: referrer.toRawString(),
-        reward: Number(event_data.referrer?.get(referrer)), 
-        referral: event_data.userAddress.toRawString(),
-        related_tx: event_data.tx_hash,
-      })
-      .select()
-      .single();
-      console.log(`rewarded ${referrer.toRawString()} with ${Number(event_data.referrer?.get(referrer))} TON`);
-    if (insertError) {
-      throw new Error(`Update admins reward error: ${insertError.message}`);
+  if (event_data.referrer) {
+    for (const referrer of Array.from(event_data.referrer.keys())) {
+      const reward = event_data.referrer.get(referrer);
+      const { error: insertError } = await supabase
+        .from("rewards_history")
+        .insert({
+          wallet_address: referrer.toRawString(),
+          reward: Number(reward),
+          referral: event_data.userAddress.toRawString(),
+          related_tx: event_data.tx_hash,
+        })
+        .select()
+        .single();
+
+      console.log(
+        `rewarded referrer ${referrer.toRawString()} with ${Number(fromNano(reward!))} TON`
+      );
+
+      if (insertError) {
+        throw new Error(`Update referrer reward error: ${insertError.message}`);
+      }
     }
-  });
+  }
+
   return true;
 }
+
 
 export async function isDuplicatePurchase(
   userAddress: string,

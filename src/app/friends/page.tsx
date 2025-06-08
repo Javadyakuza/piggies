@@ -175,7 +175,7 @@ export default function FriendsPage() {
     fetchBatchReferrals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
-  const pigsMap = pigsMapNew(t, 0);
+  const pigsMap = pigsMapV2(t, 0);
 
   const currentPig =
     currentPigCode || currentPigCode === 0

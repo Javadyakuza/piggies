@@ -35,7 +35,7 @@ export default async function handler(
       return { success: false, message: "no wallets ?!#$" };
     }
 
-    const PigCost = BigInt(pigsMapV2(undefined,1)[user.current_pig - 1].rawPriceInTon);
+    const PigCost = BigInt(pigsMapV2(undefined,1)[user.current_pig].rawPriceInTon);
 
     const tx_fee = toNano("0.5");
 
