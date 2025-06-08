@@ -8,6 +8,7 @@ import { supabase } from "../supebase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
 import { Address, fromNano } from "@ton/core";
+import { findOpenSlotInSubtree } from "../tree";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (
@@ -79,7 +80,6 @@ export const updateBountyHuntersBalances = async (
   //----------------------------------------------------
 
   for (const userAddr of bh.users.keys()) {
-
     const { error } = await supabase
       .from("users")
       .update({ piggy_bank_balance: Number(bh.users.get(userAddr)) })
@@ -156,6 +156,12 @@ export const upgradeUserPig = async (userAddress: string) => {
   if (updateError) {
     throw new Error(`Wallet update error: ${updateError.message}`);
   }
+
+  // updating the user parent id in the tree if he just updated to the bronze pig
+  if (currentPig === 0) {
+    await UpdateUSerInTree(userAddress, "");
+  }
+  
 };
 
 export const getPigs = async (
@@ -280,7 +286,6 @@ export async function updateReferralsRewardsHistory(
   return true;
 }
 
-
 export async function isDuplicatePurchase(
   userAddress: string,
   pigLevel: PigLevel
@@ -305,4 +310,86 @@ export async function isDuplicatePurchase(
   }
 
   return false;
+}
+
+export async function UpdateUSerInTree(
+  wallet_address: string,
+  parent_id: string
+) {
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({ parent_id: parent_id })
+    .eq("wallet_address", wallet_address);
+
+  if (updateError) {
+    throw new Error(
+      `Update user parent_id error (updateUserInTree): ${updateError.message}`
+    );
+  }
+}
+
+export async function getParentId(
+  wallet_address: string,
+  referral_id?: string
+): Promise<{ pi: string; ii: string }> {
+  //----------------------------------------------------
+  // Step 1: getting the user, its inviter and the genesis account
+  //----------------------------------------------------
+
+  const { data: genesisUser } = await supabase
+    .from("users")
+    .select("id")
+    .eq("telegram_id", "@genesis")
+    .single();
+
+  if (!genesisUser) {
+    throw new Error("couldn't fetch the genesis account");
+  }
+
+  let inviter_id: string | null = null;
+
+  if (wallet_address) {
+    const { data: inviter } = await supabase
+      .from("users")
+      .select("inviter_id")
+      .eq("wallet_address", wallet_address)
+      .single();
+
+    if (!inviter) {
+      throw new Error("couldn't fetch the inviter_id account");
+    }
+
+    inviter_id = inviter.inviter_id;
+
+  } else if (referral_id) {
+    const { data: inviter } = await supabase
+      .from("users")
+      .select("id")
+      .eq("referral_id", referral_id)
+      .single();
+
+    if (!inviter) {
+      throw new Error("couldn't fetch the inviter_id account");
+    }
+    inviter_id = inviter.id;
+  }
+
+  //----------------------------------------------------
+  // Step 2: Fetching the parent_id
+  //----------------------------------------------------
+  let parentId: string | number | null = null;
+
+  if (inviter_id) {
+    // Find an open slot in inviter's subtree for the new user
+    parentId = await findOpenSlotInSubtree(String(inviter_id));
+    if (!parentId) {
+      // If for some reason no slot found (tree completely full), default to attaching to inviter
+      parentId = await findOpenSlotInSubtree(String(genesisUser.id));
+    }
+  } else {
+    parentId = await findOpenSlotInSubtree(String(genesisUser.id));
+    inviter_id = genesisUser.id;
+  }
+
+  return { pi: String(parentId), ii: String(inviter_id) };
 }

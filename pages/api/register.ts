@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supebase";
 import { cookies } from "next/headers";
 import { findOpenSlotInSubtree } from "@/utils/tree";
 import { RegisterRequest } from "@/models/register";
+import { getParentId } from "@/utils/purchase/dbOps";
 
 /**
  * @swagger
@@ -122,52 +123,15 @@ export default async function handler(
   }
 
   // Determine the parent_id for the new user via referral logic
-  let parentId: string | number | null = null;
-  let inviterId: string | number | null = null;
-  if (referral_id) {
-    // If a referral (inviter) is provided, find that user
-    const { data: inviter } = await supabase
-      .from("users")
-      .select("id")
-      .eq("referral_id", referral_id)
-      .single();
-    if (!inviter) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid referral_id (inviter not found)",
-      });
-    }
-    inviterId = inviter.id;
-    // Find an open slot in inviter's subtree for the new user
-    parentId = await findOpenSlotInSubtree(String(inviterId));
-    if (!parentId) {
-      // If for some reason no slot found (tree completely full), default to attaching to inviter
-      parentId = inviterId;
-    }
-  } else {
-    const { data: genesisUser } = await supabase
-      .from("users")
-      .select("id")
-      .eq("telegram_id", "@genesis")
-      .single();
-
-    if (!genesisUser) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid referral_id (inviter not found)",
-      });
-    }
-    parentId = await findOpenSlotInSubtree(String(genesisUser.id));
-    inviterId = genesisUser.id;
-  }
-
+  let ids = await getParentId("", String(referral_id))
+  
 
   const { data: insertData, error } = await supabase
     .from("users")
     .insert({
       telegram_id: telegram_id,
-      inviter_id: inviterId,
-      parent_id: parentId,
+      inviter_id: ids.ii,
+      parent_id: null,
       fullname: fullname,
       wallet_address: wallet_address,
       user_type: 1,
