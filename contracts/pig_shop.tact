@@ -46,6 +46,12 @@ contract PigShop {
   receive(msg: ChangeCollection) {
     require(sender() == self.owner, "Only owner can change collection");
     self.collection = msg.newCollection;
+    send(SendParameters {
+      to: sender(),
+      value: 0,
+      mode: SendRemainingBalance,
+      bounce: false,
+    });
   }
 
   // Empty receiver

@@ -1,5 +1,6 @@
-import { toNano } from "@ton/core";
+import { Address, toNano } from "@ton/core";
 import { PigCollection, Tep64TokenData } from "../../wrappers/PigCollection";
+import { PigShop } from "../../wrappers/PigShop";
 import { NetworkProvider } from "@ton/blueprint";
 
 // TODO: replace with metadata urls
@@ -13,8 +14,10 @@ export const itemPrefix = 'https://';
 
 
 export async function run(provider: NetworkProvider) {
+  // !!! paste deployed pigshop address here
+  const pigshopAddress = Address.parse('EQC-0000000000000000000000000000000000000000000000000000000000000000');
   const pigCollection = provider.open(
-    await PigCollection.fromInit(provider.sender().address!, tep64TokenData, itemPrefix, {
+    await PigCollection.fromInit(provider.sender().address!, pigshopAddress, tep64TokenData, itemPrefix, {
       $$type: 'RoyaltyParams',
       numerator: 0n,
       denominator: 1n,
@@ -35,4 +38,18 @@ export async function run(provider: NetworkProvider) {
     "PigShop contract deployed successfully at:",
     pigCollection.address.toRawString()
   );
+
+  const pigshop = provider.open(
+    await PigShop.fromAddress(pigshopAddress)
+  );
+
+  await pigshop.send(provider.sender(), {
+    value: toNano("0.05"),
+  }, {
+    $$type: 'ChangeCollection',
+    newCollection: pigCollection.address,
+  });
+
+  console.log("Collection contract deployed successfully at:", pigCollection.address.toRawString());
+  console.log("Pigshop contract updated with collection address successfully");
 }
