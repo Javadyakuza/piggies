@@ -17,6 +17,7 @@ import { generateRefLink } from "@/utils/reflink";
 import "./styles.css";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { useTonConnectUI } from "@tonconnect/ui-react";
+import Image from "next/image";
 
 export default function Header() {
   const t = useTranslations("i18n");
@@ -78,17 +79,25 @@ export default function Header() {
   return (
     <div className="main-header">
       <div className="profile-container">
-        <div className="avatar-container" onClick={handleNavigateProfile}>
+        <div className="avatar-container">
           <div className="avatar">
             <FontAwesomeIcon icon={faUser} size="lg" />
           </div>
           <h4 className="full-name">
             {userData?.firstName} {userData?.lastName}
           </h4>
-          <span style={{ fontSize: "1rem"}}> v2.9.3 dev </span>
+          <span style={{ fontSize: "1rem" }}> v2.9.3 dev </span>
         </div>
         <div className="actions-container">
-          <div></div>
+          <div>
+            <Image
+              onClick={handleNavigateProfile}
+              src="/imgs/icons/settings.png"
+              alt="cart-icon"
+              width={28}
+              height={28}
+            />
+          </div>
         </div>
       </div>
     </div>
