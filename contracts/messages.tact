@@ -193,7 +193,7 @@ message(1004) PigBounty {
     surplusDestination: Address;
 }
 
-message(2001) WithdrawWithLimit {
-    level: Int as uint8;
-    to: Address;
+message(2001) PigCreation {
+    owner: Address;
+    nftIndex: Int as uint256;
 }

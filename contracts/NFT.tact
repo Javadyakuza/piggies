@@ -264,7 +264,7 @@ trait NftCollection with Common {
                 responseDestination: msg.responseDestination,
                 forwardAmount: msg.forwardAmount,
                 forwardPayload: msg.forwardPayload,
-                customPayload: beginString().toCell(),
+                customPayload: beginCell().storeAddress(self.pigshop).endCell(),
             }.toCell(),
             code: nftItemContract.code,
             data: nftItemContract.data,
@@ -376,6 +376,17 @@ trait NftItem with Common {
                 }.toCell(),
             });
         }
+
+        send(SendParameters {
+            to: self.pigshop!!,
+            value: ton("0.1"),
+            bounce: false,
+            mode: SendPayGasSeparately,
+            body: PigCreation {
+                owner: self.owner,
+                nftIndex: self.itemIndex,
+            }.toCell(),
+        });
 
         // refund the remaining balance to the responseDestination
         self.reserveValue(0);

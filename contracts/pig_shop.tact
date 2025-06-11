@@ -1,34 +1,51 @@
 import "@stdlib/deploy"; // Ensure standard library is imported
 import "./messages.tact";
+import "./NFT.tact";
 
 message UpgradePig {
   userAddress: Address;
+}
+message ChangeCollection {
+  newCollection: Address;
 }
 message PigApproval {
   userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
+message PigCreationEvent {
+  userAddress: Address;
+  nft: Address;
+}
+
 message PigApprovalEvent {
   userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
 
+inline fun calcItemAddress(nftCollectionAddress: Address, itemIndex: Int): Address {
+    let i = initOf Pig(nftCollectionAddress, itemIndex);
+    return contractAddress(i);
+}
 
 
 contract PigShop {
-  collection: Address;
+  collection: Address?;
   owner: Address;
   limits: map<Int as uint8, Int as coins> = emptyMap();
   // Initialize the owner in the init() function
-  init(owner: Address, collection: Address) {
+  init(owner: Address) {
     self.owner = owner;
-    self.collection = collection;
     self.limits.set(1, ton("0.1"));
     self.limits.set(2, ton("0.25"));
     self.limits.set(3, ton("0.5"));
     self.limits.set(4, ton("0.75"));
+  }
+
+  receive(msg: ChangeCollection) {
+    require(sender() == self.owner, "Only owner can change collection");
+    self.collection = msg.newCollection;
   }
 
   // Empty receiver
@@ -45,6 +62,11 @@ contract PigShop {
 
   receive("UpgradePig"){
     emit(UpgradePig{userAddress: sender()}.toCell());
+  }
+
+  receive(msg: PigCreation) {
+    require(sender() == calcItemAddress(self.collection!!, msg.nftIndex), "Only NFT item is authorized");
+    emit(PigCreationEvent{userAddress: msg.owner, nft: sender()}.toCell());
   }
 
   receive(msg: PigApproval){
@@ -77,10 +99,17 @@ contract PigShop {
     }
 
     send(SendParameters {
-      to: self.collection,
+      to: self.collection!!,
       value: ton("0.1"),
       mode: SendPayGasSeparately,
       bounce: false,
+      body: MintNFT {
+        queryId: 0,
+        receiver: msg.userAddress,
+        responseDestination: msg.userAddress,
+        forwardAmount: 1,
+        forwardPayload: emptyCell(),
+      }.toCell()
     });
     // emit the approval event
     emit(PigApprovalEvent{
