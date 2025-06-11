@@ -9,6 +9,7 @@ message ChangeCollection {
   newCollection: Address;
 }
 message PigApproval {
+  pig: Address;
   userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
@@ -77,6 +78,7 @@ contract PigShop {
 
   receive(msg: PigApproval){
     require(sender() == self.owner, "Only owner can approve a pig purchase");
+    require(msg.level > 0 && msg.level <= 4, "Invalid level");
     require(!msg.userBountyHunters.isEmpty() && !msg.adminsShares.isEmpty(),
       "Distribution map cannot be empty"
     );
@@ -103,20 +105,30 @@ contract PigShop {
         bounce: false,
       });
     }
-
-    send(SendParameters {
-      to: self.collection!!,
-      value: ton("0.1"),
-      mode: SendPayGasSeparately,
-      bounce: false,
-      body: MintNFT {
-        queryId: 0,
-        receiver: msg.userAddress,
-        responseDestination: msg.userAddress,
-        forwardAmount: 1,
-        forwardPayload: emptyCell(),
-      }.toCell()
-    });
+    
+    if (msg.pig == null) {
+      send(SendParameters {
+        to: self.collection!!,
+        value: ton("0.1"),
+        mode: SendPayGasSeparately,
+        bounce: false,
+        body: MintNFT {
+          queryId: 0,
+          receiver: msg.userAddress,
+          responseDestination: msg.userAddress,
+          forwardAmount: 1,
+          forwardPayload: emptyCell(),
+        }.toCell()
+      });
+    } else {
+      send(SendParameters {
+        to: msg.pig,
+        value: ton("0.1"),
+        mode: SendPayGasSeparately,
+        bounce: false,
+        body: UpgradeNftPig {}.toCell()
+      });
+    }
     // emit the approval event
     emit(PigApprovalEvent{
         userAddress: msg.userAddress,
