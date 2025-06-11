@@ -19,16 +19,17 @@ import { init } from "@/core/init";
 
 export async function mockPigPurchase(wallet_address: string) {
   let walletAddr = Address.parse(wallet_address).toRawString();
-  let bh: bountyHuntersResponse = await findUsersBountyHunters(walletAddr);
-
   let pig_data = await getPigs(walletAddr);
-  
+  let bh: bountyHuntersResponse = await findUsersBountyHunters(
+    walletAddr,
+    pig_data.new_pig_level
+  );
+
   let tx_id = TxId.create(walletAddr, pig_data.new_pig_level);
 
   // the tokens have been distributed, updating the db
   await updateBountyHuntersBalances(bh);
-
-  // the user current pig should be upgraded
+  // the user current pig should be upgraded 
   await upgradeUserPig(walletAddr);
 
   let txHash = txHashGen();
@@ -53,6 +54,7 @@ export async function mockPigPurchase(wallet_address: string) {
     userAddress: Address.parse(walletAddr),
     userBountyHunters: bh.users,
     adminsShares: bh.admins,
+    referrer: bh.referrer,
   };
 
   // update the referrals rewards history

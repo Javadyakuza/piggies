@@ -35,7 +35,9 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
   const tac = getTonApiClient();
   const adminWallet = await getAdminWallet(tc);
   const pigShop = tc.open(
-    PigShop.fromAddress(Address.parse(process.env.NEXT_PUBLIC_PIG_SHOP_ADDRESS!))
+    PigShop.fromAddress(
+      Address.parse(process.env.NEXT_PUBLIC_PIG_SHOP_ADDRESS!)
+    )
   );
 
   const txs = await tac.blockchain.getBlockchainAccountTransactions(
@@ -88,10 +90,11 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
   // handle if any purchase related events was found
   if (event && event.userAddress) {
     // finding the relative user and its reward receiver
-    let bh: bountyHuntersResponse = await findUsersBountyHunters(
-      event.userAddress.toRawString()
-    );
     let pig_data = await getPigs(event.userAddress.toRawString());
+    let bh: bountyHuntersResponse = await findUsersBountyHunters(
+      event.userAddress.toRawString(),
+      pig_data.new_pig_level
+    );
     // identifying the event type
     if (event.$$type == "UpgradePig") {
       let tx_id = TxId.create(
@@ -110,7 +113,12 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         );
 
         // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
-        await sendPigApproval(bh, adminWallet, pigShop, event.userAddress.toRawString());
+        await sendPigApproval(
+          bh,
+          adminWallet,
+          pigShop,
+          event.userAddress.toRawString()
+        );
 
         // update users transaction history
         await initTxHistory({
@@ -145,6 +153,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         upgraded_pig_level: pig_data.new_pig_level,
       });
 
+      event.referrer = bh.referrer;
       // update the referrals rewards history
       let updateRes = await updateReferralsRewardsHistory(event);
 

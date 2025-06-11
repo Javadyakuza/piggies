@@ -7,8 +7,9 @@ import {
   UpgradePigParams,
 } from "@/models/purchase";
 import { mockPigPurchase } from "@/utils/purchase/mocker";
-import { calculatePigPrice } from "@/utils/purchase/pigPrice";
+// import { calculatePigPrice } from "@/utils/purchase/pigPrice";
 import { toNano } from "@ton/ton";
+import { pigsMapV2 } from "@/utils/pigs_map";
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,7 +35,7 @@ export default async function handler(
       return { success: false, message: "no wallets ?!#$" };
     }
 
-    const PigCost = await calculatePigPrice(user.current_pig + 1);
+    const PigCost = BigInt(pigsMapV2(undefined,1)[user.current_pig].rawPriceInTon);
 
     const tx_fee = toNano("0.5");
 

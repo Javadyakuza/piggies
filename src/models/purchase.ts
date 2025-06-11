@@ -20,6 +20,7 @@ export type PurchasePigResponse = {
 };
 
 export interface bountyHuntersResponse {
+  referrer: Dictionary<Address, bigint>;
   users: Dictionary<Address, bigint>;
   admins: Dictionary<Address, bigint>;
 }
@@ -27,7 +28,7 @@ export interface bountyHuntersResponse {
 export type upgradeUserPigsInternalResponse = {
   old_pig_level: PigLevel;
   new_pig_level: PigLevel;
-};
+};  
 
 export interface extendedPigUpgradeEvent extends UpgradePig {
   tx_hash: string;
@@ -35,9 +36,10 @@ export interface extendedPigUpgradeEvent extends UpgradePig {
 
 export interface extendedPigApprovalEvent extends PigApprovalEvent {
   tx_hash: string;
+  referrer?:  Dictionary<Address, bigint>;
 }
 
 export interface UpgradePigParams {
-  amount: bigint | string ;
+  amount: bigint | string;
   operation: "UpgradePig";
 }

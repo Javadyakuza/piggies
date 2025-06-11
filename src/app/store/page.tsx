@@ -7,7 +7,7 @@ import "./styles.css";
 import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
-import { pigsMapNew } from "@/utils/pigs_map";
+import { pigsMapV2 } from "@/utils/pigs_map";
 import axios, { AxiosResponse } from "axios";
 import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
@@ -17,7 +17,7 @@ import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { getTonClient } from "@/utils/tonClients";
 import { PurchasePigResponse, UpgradePigParams } from "@/models/purchase";
-import { getUpgradePigParams } from "@/scripts/upgradePig";
+
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 
 type PigData = {
@@ -41,7 +41,7 @@ export default function StorePage() {
   const tonClient = getTonClient();
 
   const walletAddress = wallet?.account?.address;
-  const pigsMap = pigsMapNew(t, tonPrice);
+  const pigsMap = pigsMapV2(t, tonPrice);
 
   const txRequestLifetime = Date.now() + 3 * 60 * 1000; // 3 minutes for user to approve
 
@@ -56,7 +56,7 @@ export default function StorePage() {
             messages: [
               {
                 address: args.to.toString(),
-                amount: toNano("0.1").toString(), // args.value.toString(),
+                amount: toNano("0.01").toString(), // args.value.toString(),
                 payload: args.body?.toBoc()?.toString("base64"),
               },
             ],
@@ -417,7 +417,7 @@ export default function StorePage() {
                 className="action-btn purchase-btn"
               >
                 <div>
-                  <span className="price">{nextPig?.priceInTon}</span> TON
+                  <span className="price">{nextPig?.rawPriceInTon}</span> TON
                 </div>
               </button>
               <button
