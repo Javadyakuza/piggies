@@ -9,7 +9,7 @@ message ChangeCollection {
   newCollection: Address;
 }
 message PigApproval {
-  pig: Address;
+  pig: Address?;
   userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
@@ -78,7 +78,6 @@ contract PigShop {
 
   receive(msg: PigApproval){
     require(sender() == self.owner, "Only owner can approve a pig purchase");
-    require(msg.level > 0 && msg.level <= 4, "Invalid level");
     require(!msg.userBountyHunters.isEmpty() && !msg.adminsShares.isEmpty(),
       "Distribution map cannot be empty"
     );
@@ -122,7 +121,7 @@ contract PigShop {
       });
     } else {
       send(SendParameters {
-        to: msg.pig,
+        to: msg.pig!!,
         value: ton("0.1"),
         mode: SendPayGasSeparately,
         bounce: false,
