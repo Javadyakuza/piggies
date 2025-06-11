@@ -1,4 +1,5 @@
 import "@stdlib/deploy"; // Ensure standard library is imported
+import "./messages.tact";
 
 message UpgradePig {
   userAddress: Address;
@@ -13,29 +14,33 @@ message PigApprovalEvent {
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
-message Withdraw {
-  amount: Int as coins;
-  to: Address;
-}
+
+
 
 contract PigShop {
-  owner: Address; // Persistent state variable
-  balances: map<Address, Int as coins> = emptyMap();
+  collection: Address;
+  owner: Address;
+  limits: map<Int as uint8, Int as coins> = emptyMap();
   // Initialize the owner in the init() function
-  init(owner: Address){
+  init(owner: Address, collection: Address) {
     self.owner = owner;
+    self.collection = collection;
+    self.limits.set(1, ton("0.1"));
+    self.limits.set(2, ton("0.25"));
+    self.limits.set(3, ton("0.5"));
+    self.limits.set(4, ton("0.75"));
   }
 
   // Empty receiver
   receive(){
     // Refund the remaining value in the incoming message back to the sender
-    send(SendParameters{
-        to: sender(),
-        value: 0, // 0 means send no additional value
-        mode: SendRemainingValue, // Sends the remaining value of the incoming message
-        bounce: true
-      }
-    );
+    // send(SendParameters{
+    //     to: sender(),
+    //     value: 0, // 0 means send no additional value
+    //     mode: SendRemainingValue, // Sends the remaining value of the incoming message
+    //     bounce: true
+    //   }
+    // );
   }
 
   receive("UpgradePig"){
@@ -50,14 +55,33 @@ contract PigShop {
     // updating the user balances
     foreach (address, amount in msg.userBountyHunters) {
       require(amount > 0, "Amount must be greater than 0");
-      let oldAmount = self.balances.get(address)!!;
-      self.balances.set(address, oldAmount + amount);
+      send(SendParameters {
+        to: address,
+        value: amount,
+        mode: SendPayGasSeparately,
+        bounce: true,
+        body: PigBounty {
+          limits: self.limits,
+          surplusDestination: self.owner
+        }.toCell()
+      });
     }
     foreach (address, amount in msg.adminsShares) {
       require(amount > 0, "Amount must be greater than 0");
-      let oldAmount = self.balances.get(address)!!;
-      self.balances.set(address, oldAmount + amount);
+      send(SendParameters {
+        to: address,
+        value: amount,
+        mode: SendPayGasSeparately,
+        bounce: false,
+      });
     }
+
+    send(SendParameters {
+      to: self.collection,
+      value: ton("0.1"),
+      mode: SendPayGasSeparately,
+      bounce: false,
+    });
     // emit the approval event
     emit(PigApprovalEvent{
         userAddress: msg.userAddress,
@@ -65,33 +89,5 @@ contract PigShop {
         adminsShares: msg.adminsShares
       }.toCell()
     );
-    // TODO: Mint NFT
-    self.reply(null);
-  }
-
-  receive(msg: Withdraw){
-    require(msg.amount > ton("0.1") &&
-        msg.amount <= self.balances.get(sender())!!,
-      "Amount must be greater than 0.1 and less than or equal to the user's balance"
-    );
-    let oldAmount = self.balances.get(sender())!!;
-    self.balances.set(sender(), oldAmount + msg.amount);
-    send(SendParameters{
-        to: msg.to,
-        value: msg.amount,
-        mode: SendPayGasSeparately,
-        bounce: true
-      }
-    );
-    emit(
-      Withdraw {
-        amount: msg.amount,
-        to: sender(),
-      }.toCell()
-    )
-  }
-
-  get fun getBalance(user: Address): Int? {
-    return self.balances.get(user);
   }
 }

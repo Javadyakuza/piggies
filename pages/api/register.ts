@@ -125,6 +125,7 @@ export default async function handler(
   let parentId: string | number | null = null;
   let inviterId: string | number | null = null;
   if (referral_id) {
+    console.log("referral_id", referral_id);
     // If a referral (inviter) is provided, find that user
     const { data: inviter } = await supabase
       .from("users")
@@ -154,7 +155,7 @@ export default async function handler(
     if (!genesisUser) {
       return res.status(400).json({
         success: false,
-        message: "Invalid referral_id (inviter not found)",
+        message: "Invalid referral_id (genesis user not found)",
       });
     }
     parentId = await findOpenSlotInSubtree(String(genesisUser.id));
