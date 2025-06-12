@@ -197,3 +197,11 @@ message(2001) PigCreation {
     owner: Address;
     nftIndex: Int as uint256;
 }
+
+message(2002) WithdrawFromPig {
+  owner: Address;
+  nft: Address;
+  amount: Int as coins;
+  nftIndex: Int as uint256;
+
+}

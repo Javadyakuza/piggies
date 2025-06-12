@@ -137,6 +137,19 @@ contract Pig with NftItem {
             mode: SendRemainingBalance,
             bounce: false
         });
+
+        send(SendParameters {
+            to: self.pigshop!!,
+            value: amount,
+            bounce: false,
+            mode: SendPayGasSeparately,
+            body: WithdrawFromPig {
+                nft: myAddress(),
+                amount: amount,
+                owner: self.owner,
+                nftIndex: self.itemIndex,
+            }.toCell(),
+        });
     }
 }
 
