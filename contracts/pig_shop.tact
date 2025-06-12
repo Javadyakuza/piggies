@@ -1,45 +1,79 @@
 import "@stdlib/deploy"; // Ensure standard library is imported
+import "./messages.tact";
+import "./NFT.tact";
 
 message UpgradePig {
   userAddress: Address;
 }
+message ChangeCollection {
+  newCollection: Address;
+}
 message PigApproval {
+  pig: Address?;
   userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
+message PigCreationEvent {
+  userAddress: Address;
+  nft: Address;
+}
+
 message PigApprovalEvent {
   userAddress: Address;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
-message Withdraw {
-  amount: Int as coins;
-  to: Address;
+
+inline fun calcItemAddress(nftCollectionAddress: Address, itemIndex: Int): Address {
+    let i = initOf Pig(nftCollectionAddress, itemIndex);
+    return contractAddress(i);
 }
 
+
 contract PigShop {
-  owner: Address; // Persistent state variable
-  balances: map<Address, Int as coins> = emptyMap();
+  collection: Address?;
+  owner: Address;
+  limits: map<Int as uint8, Int as coins> = emptyMap();
   // Initialize the owner in the init() function
-  init(owner: Address){
+  init(owner: Address) {
     self.owner = owner;
+    self.limits.set(1, ton("0.1"));
+    self.limits.set(2, ton("0.25"));
+    self.limits.set(3, ton("0.5"));
+    self.limits.set(4, ton("0.75"));
+  }
+
+  receive(msg: ChangeCollection) {
+    require(sender() == self.owner, "Only owner can change collection");
+    self.collection = msg.newCollection;
+    send(SendParameters {
+      to: sender(),
+      value: 0,
+      mode: SendRemainingBalance,
+      bounce: false,
+    });
   }
 
   // Empty receiver
   receive(){
     // Refund the remaining value in the incoming message back to the sender
-    send(SendParameters{
-        to: sender(),
-        value: 0, // 0 means send no additional value
-        mode: SendRemainingValue, // Sends the remaining value of the incoming message
-        bounce: true
-      }
-    );
+    // send(SendParameters{
+    //     to: sender(),
+    //     value: 0, // 0 means send no additional value
+    //     mode: SendRemainingValue, // Sends the remaining value of the incoming message
+    //     bounce: true
+    //   }
+    // );
   }
 
   receive("UpgradePig"){
     emit(UpgradePig{userAddress: sender()}.toCell());
+  }
+
+  receive(msg: PigCreation) {
+    require(sender() == calcItemAddress(self.collection!!, msg.nftIndex), "Only NFT item is authorized");
+    emit(PigCreationEvent{userAddress: msg.owner, nft: sender()}.toCell());
   }
 
   receive(msg: PigApproval){
@@ -50,13 +84,49 @@ contract PigShop {
     // updating the user balances
     foreach (address, amount in msg.userBountyHunters) {
       require(amount > 0, "Amount must be greater than 0");
-      let oldAmount = self.balances.get(address)!!;
-      self.balances.set(address, oldAmount + amount);
+      send(SendParameters {
+        to: address,
+        value: amount,
+        mode: SendPayGasSeparately,
+        bounce: true,
+        body: PigBounty {
+          limits: self.limits,
+          surplusDestination: self.owner
+        }.toCell()
+      });
     }
     foreach (address, amount in msg.adminsShares) {
       require(amount > 0, "Amount must be greater than 0");
-      let oldAmount = self.balances.get(address)!!;
-      self.balances.set(address, oldAmount + amount);
+      send(SendParameters {
+        to: address,
+        value: amount,
+        mode: SendPayGasSeparately,
+        bounce: false,
+      });
+    }
+    
+    if (msg.pig == null) {
+      send(SendParameters {
+        to: self.collection!!,
+        value: ton("0.1"),
+        mode: SendPayGasSeparately,
+        bounce: false,
+        body: MintNFT {
+          queryId: 0,
+          receiver: msg.userAddress,
+          responseDestination: msg.userAddress,
+          forwardAmount: 1,
+          forwardPayload: emptyCell(),
+        }.toCell()
+      });
+    } else {
+      send(SendParameters {
+        to: msg.pig!!,
+        value: ton("0.1"),
+        mode: SendPayGasSeparately,
+        bounce: false,
+        body: UpgradeNftPig {}.toCell()
+      });
     }
     // emit the approval event
     emit(PigApprovalEvent{
@@ -65,33 +135,5 @@ contract PigShop {
         adminsShares: msg.adminsShares
       }.toCell()
     );
-    // TODO: Mint NFT
-    self.reply(null);
-  }
-
-  receive(msg: Withdraw){
-    require(msg.amount > ton("0.1") &&
-        msg.amount <= self.balances.get(sender())!!,
-      "Amount must be greater than 0.1 and less than or equal to the user's balance"
-    );
-    let oldAmount = self.balances.get(sender())!!;
-    self.balances.set(sender(), oldAmount + msg.amount);
-    send(SendParameters{
-        to: msg.to,
-        value: msg.amount,
-        mode: SendPayGasSeparately,
-        bounce: true
-      }
-    );
-    emit(
-      Withdraw {
-        amount: msg.amount,
-        to: sender(),
-      }.toCell()
-    )
-  }
-
-  get fun getBalance(user: Address): Int? {
-    return self.balances.get(user);
   }
 }
