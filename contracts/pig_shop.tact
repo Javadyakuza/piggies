@@ -23,6 +23,8 @@ message PigCreationEvent {
 
 message PigApprovalEvent {
   userAddress: Address;
+  referrerNftAddress: Address;
+  referrerAmount: Int as coins;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
@@ -143,6 +145,8 @@ contract PigShop {
     // emit the approval event
     emit(PigApprovalEvent{
         userAddress: msg.userAddress,
+        referrerNftAddress: msg.referrerNftAddress,
+        referrerAmount: msg.referrerAmount,
         userBountyHunters: msg.userBountyHunters,
         adminsShares: msg.adminsShares
       }.toCell()
