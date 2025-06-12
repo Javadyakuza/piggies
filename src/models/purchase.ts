@@ -28,6 +28,7 @@ export interface bountyHuntersResponse {
 export type upgradeUserPigsInternalResponse = {
   old_pig_level: PigLevel;
   new_pig_level: PigLevel;
+  address: Address | null;
 };  
 
 export interface extendedPigUpgradeEvent extends UpgradePig {

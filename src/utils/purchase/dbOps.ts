@@ -161,7 +161,6 @@ export const upgradeUserPig = async (userAddress: string) => {
   if (currentPig === 0) {
     await UpdateUSerInTree(userAddress, "");
   }
-  
 };
 
 export const getPigs = async (
@@ -169,13 +168,14 @@ export const getPigs = async (
 ): Promise<upgradeUserPigsInternalResponse> => {
   const { data: current_pig, error: userError } = await supabase
     .from("users")
-    .select("current_pig")
+    .select("current_pig, pig_address")
     .eq("wallet_address", userAddress)
     .single();
 
   return {
     old_pig_level: current_pig?.current_pig ?? 0,
     new_pig_level: (current_pig?.current_pig ?? 0) + 1,
+    address: Address.parse(current_pig?.current_pig) || null,
   };
 };
 
@@ -360,7 +360,6 @@ export async function getParentId(
     }
 
     inviter_id = inviter.inviter_id;
-
   } else if (referral_id) {
     const { data: inviter } = await supabase
       .from("users")

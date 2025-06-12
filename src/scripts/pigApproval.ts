@@ -10,6 +10,7 @@ export async function sendPigApproval(
   bh: bountyHuntersResponse,
   wallet: OpenedContract<WalletContractV5R1>,
   pigShop: OpenedContract<PigShop>,
+  pig: Address | null,
   mainUser: string,
 ) {
   let secretKey = (await keyPairFromEnv()).secretKey;
@@ -18,7 +19,8 @@ export async function sendPigApproval(
     $$type: "PigApproval",
     userBountyHunters: bh.users,
     adminsShares: bh.admins,
-    userAddress: Address.parse(mainUser) 
+    userAddress: Address.parse(mainUser),
+    pig
   };
 
   await pigShop.send(

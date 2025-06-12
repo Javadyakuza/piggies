@@ -107,6 +107,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
           pig_data.old_pig_level
         ))
       ) {
+
         // the purchase have been initiated and the tokens are received by the "pigsShop" contract
         console.log(
           `Upgrade pig request initiated wallet address${event.userAddress}`
@@ -117,7 +118,8 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
           bh,
           adminWallet,
           pigShop,
-          event.userAddress.toRawString()
+          pig_data.address,
+          event.userAddress.toRawString(),
         );
 
         // update users transaction history
@@ -136,7 +138,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       );
 
       // the tokens have been distributed, updating the db
-      await updateBountyHuntersBalances(bh);
+      await updateBountyHuntersBalances(event.);
 
       // the user current pig should be upgraded
       await upgradeUserPig(event.userAddress.toRawString());
