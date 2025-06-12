@@ -11,6 +11,8 @@ message ChangeCollection {
 message PigApproval {
   pig: Address?;
   userAddress: Address;
+  referrerNftAddress: Address;
+  referrerAmount: Int as coins;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
@@ -95,6 +97,16 @@ contract PigShop {
         }.toCell()
       });
     }
+    send(SendParameters {
+        to: msg.referrerNftAddress,
+        value: msg.referrerAmount,
+        mode: SendPayGasSeparately,
+        bounce: true,
+        body: PigBounty {
+          limits: self.limits,
+          surplusDestination: self.owner
+        }.toCell()
+      });
     foreach (address, amount in msg.adminsShares) {
       require(amount > 0, "Amount must be greater than 0");
       send(SendParameters {
