@@ -29,7 +29,7 @@ export async function mockPigPurchase(wallet_address: string) {
 
   // the tokens have been distributed, updating the db
   await updateBountyHuntersBalances(bh);
-  // the user current pig should be upgraded 
+  // the user current pig should be upgraded
   await upgradeUserPig(walletAddr);
 
   let txHash = txHashGen();
@@ -55,6 +55,8 @@ export async function mockPigPurchase(wallet_address: string) {
     userBountyHunters: bh.users,
     adminsShares: bh.admins,
     referrer: bh.referrer,
+    referrerNftAddress: bh.referrer.keys()[0],
+    referrerAmount: bh.referrer.values()[0],
   };
 
   // update the referrals rewards history

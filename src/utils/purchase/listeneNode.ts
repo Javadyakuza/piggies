@@ -5,12 +5,13 @@ import {
 } from "@/models/purchase";
 import { TxId } from "@/models/history";
 import { TonApiClient } from "@ton-api/client";
-import { Address } from "@ton/core";
+import { Address, Dictionary } from "@ton/core";
 webkitURL;
 import {
   loadPigApproval,
   loadPigApprovalEvent,
   loadUpgradePig,
+  PigCreationEvent,
   PigShop,
 } from "../../../build/PigShop/tact_PigShop";
 
@@ -27,6 +28,7 @@ import {
   updateReferralsRewardsHistory,
   updateTxHistory,
   upgradeUserPig,
+  upgradeUserPigAddress,
 } from "./dbOps";
 import { PigLevel } from "@/models/pigs";
 
@@ -49,7 +51,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
 
   if (txs.transactions.length === 0) return afterLt;
 
-  let event: extendedPigUpgradeEvent | extendedPigApprovalEvent | undefined;
+  let event: extendedPigUpgradeEvent | extendedPigApprovalEvent | PigCreationEvent | undefined;
   for (const tx of txs.transactions) {
     // tx must be successful
     if (!tx.computePhase?.success || !tx.actionPhase?.success || tx.aborted)
@@ -107,7 +109,6 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
           pig_data.old_pig_level
         ))
       ) {
-
         // the purchase have been initiated and the tokens are received by the "pigsShop" contract
         console.log(
           `Upgrade pig request initiated wallet address${event.userAddress}`
@@ -119,7 +120,7 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
           adminWallet,
           pigShop,
           pig_data.address,
-          event.userAddress.toRawString(),
+          event.userAddress.toRawString()
         );
 
         // update users transaction history
@@ -136,9 +137,16 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
       console.log(
         `approval received for wallet address ${event.userAddress} pig upgrade request`
       );
-
+      event.referrer = Dictionary.empty<Address, bigint>().set(
+        event.referrerNftAddress,
+        event.referrerAmount
+      );
       // the tokens have been distributed, updating the db
-      await updateBountyHuntersBalances(event.);
+      await updateBountyHuntersBalances({
+        referrer: event.referrer,
+        users: event.userBountyHunters,
+        admins: event.adminsShares,
+      });
 
       // the user current pig should be upgraded
       await upgradeUserPig(event.userAddress.toRawString());
@@ -155,7 +163,10 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         upgraded_pig_level: pig_data.new_pig_level,
       });
 
-      event.referrer = bh.referrer;
+      event.referrer = Dictionary.empty<Address, bigint>().set(
+        event.referrerNftAddress,
+        event.referrerAmount
+      );
       // update the referrals rewards history
       let updateRes = await updateReferralsRewardsHistory(event);
 
@@ -163,6 +174,11 @@ async function catchEvents(listenAddress: Address, afterLt: bigint) {
         throw new Error("Failed to update referrals rewards history!");
       }
     }
+    if (event.$$type == "PigCreationEvent") {
+      // updating the user pig address on the db
+      await upgradeUserPigAddress(event.userAddress.toRawString(), event.nft.toRawString());
+    }
+    
   }
 
   return txs.transactions[txs.transactions.length - 1].lt;

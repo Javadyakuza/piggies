@@ -1,8 +1,18 @@
 // Assuming you have imported necessary TON SDK modules
-import { TonClient, WalletContractV4, WalletContractV5R1, internal, toNano } from "@ton/ton";
+import {
+  TonClient,
+  WalletContractV4,
+  WalletContractV5R1,
+  internal,
+  toNano,
+} from "@ton/ton";
 import { beginCell, Address, Dictionary, OpenedContract } from "@ton/core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
-import { PigApproval, PigShop, storePigApproval } from "../../build/PigShop/tact_PigShop";
+import {
+  PigApproval,
+  PigShop,
+  storePigApproval,
+} from "../../build/PigShop/tact_PigShop";
 import { bountyHuntersResponse } from "@/models/purchase";
 import { keyPairFromEnv } from "./helpers";
 
@@ -11,7 +21,7 @@ export async function sendPigApproval(
   wallet: OpenedContract<WalletContractV5R1>,
   pigShop: OpenedContract<PigShop>,
   pig: Address | null,
-  mainUser: string,
+  mainUser: string
 ) {
   let secretKey = (await keyPairFromEnv()).secretKey;
 
@@ -20,7 +30,9 @@ export async function sendPigApproval(
     userBountyHunters: bh.users,
     adminsShares: bh.admins,
     userAddress: Address.parse(mainUser),
-    pig
+    referrerNftAddress: bh.referrer.keys()[0],
+    referrerAmount: bh.referrer.values()[0],
+    pig,
   };
 
   await pigShop.send(

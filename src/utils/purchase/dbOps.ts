@@ -163,6 +163,21 @@ export const upgradeUserPig = async (userAddress: string) => {
   }
 };
 
+export const upgradeUserPigAddress = async (
+  wallet_address: string,
+  pig_address: string
+) => {
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({ pig_address })
+    .eq("wallet_address", wallet_address);
+
+  if (updateError) {
+    throw new Error(`Wallet update error: ${updateError.message}`);
+  }
+};
+
+
 export const getPigs = async (
   userAddress: string
 ): Promise<upgradeUserPigsInternalResponse> => {

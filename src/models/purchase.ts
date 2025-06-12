@@ -44,3 +44,10 @@ export interface UpgradePigParams {
   amount: bigint | string;
   operation: "UpgradePig";
 }
+
+export interface WithdrawPigParams {
+  amount: bigint | string;
+  pig_address: string;
+  operation: "WithdrawFromNftPig";
+  balance: bigint | string;
+}

@@ -15,10 +15,16 @@ import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
 import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
+import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { getTonClient } from "@/utils/tonClients";
-import { PurchasePigResponse, UpgradePigParams } from "@/models/purchase";
+import {
+  PurchasePigResponse,
+  UpgradePigParams,
+  WithdrawPigParams,
+} from "@/models/purchase";
 
 import { useSignal, initData } from "@telegram-apps/sdk-react";
+import { Pig } from "../../../wrappers/Pig";
 
 type PigData = {
   pig_level: number;
@@ -51,7 +57,6 @@ export default function StorePage() {
     try {
       const sender_ = {
         send: async (args: SenderArguments) => {
-          console.log("args", args, args.to.toString());
           await wallet!.sendTransaction({
             messages: [
               {
@@ -72,8 +77,8 @@ export default function StorePage() {
 
       let pigShop = tonClient.open(
         PigShop.fromAddress(
-          Address.parse(process.env.NEXT_PUBLIC_PIGSHOP_ADDRESS!),
-        ),
+          Address.parse(process.env.NEXT_PUBLIC_PIGSHOP_ADDRESS!)
+        )
       );
 
       await pigShop.send(
@@ -81,7 +86,7 @@ export default function StorePage() {
         {
           value: BigInt((params.data.message as UpgradePigParams).amount),
         },
-        (params.data.message as UpgradePigParams).operation,
+        (params.data.message as UpgradePigParams).operation
       );
 
       console.log("Transaction sent");
@@ -109,9 +114,67 @@ export default function StorePage() {
     setIsConfirmModalOpen(false);
   };
 
+  const handleWithdrawal = async () => {
+    if (!walletAddress || isPurchaseInProgress) return;
+
+    try {
+      const sender_ = {
+        send: async (args: SenderArguments) => {
+          console.log("args", args, args.to.toString());
+          await wallet!.sendTransaction({
+            messages: [
+              {
+                address: args.to.toString(),
+                amount: toNano("0.01").toString(), // args.value.toString(),
+                payload: args.body?.toBoc()?.toString("base64"),
+              },
+            ],
+            validUntil: txRequestLifetime,
+          });
+        },
+        address: walletAddress,
+      } as unknown as Sender;
+
+      const params: WithdrawPigParams = (
+        await axios.get(
+          `/api/pigs/withdrawParams?wallet_address=${walletAddress}`
+        )
+      ).data as WithdrawPigParams;
+
+      let pig = tonClient.open(
+        Pig.fromAddress(Address.parse(params.pig_address))
+      );
+
+      await pig.send(
+        sender_,
+        {
+          value: BigInt(params.amount),
+        },
+        { $$type: params.operation }
+      );
+
+      console.log("withdraw Request sent");
+
+      alert(`✅ Withdraw request for ${params.balance.toString()} has been sent.`);
+
+      console.log("Waiting for transaction to be confirmed...");
+
+      setIsPurchaseInProgress(true);
+
+      // show the rest to the user
+    } catch (error) {
+      console.error("Transaction failed or was rejected:", error);
+      logger.error("Transaction failed or was rejected:", error);
+      alert(`⚠️ Transaction was cancelled or failed. ${error}`);
+    }
+    await fetchPigsData();
+
+    setIsPurchaseInProgress(false);
+    setIsConfirmModalOpen(false);
+  };
   const fetchTonPrice = async () => {
     const res = await axios.get(
-      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`,
+      `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
     );
     const tonPriceToSet = res?.data?.quotes?.USD.price.toFixed(2);
 
@@ -221,7 +284,7 @@ export default function StorePage() {
 
   const filteredSlides = slides.filter(
     (slide) =>
-      (currentPigCode && slide.code >= currentPigCode) || !currentPigCode,
+      (currentPigCode && slide.code >= currentPigCode) || !currentPigCode
   );
 
   const suggestionData = {
@@ -342,7 +405,7 @@ export default function StorePage() {
   ];
 
   const filteredSuggestionSlides = suggestionSlides.filter(
-    (slide) => slide.code > (currentPigCode || 0),
+    (slide) => slide.code > (currentPigCode || 0)
   );
   const mainPage = (
     <div className="main-container">
@@ -351,12 +414,10 @@ export default function StorePage() {
           <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
           <span className="text">
             <h4 className="earning">{piggyBankBalance}</h4>{" "}
-            <h4 className="total">
-              / {currentPig?.capacityInTon || 0} TON
-            </h4>
+            <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
           </span>
         </div>
-        <Button className="withdraw-btn normal">
+        <Button className="withdraw-btn normal" onClick={handleWithdrawal}>
           {t("storePage.withdraw")}
         </Button>
       </div>

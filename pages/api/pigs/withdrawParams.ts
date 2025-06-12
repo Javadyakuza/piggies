@@ -5,10 +5,11 @@ import {
   PurchasePigRequest,
   PurchasePigResponse,
   UpgradePigParams,
+  WithdrawPigParams,
 } from "@/models/purchase";
 import { mockPigPurchase } from "@/utils/purchase/mocker";
 // import { calculatePigPrice } from "@/utils/purchase/pigPrice";
-import { toNano } from "@ton/ton";
+import { Address, toNano } from "@ton/ton";
 import { pigsMapV2 } from "@/utils/pigs_map";
 
 export default async function handler(
@@ -27,25 +28,25 @@ export default async function handler(
     // Check if the user exists
     const { data: user, error: userError } = await supabase
       .from("users")
-      .select("wallet_address, current_pig")
+      .select("wallet_address, pig_address, piggy_bank_balance")
       .eq("wallet_address", wallet_address)
       .single();
 
-    if (userError || !user.wallet_address) {
-      return res
-        .status(404)
-        .json({ success: false, message: "no wallets ?!#$" });
-    }
-
-    const PigCost = BigInt(
-      pigsMapV2(undefined, 1)[user.current_pig].rawPriceInTon
-    );
+    console.log(user);
+  if (userError || !user.wallet_address || !user.pig_address) {
+  return res.status(404).json({
+    success: false,
+    message: "Wallet or pig address not found.",
+  });
+}
 
     const tx_fee = toNano("0.5");
 
-    const params: UpgradePigParams = {
-      amount: (tx_fee + PigCost).toString(),
-      operation: "UpgradePig",
+    const params: WithdrawPigParams = {
+      amount: tx_fee.toString(),
+      pig_address: user.pig_address,
+      operation: "WithdrawFromNftPig",
+      balance: user.piggy_bank_balance,
     };
 
     const response = {
