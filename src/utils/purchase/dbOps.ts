@@ -7,7 +7,7 @@ import {
 import { supabase } from "../supebase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
-import { Address, fromNano } from "@ton/core";
+import { Address, fromNano, toNano } from "@ton/core";
 import { findOpenSlotInSubtree } from "../tree";
 
 // update the db based on the user purchase on the following fields
@@ -176,7 +176,6 @@ export const upgradeUserPigAddress = async (
     throw new Error(`Wallet update error: ${updateError.message}`);
   }
 };
-
 
 export const getPigs = async (
   userAddress: string
@@ -406,4 +405,49 @@ export async function getParentId(
   }
 
   return { pi: String(parentId), ii: String(inviter_id) };
+}
+
+export async function updateUserPiggyBankBalance(
+  userAddress: string,
+  pigAddress: string,
+  amount: bigint
+) {
+  // fetch te user first to see if it exists and if its pig address is the same
+  const { data: user, error: userError } = await supabase
+    .from("users")
+    .select("piggy_bank_balance, piggy_address")
+    .eq("wallet_address", userAddress)
+    .single();
+
+  if (userError || !user) {
+    throw new Error(
+      `Failed to fetch user ${userAddress}: ${userError.message}`
+    );
+    return;
+  }
+
+  // comparing the balance and the pig address
+  if (user.piggy_address !== pigAddress) {
+    throw new Error(
+      `User ${userAddress} has a different pig address than the one in the db`
+    );
+  }
+  if (BigInt(user.piggy_bank_balance) - BigInt(toNano("0.01")) !== amount) {
+    throw new Error(
+      `User ${userAddress} has insufficient balance to withdraw ${amount}`
+    );
+  }
+
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({
+      piggy_bank_balance: 0,
+    })
+    .eq("wallet_address", userAddress);
+
+  if (updateError) {
+    throw new Error(
+      `Balance update error (updateUserPiggyBankBalance): ${updateError.message}`
+    );
+  }
 }

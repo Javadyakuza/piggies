@@ -32,6 +32,7 @@ import {
   updateBountyHuntersBalances,
   updateReferralsRewardsHistory,
   updateTxHistory,
+  updateUserPiggyBankBalance,
   upgradeUserPig,
   upgradeUserPigAddress,
 } from "./dbOps";
@@ -220,6 +221,12 @@ async function catchPigShopEvents(listenAddress: Address, afterLt: bigint) {
     }
 
     if (event.$$type === "WithdrawFromPigEvent") {
+      // updating the user pig address on the db
+      await updateUserPiggyBankBalance(
+        event.userAddress.toRawString(),
+        event.nft.toRawString(),
+        event.amount
+      );
     }
   }
 
