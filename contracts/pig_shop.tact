@@ -21,7 +21,7 @@ message PigCreationEvent {
   nft: Address;
 }
 message WithdrawFromPigEvent {
-  owner: Address;
+  userAddress: Address;
   nft: Address;
   amount: Int as coins;
 }
@@ -86,7 +86,7 @@ contract PigShop {
 
   receive(msg: WithdrawFromPig) {
     require(sender() == calcItemAddress(self.collection!!, msg.nftIndex), "Only NFT item is authorized");
-    emit(WithdrawFromPigEvent{owner: msg.owner, nft: sender(), amount: msg.amount}.toCell());
+    emit(WithdrawFromPigEvent{ userAddress: msg.owner, nft: sender(), amount: msg.amount}.toCell());
   }
 
   receive(msg: PigApproval){

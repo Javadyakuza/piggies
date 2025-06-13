@@ -4,7 +4,9 @@ import { SenderArguments, TonClient, type Sender } from "@ton/ton";
 import {
   PigApproval,
   PigApprovalEvent,
+  PigCreationEvent,
   UpgradePig,
+  WithdrawFromPigEvent,
 } from "../../wrappers/PigShop";
 import { txHistory, UserHistory } from "./history";
 import { PigLevel } from "./pigs";
@@ -29,7 +31,7 @@ export type upgradeUserPigsInternalResponse = {
   old_pig_level: PigLevel;
   new_pig_level: PigLevel;
   address: Address | null;
-};  
+};
 
 export interface extendedPigUpgradeEvent extends UpgradePig {
   tx_hash: string;
@@ -37,7 +39,15 @@ export interface extendedPigUpgradeEvent extends UpgradePig {
 
 export interface extendedPigApprovalEvent extends PigApprovalEvent {
   tx_hash: string;
-  referrer?:  Dictionary<Address, bigint>;
+  referrer?: Dictionary<Address, bigint>;
+}
+
+export interface extendedPigCreationEvent extends PigCreationEvent {
+  tx_hash: string;
+}
+
+export interface extendedWithdrawFromPigEvent extends WithdrawFromPigEvent {
+  tx_hash: string;
 }
 
 export interface UpgradePigParams {
