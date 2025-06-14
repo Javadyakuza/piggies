@@ -12,7 +12,7 @@ import {
   PigApproval,
   PigShop,
   storePigApproval,
-} from "../../build/PigShop/tact_PigShop";
+} from "../build/PigShop/tact_PigShop";
 import { bountyHuntersResponse } from "@/models/purchase";
 import { keyPairFromEnv } from "./helpers";
 

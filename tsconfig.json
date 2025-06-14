@@ -49,7 +49,7 @@
     "jest.config.ts",
     "src/utils/networkProvider.ts_not_using",
     ".env"
-, "src/scripts/withdrawal.ts.dep"  ],
+, "scripts/withdrawal.ts.dep"  ],
   "exclude": [
     "node_modules"
   ]

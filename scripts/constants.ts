@@ -1,0 +1,11 @@
+export const ContractAddresses = {
+  pigShop: "EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P",
+
+  pigShopRawString:
+    "0:686005807795a3ce28f57d7d622f0f667d1870bad373b075faac6ed307aaa4de",
+
+  pigsCollection: "EQB1wVMBxSN0kR4fU1WducxPdGeJKsUwVabyfCddAhGHw6EH",
+
+  PigShopCollectionRawString:
+    "0:75c15301c52374911e1f53559db9cc4f7467892ac53055a6f27c275d021187c3",
+};
