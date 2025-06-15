@@ -25,6 +25,7 @@ import {
 
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { Pig } from "../../../wrappers/Pig";
+import { ContractAddresses } from "../../../scripts/constants";
 
 type PigData = {
   pig_level: number;
@@ -72,13 +73,11 @@ export default function StorePage() {
       } as unknown as Sender;
 
       const params: AxiosResponse<PurchasePigResponse> = await axios.get(
-        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`,
+        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`
       );
 
       let pigShop = tonClient.open(
-        PigShop.fromAddress(
-          Address.parse(process.env.NEXT_PUBLIC_PIGSHOP_ADDRESS!)
-        )
+        PigShop.fromAddress(ContractAddresses.pigShop)
       );
 
       await pigShop.send(
@@ -155,7 +154,9 @@ export default function StorePage() {
 
       console.log("withdraw Request sent");
 
-      alert(`✅ Withdraw request for ${params.balance.toString()} has been sent.`);
+      alert(
+        `✅ Withdraw request for ${params.balance.toString()} has been sent.`
+      );
 
       console.log("Waiting for transaction to be confirmed...");
 

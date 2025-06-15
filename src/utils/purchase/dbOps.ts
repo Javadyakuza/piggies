@@ -189,8 +189,9 @@ export const getPigs = async (
   return {
     old_pig_level: current_pig?.current_pig ?? 0,
     new_pig_level: (current_pig?.current_pig ?? 0) + 1,
-    address: Address.parse(current_pig?.current_pig) || null,
+    address: Address.parse(current_pig?.pig_address) || null,
   };
+  
 };
 
 export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
