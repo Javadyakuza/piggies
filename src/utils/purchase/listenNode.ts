@@ -252,6 +252,7 @@ async function catchPigShopEvents(afterLt: bigint) {
     ContractAddresses.pigShop,
     {
       limit: 10,
+      after_lt: afterLt,
     }
   );
 
@@ -282,7 +283,12 @@ async function catchPigShopEvents(afterLt: bigint) {
     }
 
     for (const msg of tx.outMsgs) {
-      console.log("💬 Out message:", Object.entries(PigShop.opcodes).find(([key, value]) => BigInt(value) === msg.opCode)?.[0]);
+      console.log(
+        "💬 Out message:",
+        Object.entries(PigShop.opcodes).find(
+          ([key, value]) => BigInt(value) === msg.opCode
+        )?.[0]
+      );
 
       try {
         if (
@@ -333,8 +339,12 @@ async function catchPigShopEvents(afterLt: bigint) {
     }
   }
   let some = true;
+  console.log("the parsed event is", event);
   if (some) {
-    return txs.transactions[txs.transactions.length - 1].lt;
+    const nextLt = txs.transactions[txs.transactions.length - 1].lt;
+    console.log("⏭️ Returning next lt:", nextLt.toString());
+
+    return nextLt;
   }
   if (event && event.userAddress) {
     console.log("📍 Processing event for user:", event.userAddress.toString());
@@ -384,14 +394,23 @@ async function catchPigShopEvents(afterLt: bigint) {
         event.referrerAmount
       );
 
+      //-----------------------------------------
+      // update the bounty hunter balances (piggy_bank_balance on the users table)
+      //-----------------------------------------
       await updateBountyHuntersBalances({
         referrer: event.referrer,
         users: event.userBountyHunters,
         admins: event.adminsShares,
       });
 
+      //-----------------------------------------
+      // update the user pig (current_pig on the users table)
+      //-----------------------------------------
       await upgradeUserPig(userAddr);
 
+      //-----------------------------------------
+      // update the transaction history (tx_history table)
+      //-----------------------------------------
       await updateTxHistory({
         tx_id: TxId.create(userAddr, pig_data.old_pig_level),
         tx_hash: event.tx_hash,
@@ -400,6 +419,9 @@ async function catchPigShopEvents(afterLt: bigint) {
         upgraded_pig_level: pig_data.new_pig_level,
       });
 
+      //-----------------------------------------
+      // update the referrals rewards history (rewards_history table)
+      //-----------------------------------------
       const updateRes = await updateReferralsRewardsHistory(event);
       console.log("📦 Referral reward update:", updateRes);
 
@@ -409,13 +431,18 @@ async function catchPigShopEvents(afterLt: bigint) {
 
     if (event.$$type === "PigCreationEvent") {
       console.log("🐣 Handling PigCreationEvent");
-
+      //-----------------------------------------
+      // update the user pig address (pig_address on the users table)
+      //-----------------------------------------
       await upgradeUserPigAddress(userAddr, event.nft.toRawString());
       console.log("✅ User pig address upgraded");
     }
 
     if (event.$$type === "WithdrawFromPigEvent") {
       console.log("🏧 Handling WithdrawFromPigEvent");
+      //-----------------------------------------
+      // update the user piggy bank balance (piggy_bank_balance on the users table)
+      //-----------------------------------------
 
       await updateUserPiggyBankBalance(
         userAddr,
@@ -435,13 +462,23 @@ async function catchPigShopEvents(afterLt: bigint) {
 }
 
 export async function listenPigShopForever() {
+  console.log("🔁 Starting to listen for PigShop events");
   try {
     let lastLt = BigInt(0);
-    // while (true) {
-    lastLt = await catchPigShopEvents(lastLt);
-    // }
+    while (true) {
+      try {
+        lastLt = await catchPigShopEvents(lastLt);
+
+        // waiting for 1 second before checking the next lt
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } catch (error) {
+        console.error("Error in listenPigShopForever:", error);
+        console.log("restarting...");
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+    }
   } catch (error) {
     console.error("Error in listenPigShopForever:", error);
-    throw error;
+    console.log("restarting...");
   }
 }
