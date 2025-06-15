@@ -12,18 +12,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // 1. Get token from header
   const authHeader = req.headers["authorization"];
-
-  // 2. Check against env secret
   const expectedToken = `Bearer ${process.env.API_SECRET_TOKEN}`;
 
   if (authHeader !== expectedToken) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  // Your secured logic
-  await listenPigShopForever();
+  // Start the listener but don't wait for it
+  listenPigShopForever().catch(err => {
+    console.error("listenPigShopForever error:", err);
+  });
 
   return res.status(200).json({ success: true, message: "ok" });
 }

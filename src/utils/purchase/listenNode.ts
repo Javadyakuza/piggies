@@ -38,215 +38,37 @@ import {
 import { PigLevel } from "../../models/pigs";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
-
-// async function catchPigShopEvents(listenAddress: Address, afterLt: bigint) {
-//   const tc = getTonClient();
-//   const tac = getTonApiClient();
-//   const adminWallet = await getAdminWallet(tc);
-//   const pigShop = tc.open(
-//     PigShop.fromAddress(
-//       Address.parse(process.env.NEXT_PUBLIC_PIG_SHOP_ADDRESS!)
-//     )
-//   );
-
-//   const txs = await tac.blockchain.getBlockchainAccountTransactions(
-//     listenAddress,
-//     {
-//       limit: 10,
-//     }
-//   );
-
-//   if (txs.transactions.length === 0) return afterLt;
-
-//   let event:
-//     | extendedPigUpgradeEvent
-//     | extendedPigApprovalEvent
-//     | extendedPigCreationEvent
-//     | extendedWithdrawFromPigEvent
-//     | undefined;
-//   for (const tx of txs.transactions) {
-//     // tx must be successful
-//     if (!tx.computePhase?.success || !tx.actionPhase?.success || tx.aborted)
-//       continue;
-//     // tx must have a body
-//     if (tx.inMsg?.rawBody === undefined) continue;
-//     for (const msg of tx.outMsgs) {
-//       if (
-//         msg.msgType == "ext_out_msg" &&
-//         msg.decodedOpName == "UpgradePig" &&
-//         msg.rawBody
-//       ) {
-//         try {
-//           event = {
-//             ...loadUpgradePig(msg.rawBody?.asSlice()),
-//             tx_hash: tx.hash,
-//           };
-//         } catch (e) {
-//           continue;
-//         }
-//       } else if (
-//         msg.msgType == "ext_out_msg" &&
-//         "PigApprovalEvent" &&
-//         msg.rawBody
-//       ) {
-//         try {
-//           event = {
-//             ...loadPigApprovalEvent(msg.rawBody?.asSlice()),
-//             tx_hash: tx.hash,
-//           };
-//         } catch (e) {
-//           continue;
-//         }
-//       } else if (
-//         msg.msgType == "ext_out_msg" &&
-//         "WithdrawFromPigEvent" &&
-//         msg.rawBody
-//       ) {
-//         try {
-//           event = {
-//             ...loadWithdrawFromPigEvent(msg.rawBody?.asSlice()),
-//             tx_hash: tx.hash,
-//           };
-//         } catch (e) {
-//           continue;
-//         }
-//       } else if (
-//         msg.msgType == "ext_out_msg" &&
-//         "PigCreationEvent" &&
-//         msg.rawBody
-//       ) {
-//         try {
-//           event = {
-//             ...loadPigCreationEvent(msg.rawBody?.asSlice()),
-//             tx_hash: tx.hash,
-//           };
-//         } catch (e) {
-//           continue;
-//         }
-//       }
-//     }
-//   }
-
-//   // handle if any purchase related events was found
-//   if (event && event.userAddress) {
-//     // finding the relative user and its reward receiver
-//     let pig_data = await getPigs(event.userAddress.toRawString());
-//     let bh: bountyHuntersResponse = await findUsersBountyHunters(
-//       event.userAddress.toRawString(),
-//       pig_data.new_pig_level
-//     );
-//     // identifying the event type
-//     if (event.$$type == "UpgradePig") {
-//       let tx_id = TxId.create(
-//         event.userAddress.toRawString(),
-//         pig_data.old_pig_level
-//       );
-//       if (
-//         !(await isDuplicatePurchase(
-//           event.userAddress.toRawString(),
-//           pig_data.old_pig_level
-//         ))
-//       ) {
-//         // the purchase have been initiated and the tokens are received by the "pigsShop" contract
-//         console.log(
-//           `Upgrade pig request initiated wallet address${event.userAddress}`
-//         );
-
-//         // sending the approval message to the pig shop to distribute the tokens to the bounty hunters
-//         await sendPigApproval(
-//           bh,
-//           adminWallet,
-//           pigShop,
-//           pig_data.address,
-//           event.userAddress.toRawString()
-//         );
-
-//         // update users transaction history
-//         await initTxHistory({
-//           tx_id,
-//           tx_hash: event.tx_hash,
-//           wallet_address: event.userAddress.toRawString(),
-//           request_status: "PigUpgradePending",
-//           upgraded_pig_level: pig_data.new_pig_level,
-//         });
-//       }
-//     }
-//     if (event.$$type == "PigApprovalEvent") {
-//       console.log(
-//         `approval received for wallet address ${event.userAddress} pig upgrade request`
-//       );
-//       event.referrer = Dictionary.empty<Address, bigint>().set(
-//         event.referrerNftAddress,
-//         event.referrerAmount
-//       );
-//       // the tokens have been distributed, updating the db
-//       await updateBountyHuntersBalances({
-//         referrer: event.referrer,
-//         users: event.userBountyHunters,
-//         admins: event.adminsShares,
-//       });
-
-//       // the user current pig should be upgraded
-//       await upgradeUserPig(event.userAddress.toRawString());
-
-//       // update users transaction history
-//       await updateTxHistory({
-//         tx_id: TxId.create(
-//           event.userAddress.toRawString(),
-//           pig_data.old_pig_level
-//         ),
-//         tx_hash: event.tx_hash,
-//         wallet_address: event.userAddress.toRawString(),
-//         request_status: "PigPurchaseApproved",
-//         upgraded_pig_level: pig_data.new_pig_level,
-//       });
-
-//       event.referrer = Dictionary.empty<Address, bigint>().set(
-//         event.referrerNftAddress,
-//         event.referrerAmount
-//       );
-//       // update the referrals rewards history
-//       let updateRes = await updateReferralsRewardsHistory(event);
-
-//       if (!updateRes) {
-//         throw new Error("Failed to update referrals rewards history!");
-//       }
-//     }
-//     if (event.$$type == "PigCreationEvent") {
-//       // updating the user pig address on the db
-//       await upgradeUserPigAddress(
-//         event.userAddress.toRawString(),
-//         event.nft.toRawString()
-//       );
-//     }
-
-//     if (event.$$type === "WithdrawFromPigEvent") {
-//       // updating the user pig address on the db
-//       await updateUserPiggyBankBalance(
-//         event.userAddress.toRawString(),
-//         event.nft.toRawString(),
-//         event.amount
-//       );
-//     }
-//   }
-
-//   return txs.transactions[txs.transactions.length - 1].lt;
-// }
+import { fileSystemLogger } from "../fsLogger";
 
 async function catchPigShopEvents(afterLt: bigint) {
   console.log("➡️ Starting to catch PigShop events");
+  fileSystemLogger.log("➡️ Starting to catch PigShop events");
   console.log("🔍 Listen address:", ContractAddresses.pigShop.toString());
+  fileSystemLogger.log(
+    "🔍 Listen address:",
+    ContractAddresses.pigShop.toString()
+  );
   console.log("📌 Last known lt:", afterLt.toString());
+  fileSystemLogger.log("📌 Last known lt:", afterLt.toString());
+  fileSystemLogger.log("📌 Last known lt:", afterLt.toString());
 
   const tc = getTonClient();
   const tac = getTonApiClient();
   const adminWallet = await getAdminWallet(tc);
 
   console.log("👛 Admin wallet loaded:", adminWallet.address.toString());
+  fileSystemLogger.log(
+    "👛 Admin wallet loaded:",
+    adminWallet.address.toString()
+  );
 
   const pigShop = tc.open(PigShop.fromAddress(ContractAddresses.pigShop));
 
   console.log("🏪 PigShop contract opened at:", pigShop.address.toString());
+  fileSystemLogger.log(
+    "🏪 PigShop contract opened at:",
+    pigShop.address.toString()
+  );
 
   const txs = await tac.blockchain.getBlockchainAccountTransactions(
     ContractAddresses.pigShop,
@@ -258,9 +80,11 @@ async function catchPigShopEvents(afterLt: bigint) {
 
   if (txs && txs.transactions.length === 0) {
     console.log("⚠️ No new transactions found");
+    fileSystemLogger.log("⚠️ No new transactions found");
     return afterLt;
   }
   console.log("📦 Transactions fetched:", txs.transactions.length);
+  fileSystemLogger.log("📦 Transactions fetched:", txs.transactions.length);
 
   let event:
     | extendedPigUpgradeEvent
@@ -271,19 +95,28 @@ async function catchPigShopEvents(afterLt: bigint) {
 
   for (const tx of txs.transactions) {
     console.log("🔁 Processing transaction:", tx.hash);
+    fileSystemLogger.log("🔁 Processing transaction:", tx.hash);
 
     if (!tx.computePhase?.success || !tx.actionPhase?.success || tx.aborted) {
       console.log("🚫 Skipped aborted or failed tx:", tx.hash);
+      fileSystemLogger.log("🚫 Skipped aborted or failed tx:", tx.hash);
       continue;
     }
 
     if (tx.inMsg?.rawBody === undefined) {
       console.log("⚠️ Skipped tx with no body:", tx.hash);
+      fileSystemLogger.log("⚠️ Skipped tx with no body:", tx.hash);
       continue;
     }
 
     for (const msg of tx.outMsgs) {
       console.log(
+        "💬 Out message:",
+        Object.entries(PigShop.opcodes).find(
+          ([key, value]) => BigInt(value) === msg.opCode
+        )?.[0]
+      );
+      fileSystemLogger.log(
         "💬 Out message:",
         Object.entries(PigShop.opcodes).find(
           ([key, value]) => BigInt(value) === msg.opCode
@@ -301,6 +134,7 @@ async function catchPigShopEvents(afterLt: bigint) {
             tx_hash: tx.hash,
           };
           console.log("✅ Detected UpgradePig event");
+          fileSystemLogger.log("✅ Detected UpgradePig event");
         } else if (
           msg.msgType === "ext_out_msg" &&
           msg.opCode === BigInt(PigShop.opcodes.PigApprovalEvent) &&
@@ -311,6 +145,7 @@ async function catchPigShopEvents(afterLt: bigint) {
             tx_hash: tx.hash,
           };
           console.log("✅ Detected PigApprovalEvent");
+          fileSystemLogger.log("✅ Detected PigApprovalEvent");
         } else if (
           msg.msgType === "ext_out_msg" &&
           msg.opCode === BigInt(PigShop.opcodes.WithdrawFromPigEvent) &&
@@ -321,6 +156,7 @@ async function catchPigShopEvents(afterLt: bigint) {
             tx_hash: tx.hash,
           };
           console.log("✅ Detected WithdrawFromPigEvent");
+          fileSystemLogger.log("✅ Detected WithdrawFromPigEvent");
         } else if (
           msg.msgType === "ext_out_msg" &&
           msg.opCode === BigInt(PigShop.opcodes.PigCreationEvent) &&
@@ -331,41 +167,58 @@ async function catchPigShopEvents(afterLt: bigint) {
             tx_hash: tx.hash,
           };
           console.log("✅ Detected PigCreationEvent");
+          fileSystemLogger.log("✅ Detected PigCreationEvent");
         }
       } catch (e) {
         console.log("❌ Error decoding message:", msg.decodedOpName, e);
+        fileSystemLogger.log(
+          "❌ Error decoding message:",
+          msg.decodedOpName,
+          e
+        );
         continue;
       }
     }
   }
   let some = true;
   console.log("the parsed event is", event);
+  fileSystemLogger.log("the parsed event is", event);
   if (some) {
     const nextLt = txs.transactions[txs.transactions.length - 1].lt;
     console.log("⏭️ Returning next lt:", nextLt.toString());
+    fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
 
     return nextLt;
   }
   if (event && event.userAddress) {
     console.log("📍 Processing event for user:", event.userAddress.toString());
+    fileSystemLogger.log(
+      "📍 Processing event for user:",
+      event.userAddress.toString()
+    );
 
     const userAddr = event.userAddress.toRawString();
     const pig_data = await getPigs(userAddr);
     console.log("🐷 Pig data loaded:", pig_data);
+    fileSystemLogger.log("🐷 Pig data loaded:", pig_data);
 
     const bh = await findUsersBountyHunters(userAddr, pig_data.new_pig_level);
     console.log("🏹 Bounty hunters fetched:", bh);
+    fileSystemLogger.log("🏹 Bounty hunters fetched:", bh);
 
     if (event.$$type === "UpgradePig") {
       console.log("🛠️ Handling UpgradePig event");
+      fileSystemLogger.log("🛠️ Handling UpgradePig event");
 
       const tx_id = TxId.create(userAddr, pig_data.old_pig_level);
 
       const isDup = await isDuplicatePurchase(userAddr, pig_data.old_pig_level);
       console.log("🔁 Is duplicate purchase?", isDup);
+      fileSystemLogger.log("🔁 Is duplicate purchase?", isDup);
 
       if (!isDup) {
         console.log("🚀 Sending pig approval message");
+        fileSystemLogger.log("🚀 Sending pig approval message");
         await sendPigApproval(
           bh,
           adminWallet,
@@ -383,11 +236,13 @@ async function catchPigShopEvents(afterLt: bigint) {
         });
 
         console.log("📜 Tx history initialized for UpgradePig");
+        fileSystemLogger.log("📜 Tx history initialized for UpgradePig");
       }
     }
 
     if (event.$$type === "PigApprovalEvent") {
       console.log("✅ Approval received for:", userAddr);
+      fileSystemLogger.log("✅ Approval received for:", userAddr);
 
       event.referrer = Dictionary.empty<Address, bigint>().set(
         event.referrerNftAddress,
@@ -424,6 +279,7 @@ async function catchPigShopEvents(afterLt: bigint) {
       //-----------------------------------------
       const updateRes = await updateReferralsRewardsHistory(event);
       console.log("📦 Referral reward update:", updateRes);
+      fileSystemLogger.log("📦 Referral reward update:", updateRes);
 
       if (!updateRes)
         throw new Error("Failed to update referrals rewards history!");
@@ -431,15 +287,18 @@ async function catchPigShopEvents(afterLt: bigint) {
 
     if (event.$$type === "PigCreationEvent") {
       console.log("🐣 Handling PigCreationEvent");
+      fileSystemLogger.log("🐣 Handling PigCreationEvent");
       //-----------------------------------------
       // update the user pig address (pig_address on the users table)
       //-----------------------------------------
       await upgradeUserPigAddress(userAddr, event.nft.toRawString());
       console.log("✅ User pig address upgraded");
+      fileSystemLogger.log("✅ User pig address upgraded");
     }
 
     if (event.$$type === "WithdrawFromPigEvent") {
       console.log("🏧 Handling WithdrawFromPigEvent");
+      fileSystemLogger.log("🏧 Handling WithdrawFromPigEvent");
       //-----------------------------------------
       // update the user piggy bank balance (piggy_bank_balance on the users table)
       //-----------------------------------------
@@ -450,19 +309,23 @@ async function catchPigShopEvents(afterLt: bigint) {
         event.amount
       );
       console.log("💰 User piggy bank balance updated");
+      fileSystemLogger.log("💰 User piggy bank balance updated");
     }
   } else {
     console.log("⚠️ No event with userAddress was detected");
+    fileSystemLogger.log("⚠️ No event with userAddress was detected");
   }
 
   const nextLt = txs.transactions[txs.transactions.length - 1].lt;
   console.log("⏭️ Returning next lt:", nextLt.toString());
+  fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
 
   return nextLt;
 }
 
 export async function listenPigShopForever() {
   console.log("🔁 Starting to listen for PigShop events");
+  fileSystemLogger.log("🔁 Starting to listen for PigShop events");
   try {
     let lastLt = BigInt(0);
     while (true) {
@@ -473,12 +336,16 @@ export async function listenPigShopForever() {
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (error) {
         console.error("Error in listenPigShopForever:", error);
+        fileSystemLogger.error("Error in listenPigShopForever:", error);
         console.log("restarting...");
+        fileSystemLogger.log("restarting...");
         await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
   } catch (error) {
     console.error("Error in listenPigShopForever:", error);
+    fileSystemLogger.error("Error in listenPigShopForever:", error);
     console.log("restarting...");
+    fileSystemLogger.log("restarting...");
   }
 }
