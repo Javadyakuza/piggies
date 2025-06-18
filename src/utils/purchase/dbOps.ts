@@ -55,7 +55,7 @@ export const updateBountyHuntersBalances = async (
     bh.users.set(
       Address.parse(user.wallet_address),
       BigInt(user.piggy_bank_balance) +
-        bh.users.get(Address.parse(user.wallet_address))!
+      bh.users.get(Address.parse(user.wallet_address))!
     )
   );
 
@@ -63,7 +63,7 @@ export const updateBountyHuntersBalances = async (
     bh.admins.set(
       Address.parse(admin.wallet_address),
       BigInt(admin.piggy_bank_balance) +
-        bh.admins.get(Address.parse(admin.wallet_address))!
+      bh.admins.get(Address.parse(admin.wallet_address))!
     )
   );
 
@@ -71,7 +71,7 @@ export const updateBountyHuntersBalances = async (
     bh.referrer.set(
       Address.parse(referrer.wallet_address),
       BigInt(referrer.piggy_bank_balance) +
-        bh.referrer.get(Address.parse(referrer.wallet_address))!
+      bh.referrer.get(Address.parse(referrer.wallet_address))!
     )
   );
 
@@ -159,7 +159,7 @@ export const upgradeUserPig = async (userAddress: string) => {
 
   // updating the user parent id in the tree if he just updated to the bronze pig
   if (currentPig === 0) {
-    await UpdateUSerInTree(userAddress, "");
+    await UpdateUSerInTree(userAddress, (await getParentId(userAddress)).pi);
   }
 };
 
@@ -184,14 +184,23 @@ export const getPigs = async (
     .from("users")
     .select("current_pig, pig_address")
     .eq("wallet_address", userAddress)
-    .single();
+    .maybeSingle();
 
+  let address: Address | null = null;
+
+  if (current_pig?.pig_address !== null) {
+    try {
+      address = Address.parse(current_pig?.pig_address);
+    } catch (error) {
+      console.error("Error parsing pig address:", error);
+    }
+  }
   return {
     old_pig_level: current_pig?.current_pig ?? 0,
     new_pig_level: (current_pig?.current_pig ?? 0) + 1,
-    address: Address.parse(current_pig?.pig_address) || null,
+    address,
   };
-  
+
 };
 
 export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {
@@ -215,7 +224,7 @@ export const updateTxHistory = async (
   const { data: tx, error: insertError } = await supabase
     .from("tx_history")
     .update(txData)
-    .eq("tx_hash", txData.tx_hash)
+    .eq("tx_id", txData.tx_id)
     .select()
     .single();
 
@@ -310,7 +319,7 @@ export async function isDuplicatePurchase(
     .from("tx_history")
     .select("request_status")
     .eq("tx_id", tx_id)
-    .single();
+    .maybeSingle();
 
   if (fetchError) {
     throw new Error(`Error fetching tx history: ${fetchError.message}`);
@@ -333,7 +342,7 @@ export async function UpdateUSerInTree(
 ) {
   const { error: updateError } = await supabase
     .from("users")
-    .update({ parent_id: parent_id })
+    .update({ parent_id: Number(parent_id) })
     .eq("wallet_address", wallet_address);
 
   if (updateError) {

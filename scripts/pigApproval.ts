@@ -15,6 +15,7 @@ import {
 } from "../build/PigShop/tact_PigShop";
 import { bountyHuntersResponse } from "@/models/purchase";
 import { keyPairFromEnv } from "./helpers";
+import { fileSystemLogger } from "@/utils/fsLogger";
 
 export async function sendPigApproval(
   bh: bountyHuntersResponse,
@@ -23,25 +24,31 @@ export async function sendPigApproval(
   pig: Address | null,
   mainUser: string
 ) {
-  let secretKey = (await keyPairFromEnv()).secretKey;
+  try {
+    let secretKey = (await keyPairFromEnv()).secretKey;
 
-  const approvalMsg: PigApproval = {
-    $$type: "PigApproval",
-    userBountyHunters: bh.users,
-    adminsShares: bh.admins,
-    userAddress: Address.parse(mainUser),
-    referrerNftAddress: bh.referrer.keys()[0],
-    referrerAmount: bh.referrer.values()[0],
-    pig,
-  };
+    const approvalMsg: PigApproval = {
+      $$type: "PigApproval",
+      userBountyHunters: bh.users,
+      adminsShares: bh.admins,
+      userAddress: Address.parse(mainUser),
+      referrerNftAddress: bh.referrer.keys()[0],
+      referrerAmount: bh.referrer.values()[0],
+      pig,
+    };
 
-  await pigShop.send(
-    wallet.sender(secretKey),
-    {
-      value: toNano("0.1"),
-    },
-    approvalMsg
-  );
+    await pigShop.send(
+      wallet.sender(secretKey),
+      {
+        value: toNano("0.1"),
+      },
+      approvalMsg
+    );
 
-  console.log("PigApproval message sent.");
+    console.log("PigApproval message sent.");
+  } catch (err) {
+    fileSystemLogger.error("error sending the pig approval", err);
+    console.error("error sending the pig approval", err);
+  }
+
 }

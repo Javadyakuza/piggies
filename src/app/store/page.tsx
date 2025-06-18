@@ -62,7 +62,7 @@ export default function StorePage() {
             messages: [
               {
                 address: args.to.toString(),
-                amount: toNano("0.01").toString(), // args.value.toString(),
+                amount: args.value.toString(),
                 payload: args.body?.toBoc()?.toString("base64"),
               },
             ],

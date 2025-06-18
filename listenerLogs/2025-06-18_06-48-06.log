@@ -1,0 +1,75 @@
+[2025-06-18T03:18:06.558Z] [LOG] 🔁 Starting to listen for PigShop events
+[2025-06-18T03:18:06.559Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T03:18:06.559Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:18:06.559Z] [LOG] 📌 Last known lt: 35820187000003
+[2025-06-18T03:18:06.559Z] [LOG] 📌 Last known lt: 35820187000003
+[2025-06-18T03:18:06.668Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T03:18:06.668Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:18:07.389Z] [LOG] 📦 Transactions fetched: 5
+[2025-06-18T03:18:07.389Z] [LOG] 🔁 Processing transaction: b3ead9847a24ba9af76d5f3c27bd0de97f767ac2ce2fe33e3cda5b6361831c61
+[2025-06-18T03:18:07.389Z] [LOG] 🔁 Processing transaction: 42dfce1860aae66f3f1c0c7cf9b9786e2eed9df0c8117c7a2346a42b7cb34d87
+[2025-06-18T03:18:07.390Z] [LOG] 🔁 Processing transaction: ac52d21c915394aa848210153320ac1227e319647337a682b48bcb4cd8eb890d
+[2025-06-18T03:18:07.390Z] [LOG] 🔁 Processing transaction: 7eb855a601921d3e910c394a156401513f65b2ecb5802691468faacf71215a75
+[2025-06-18T03:18:07.390Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:07.390Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:07.390Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:07.390Z] [LOG] 💬 Out message: undefined
+[2025-06-18T03:18:07.390Z] [LOG] 💬 Out message: MintNFT
+[2025-06-18T03:18:07.390Z] [LOG] 💬 Out message: PigApprovalEvent
+[2025-06-18T03:18:07.392Z] [LOG] ✅ Detected PigApprovalEvent
+[2025-06-18T03:18:07.392Z] [LOG] 🔁 Processing transaction: dcef74960a83ffcc1d747d866a6b9f059e5b8871a33a56a5191bfebb40a63f6c
+[2025-06-18T03:18:07.392Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T03:18:07.392Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T03:18:07.394Z] [LOG] the parsed event is [object Object]
+[2025-06-18T03:18:07.394Z] [LOG] 📍 Processing event for user: EQDVYHUaVzoNC62Q-G9tR0_6ZDrRBHMABZ_MBe-ktMeYg8SJ
+[2025-06-18T03:18:08.546Z] [LOG] 🐷 Pig data loaded: [object Object]
+[2025-06-18T03:18:10.473Z] [LOG] 🏹 Bounty hunters fetched: [object Object]
+[2025-06-18T03:18:10.474Z] [LOG] 🛠️ Handling UpgradePig event
+[2025-06-18T03:18:10.650Z] [LOG] 🔁 Is duplicate purchase? true
+[2025-06-18T03:18:10.650Z] [LOG] ⏭️ Returning next lt: 35863413000001
+[2025-06-18T03:18:12.651Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T03:18:12.652Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:18:12.652Z] [LOG] 📌 Last known lt: 35863413000001
+[2025-06-18T03:18:12.652Z] [LOG] 📌 Last known lt: 35863413000001
+[2025-06-18T03:18:12.736Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T03:18:12.736Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:18:13.253Z] [LOG] 📦 Transactions fetched: 4
+[2025-06-18T03:18:13.253Z] [LOG] 🔁 Processing transaction: b3ead9847a24ba9af76d5f3c27bd0de97f767ac2ce2fe33e3cda5b6361831c61
+[2025-06-18T03:18:13.253Z] [LOG] 🔁 Processing transaction: 42dfce1860aae66f3f1c0c7cf9b9786e2eed9df0c8117c7a2346a42b7cb34d87
+[2025-06-18T03:18:13.254Z] [LOG] 🔁 Processing transaction: ac52d21c915394aa848210153320ac1227e319647337a682b48bcb4cd8eb890d
+[2025-06-18T03:18:13.254Z] [LOG] 🔁 Processing transaction: 7eb855a601921d3e910c394a156401513f65b2ecb5802691468faacf71215a75
+[2025-06-18T03:18:13.254Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:13.254Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:13.254Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:13.254Z] [LOG] 💬 Out message: undefined
+[2025-06-18T03:18:13.254Z] [LOG] 💬 Out message: MintNFT
+[2025-06-18T03:18:13.254Z] [LOG] 💬 Out message: PigApprovalEvent
+[2025-06-18T03:18:13.255Z] [LOG] ✅ Detected PigApprovalEvent
+[2025-06-18T03:18:13.256Z] [LOG] the parsed event is [object Object]
+[2025-06-18T03:18:13.256Z] [LOG] 📍 Processing event for user: EQDVYHUaVzoNC62Q-G9tR0_6ZDrRBHMABZ_MBe-ktMeYg8SJ
+[2025-06-18T03:18:13.418Z] [LOG] 🐷 Pig data loaded: [object Object]
+[2025-06-18T03:18:15.237Z] [LOG] 🏹 Bounty hunters fetched: [object Object]
+[2025-06-18T03:18:15.238Z] [LOG] ✅ Approval received for: 0:d560751a573a0d0bad90f86f6d474ffa643ad1047300059fcc05efa4b4c79883
+[2025-06-18T03:18:17.136Z] [ERROR] Error in listenPigShopForever: Error: Update user parent_id error (updateUserInTree): insert or update on table "users" violates foreign key constraint "users_parent_id_fkey"
+[2025-06-18T03:18:17.136Z] [LOG] restarting...
+[2025-06-18T03:18:19.137Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T03:18:19.137Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:18:19.138Z] [LOG] 📌 Last known lt: 35863413000001
+[2025-06-18T03:18:19.138Z] [LOG] 📌 Last known lt: 35863413000001
+[2025-06-18T03:18:19.245Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T03:18:19.245Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:18:19.726Z] [LOG] 📦 Transactions fetched: 4
+[2025-06-18T03:18:19.727Z] [LOG] 🔁 Processing transaction: b3ead9847a24ba9af76d5f3c27bd0de97f767ac2ce2fe33e3cda5b6361831c61
+[2025-06-18T03:18:19.727Z] [LOG] 🔁 Processing transaction: 42dfce1860aae66f3f1c0c7cf9b9786e2eed9df0c8117c7a2346a42b7cb34d87
+[2025-06-18T03:18:19.727Z] [LOG] 🔁 Processing transaction: ac52d21c915394aa848210153320ac1227e319647337a682b48bcb4cd8eb890d
+[2025-06-18T03:18:19.727Z] [LOG] 🔁 Processing transaction: 7eb855a601921d3e910c394a156401513f65b2ecb5802691468faacf71215a75
+[2025-06-18T03:18:19.727Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:19.727Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:19.728Z] [LOG] 💬 Out message: PigBounty
+[2025-06-18T03:18:19.728Z] [LOG] 💬 Out message: undefined
+[2025-06-18T03:18:19.728Z] [LOG] 💬 Out message: MintNFT
+[2025-06-18T03:18:19.728Z] [LOG] 💬 Out message: PigApprovalEvent
+[2025-06-18T03:18:19.730Z] [LOG] ✅ Detected PigApprovalEvent
+[2025-06-18T03:18:19.730Z] [LOG] the parsed event is [object Object]
+[2025-06-18T03:18:19.730Z] [LOG] 📍 Processing event for user: EQDVYHUaVzoNC62Q-G9tR0_6ZDrRBHMABZ_MBe-ktMeYg8SJ
+[2025-06-18T03:18:19.895Z] [LOG] 🐷 Pig data loaded: [object Object]

@@ -91,6 +91,17 @@ contract PigShop {
 
   receive(msg: PigApproval){
     require(sender() == self.owner, "Only owner can approve a pig purchase");
+    let totalAmount = ton("0");
+    foreach (k, v in msg.userBountyHunters) {
+      totalAmount += v;
+      totalAmount += ton("0.05");
+    }
+    foreach (k, v in msg.adminsShares) {
+      totalAmount += v;
+      totalAmount += ton("0.05");
+    }
+    totalAmount += ton("0.05"); // for referer 
+    nativeReserve(totalAmount, ReserveExact);
     require(!msg.userBountyHunters.isEmpty() && !msg.adminsShares.isEmpty(),
       "Distribution map cannot be empty"
     );

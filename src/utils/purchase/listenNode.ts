@@ -183,13 +183,13 @@ async function catchPigShopEvents(afterLt: bigint) {
   let some = true;
   console.log("the parsed event is", event);
   fileSystemLogger.log("the parsed event is", event);
-  if (some) {
-    const nextLt = txs.transactions[txs.transactions.length - 1].lt;
-    console.log("⏭️ Returning next lt:", nextLt.toString());
-    fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
+  // if (some) {
+  //   const nextLt = txs.transactions[txs.transactions.length - 1].lt;
+  //   console.log("⏭️ Returning next lt:", nextLt.toString());
+  //   fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
 
-    return nextLt;
-  }
+  //   return nextLt;
+  // }
   if (event && event.userAddress) {
     console.log("📍 Processing event for user:", event.userAddress.toString());
     fileSystemLogger.log(
@@ -327,7 +327,7 @@ export async function listenPigShopForever() {
   console.log("🔁 Starting to listen for PigShop events");
   fileSystemLogger.log("🔁 Starting to listen for PigShop events");
   try {
-    let lastLt = BigInt(0);
+    let lastLt = BigInt(35820187000003);
     while (true) {
       try {
         lastLt = await catchPigShopEvents(lastLt);

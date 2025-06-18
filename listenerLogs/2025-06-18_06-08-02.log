@@ -1,0 +1,69 @@
+[2025-06-18T02:38:22.929Z] [LOG] 🔁 Starting to listen for PigShop events
+[2025-06-18T02:38:22.929Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T02:38:22.930Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T02:38:22.930Z] [LOG] 📌 Last known lt: 0
+[2025-06-18T02:38:22.930Z] [LOG] 📌 Last known lt: 0
+[2025-06-18T02:38:23.078Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T02:38:23.079Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T02:38:23.690Z] [LOG] 📦 Transactions fetched: 9
+[2025-06-18T02:38:23.691Z] [LOG] 🔁 Processing transaction: 67b05e150f570fc9abb1fde8a4085f002d0344979a3214be17dd08f6efed310e
+[2025-06-18T02:38:23.691Z] [LOG] 🚫 Skipped aborted or failed tx: 67b05e150f570fc9abb1fde8a4085f002d0344979a3214be17dd08f6efed310e
+[2025-06-18T02:38:23.691Z] [LOG] 🔁 Processing transaction: cbfa413e947726e090a46cbb2af36e7ee02a7ed8404c7ab2f674dfa8ac55450f
+[2025-06-18T02:38:23.691Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:23.692Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:23.692Z] [LOG] 🔁 Processing transaction: f659e4280bd9049ac835c44cfed18e68112f6bae223efb890b39af9887f96d48
+[2025-06-18T02:38:23.693Z] [LOG] 🚫 Skipped aborted or failed tx: f659e4280bd9049ac835c44cfed18e68112f6bae223efb890b39af9887f96d48
+[2025-06-18T02:38:23.693Z] [LOG] 🔁 Processing transaction: 9619c9e911360e2d5d347ec0e96ddaaa189bca8b310f84e3932f152dc5d3d93d
+[2025-06-18T02:38:23.693Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:23.693Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:23.693Z] [LOG] 🔁 Processing transaction: a76da33a6cf3792729829817c9c991ba961f0aae02a7aae43943f857e9f85228
+[2025-06-18T02:38:23.693Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:23.693Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:23.693Z] [LOG] 🔁 Processing transaction: 04e5ae2b5b218862ca08b91cbba69314e28232c0458718ff6921d83ba80eefa7
+[2025-06-18T02:38:23.693Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:23.693Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:23.694Z] [LOG] 🔁 Processing transaction: ba7653d61be34b1f812cf5755158ef17d328c81d5e35b33c30003964671620e4
+[2025-06-18T02:38:23.694Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:23.694Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:23.694Z] [LOG] 🔁 Processing transaction: a9e02310adfa46bba69278b0b39c83998822cb5e1aeb287a749c285f8a9c90ec
+[2025-06-18T02:38:23.694Z] [LOG] 💬 Out message: undefined
+[2025-06-18T02:38:23.694Z] [LOG] 🔁 Processing transaction: 127576c5d7234589287ca39795c2b9f5296732feb209f2d7c2ed0f138c4834bf
+[2025-06-18T02:38:23.694Z] [LOG] ⚠️ Skipped tx with no body: 127576c5d7234589287ca39795c2b9f5296732feb209f2d7c2ed0f138c4834bf
+[2025-06-18T02:38:23.695Z] [LOG] the parsed event is [object Object]
+[2025-06-18T02:38:23.696Z] [LOG] ⏭️ Returning next lt: 35720350000003
+[2025-06-18T02:38:25.695Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T02:38:25.696Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T02:38:25.696Z] [LOG] 📌 Last known lt: 35720350000003
+[2025-06-18T02:38:25.696Z] [LOG] 📌 Last known lt: 35720350000003
+[2025-06-18T02:38:25.790Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T02:38:25.790Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T02:38:25.981Z] [LOG] 📦 Transactions fetched: 8
+[2025-06-18T02:38:25.981Z] [LOG] 🔁 Processing transaction: 67b05e150f570fc9abb1fde8a4085f002d0344979a3214be17dd08f6efed310e
+[2025-06-18T02:38:25.981Z] [LOG] 🚫 Skipped aborted or failed tx: 67b05e150f570fc9abb1fde8a4085f002d0344979a3214be17dd08f6efed310e
+[2025-06-18T02:38:25.981Z] [LOG] 🔁 Processing transaction: cbfa413e947726e090a46cbb2af36e7ee02a7ed8404c7ab2f674dfa8ac55450f
+[2025-06-18T02:38:25.981Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:25.981Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:25.981Z] [LOG] 🔁 Processing transaction: f659e4280bd9049ac835c44cfed18e68112f6bae223efb890b39af9887f96d48
+[2025-06-18T02:38:25.981Z] [LOG] 🚫 Skipped aborted or failed tx: f659e4280bd9049ac835c44cfed18e68112f6bae223efb890b39af9887f96d48
+[2025-06-18T02:38:25.981Z] [LOG] 🔁 Processing transaction: 9619c9e911360e2d5d347ec0e96ddaaa189bca8b310f84e3932f152dc5d3d93d
+[2025-06-18T02:38:25.981Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:25.982Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:25.982Z] [LOG] 🔁 Processing transaction: a76da33a6cf3792729829817c9c991ba961f0aae02a7aae43943f857e9f85228
+[2025-06-18T02:38:25.982Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:25.982Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:25.982Z] [LOG] 🔁 Processing transaction: 04e5ae2b5b218862ca08b91cbba69314e28232c0458718ff6921d83ba80eefa7
+[2025-06-18T02:38:25.982Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:25.982Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:25.982Z] [LOG] 🔁 Processing transaction: ba7653d61be34b1f812cf5755158ef17d328c81d5e35b33c30003964671620e4
+[2025-06-18T02:38:25.982Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T02:38:25.982Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T02:38:25.982Z] [LOG] 🔁 Processing transaction: a9e02310adfa46bba69278b0b39c83998822cb5e1aeb287a749c285f8a9c90ec
+[2025-06-18T02:38:25.982Z] [LOG] 💬 Out message: undefined
+[2025-06-18T02:38:25.983Z] [LOG] the parsed event is [object Object]
+[2025-06-18T02:38:25.983Z] [LOG] ⏭️ Returning next lt: 35720362000003
+[2025-06-18T02:38:27.984Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T02:38:27.984Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T02:38:27.984Z] [LOG] 📌 Last known lt: 35720362000003
+[2025-06-18T02:38:27.985Z] [LOG] 📌 Last known lt: 35720362000003
+[2025-06-18T02:38:28.078Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T02:38:28.078Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P

@@ -43,7 +43,7 @@ function useWalletConnection() {
       setTonClient(tonClient);
 
       const tonApi = new TonApiClient({
-        apiKey: process.env.NEXT_PUBLIC_TONAPI_APIKEY!,
+        apiKey: process.env.NEXT_PUBLIC_TONAPI_API_KEY!,
       });
       setTonApi(tonApi);
     } else {

@@ -1,0 +1,35 @@
+[2025-06-18T03:05:06.202Z] [LOG] 🔁 Starting to listen for PigShop events
+[2025-06-18T03:05:06.203Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T03:05:06.203Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:05:06.203Z] [LOG] 📌 Last known lt: 35820187000003
+[2025-06-18T03:05:06.203Z] [LOG] 📌 Last known lt: 35820187000003
+[2025-06-18T03:05:06.308Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T03:05:06.309Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:05:06.916Z] [LOG] 📦 Transactions fetched: 1
+[2025-06-18T03:05:06.916Z] [LOG] 🔁 Processing transaction: dcef74960a83ffcc1d747d866a6b9f059e5b8871a33a56a5191bfebb40a63f6c
+[2025-06-18T03:05:06.916Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T03:05:06.917Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T03:05:06.918Z] [LOG] the parsed event is [object Object]
+[2025-06-18T03:05:06.918Z] [LOG] 📍 Processing event for user: EQDVYHUaVzoNC62Q-G9tR0_6ZDrRBHMABZ_MBe-ktMeYg8SJ
+[2025-06-18T03:05:07.832Z] [LOG] 🐷 Pig data loaded: [object Object]
+[2025-06-18T03:05:09.749Z] [LOG] 🏹 Bounty hunters fetched: [object Object]
+[2025-06-18T03:05:09.749Z] [LOG] 🛠️ Handling UpgradePig event
+[2025-06-18T03:05:09.938Z] [ERROR] Error in listenPigShopForever: Error: Error fetching tx history: JSON object requested, multiple (or no) rows returned
+[2025-06-18T03:05:09.939Z] [LOG] restarting...
+[2025-06-18T03:05:11.939Z] [LOG] ➡️ Starting to catch PigShop events
+[2025-06-18T03:05:11.939Z] [LOG] 🔍 Listen address: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:05:11.940Z] [LOG] 📌 Last known lt: 35820187000003
+[2025-06-18T03:05:11.940Z] [LOG] 📌 Last known lt: 35820187000003
+[2025-06-18T03:05:12.023Z] [LOG] 👛 Admin wallet loaded: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
+[2025-06-18T03:05:12.023Z] [LOG] 🏪 PigShop contract opened at: EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P
+[2025-06-18T03:05:12.465Z] [LOG] 📦 Transactions fetched: 1
+[2025-06-18T03:05:12.465Z] [LOG] 🔁 Processing transaction: dcef74960a83ffcc1d747d866a6b9f059e5b8871a33a56a5191bfebb40a63f6c
+[2025-06-18T03:05:12.465Z] [LOG] 💬 Out message: UpgradePig
+[2025-06-18T03:05:12.465Z] [LOG] ✅ Detected UpgradePig event
+[2025-06-18T03:05:12.466Z] [LOG] the parsed event is [object Object]
+[2025-06-18T03:05:12.466Z] [LOG] 📍 Processing event for user: EQDVYHUaVzoNC62Q-G9tR0_6ZDrRBHMABZ_MBe-ktMeYg8SJ
+[2025-06-18T03:05:12.628Z] [LOG] 🐷 Pig data loaded: [object Object]
+[2025-06-18T03:05:14.440Z] [LOG] 🏹 Bounty hunters fetched: [object Object]
+[2025-06-18T03:05:14.441Z] [LOG] 🛠️ Handling UpgradePig event
+[2025-06-18T03:05:14.603Z] [ERROR] Error in listenPigShopForever: Error: Error fetching tx history: JSON object requested, multiple (or no) rows returned
+[2025-06-18T03:05:14.604Z] [LOG] restarting...
