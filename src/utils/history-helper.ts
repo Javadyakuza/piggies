@@ -7,7 +7,7 @@ import { PigLevel } from "@/models/pigs";
 export async function getUser(wallet_address: string) {
   const { data, error: fetchError } = await supabase
     .from("users")
-    .select("id, wallet_address, fullname")
+    .select("id, wallet_address, fullname, parent_id")
     .eq("wallet_address", wallet_address.trim().toLowerCase())
     .single();
 

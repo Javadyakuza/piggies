@@ -25,12 +25,14 @@ import { getTonApiClient, getTonClient } from "../tonClients";
 import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
+  getParentId,
   getPigs,
   initTxHistory,
   isDuplicatePurchase,
   updateBountyHuntersBalances,
   updateReferralsRewardsHistory,
   updateTxHistory,
+  UpdateUSerInTree,
   updateUserPiggyBankBalance,
   upgradeUserPig,
   upgradeUserPigAddress,
@@ -39,6 +41,7 @@ import { PigLevel } from "../../models/pigs";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
 import { fileSystemLogger } from "../fsLogger";
+import { getUser } from "../history-helper";
 
 async function catchPigShopEvents(afterLt: bigint) {
   console.log("➡️ Starting to catch PigShop events");
@@ -198,6 +201,7 @@ async function catchPigShopEvents(afterLt: bigint) {
     );
 
     const userAddr = event.userAddress.toRawString();
+    let user = await getUser(userAddr);
     const pig_data = await getPigs(userAddr);
     console.log("🐷 Pig data loaded:", pig_data);
     fileSystemLogger.log("🐷 Pig data loaded:", pig_data);
@@ -210,13 +214,29 @@ async function catchPigShopEvents(afterLt: bigint) {
       console.log("🛠️ Handling UpgradePig event");
       fileSystemLogger.log("🛠️ Handling UpgradePig event");
 
-      const tx_id = TxId.create(userAddr, pig_data.old_pig_level);
-
       const isDup = await isDuplicatePurchase(userAddr, pig_data.old_pig_level);
       console.log("🔁 Is duplicate purchase?", isDup);
       fileSystemLogger.log("🔁 Is duplicate purchase?", isDup);
 
       if (!isDup) {
+        console.log("⁉️ UpgradePig tx initiated check for potential user tree update ...");
+        fileSystemLogger.log("⁉️ UpgradePig tx initiated check for potential user tree update ...");
+
+        if (pig_data.address === null && user.parent_id === null) {
+          console.log("🆗 User parent should be updated since the tx is definietly going through");
+          fileSystemLogger.log("🆗 User parent should be updated since the tx is definietly going through");
+          let ids = await getParentId(userAddr);
+          if (ids.pi) {
+            console.log("🔁 Updating the user parent id...");
+            fileSystemLogger.log("🔁 Updating the user parent id...");
+            await UpdateUSerInTree(userAddr, ids.pi);
+          }
+        }
+
+        const bh = await findUsersBountyHunters(userAddr, pig_data.new_pig_level);
+
+        const tx_id = TxId.create(userAddr, pig_data.old_pig_level);
+
         console.log("🚀 Sending pig approval message");
         fileSystemLogger.log("🚀 Sending pig approval message");
         await sendPigApproval(
@@ -311,6 +331,7 @@ async function catchPigShopEvents(afterLt: bigint) {
       console.log("💰 User piggy bank balance updated");
       fileSystemLogger.log("💰 User piggy bank balance updated");
     }
+
   } else {
     console.log("⚠️ No event with userAddress was detected");
     fileSystemLogger.log("⚠️ No event with userAddress was detected");
