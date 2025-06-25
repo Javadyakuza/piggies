@@ -6,10 +6,10 @@ import { ContractAdapter } from "@ton-api/ton-adapter";
 export async function getAdminWallet(
   tc: TonClient
 ): Promise<OpenedContract<WalletContractV5R1>> {
-  if (!process.env.NEXT_PUBLIC_WALLET_MNEMONIC) {
+  if (!process.env.WALLET_MNEMONIC) {
     throw new Error("ADMIN_MNEMONIC is not set");
   }
-  const mnemonics = process.env.NEXT_PUBLIC_WALLET_MNEMONIC.split(" ");
+  const mnemonics = process.env.WALLET_MNEMONIC.split(" ");
   const keyPair = await mnemonicToPrivateKey(mnemonics);
   return tc.open(
     WalletContractV5R1.create({

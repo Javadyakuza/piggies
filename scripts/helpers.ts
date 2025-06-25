@@ -1,7 +1,7 @@
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
 
 export async function keyPairFromEnv(): Promise<KeyPair> {
-  const mnemonic = process.env.NEXT_PUBLIC_WALLET_MNEMONIC;
+  const mnemonic = process.env.WALLET_MNEMONIC;
   if (!mnemonic) {
     throw new Error("WALLET_MNEMONIC is not set");
   }

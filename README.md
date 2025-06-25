@@ -34,6 +34,46 @@ This project contains the following scripts:
 - `lint`. Runs [eslint](https://eslint.org/) to ensure the code quality meets
   the required
   standards.
+- `listener`. Runs the PigShop event listener as a standalone process with auto-restart.
+
+### PigShop Event Listener
+
+The `listener` script runs a standalone process that monitors the PigShop smart contract for blockchain events and processes them accordingly. This should be run as a separate process from the main application.
+
+**What it listens to:**
+- **UpgradePig**: When a user upgrades their pig level
+- **PigApprovalEvent**: When a pig upgrade is approved by the contract
+- **PigCreationEvent**: When a new pig NFT is created
+- **WithdrawFromPigEvent**: When a user withdraws funds from their pig
+
+**How it reacts to events:**
+- **UpgradePig**: 
+  - Checks for duplicate purchases
+  - Updates user tree structure if needed
+  - Sends pig approval messages to bounty hunters
+  - Initializes transaction history
+- **PigApprovalEvent**:
+  - Updates bounty hunter balances (piggy_bank_balance)
+  - Updates user's current pig level
+  - Updates transaction history status
+  - Updates referral rewards history
+- **PigCreationEvent**:
+  - Updates user's pig NFT address
+- **WithdrawFromPigEvent**:
+  - Updates user's piggy bank balance
+
+**To run the listener:**
+```bash
+pnpm run listener
+```
+
+**Reliability features:**
+- Built-in auto-restart on crashes with 5-second delays
+- Maximum 10 restart attempts to prevent infinite loops
+- Graceful shutdown handling (SIGINT, SIGTERM)
+- Comprehensive error logging
+- Uncaught exception handling
+- Continuous monitoring with 2-second polling intervals
 
 To run a script, use the `pnpm run` command:
 

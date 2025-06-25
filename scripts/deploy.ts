@@ -60,7 +60,7 @@ export async function run(provider: NetworkProvider) {
   await provider.waitForDeploy(pigCollection.address);
 
   console.log(
-    "PigShop contract deployed successfully at:",
+    "PigCollection contract deployed successfully at:",
     pigCollection.address.toRawString()
   );
 
@@ -75,11 +75,6 @@ export async function run(provider: NetworkProvider) {
       $$type: "ChangeCollection",
       newCollection: pigCollection.address,
     }
-  );
-
-  console.log(
-    "Collection contract deployed successfully at:",
-    pigCollection.address.toRawString()
   );
   console.log("Pigshop contract updated with collection address successfully");
 }

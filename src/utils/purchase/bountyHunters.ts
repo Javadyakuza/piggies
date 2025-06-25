@@ -164,6 +164,9 @@ export async function findUsersBountyHunters(
       .concat(adminsDic.values());
     let totalPaymentsSum = totalPayments.reduce((a, b) => a + b, BigInt(0));
     console.log("totalPaymentsSum", totalPaymentsSum);
+    console.log("admin dictionaries:", adminsDic);
+    console.log("user dictionaries:", usersDic);
+    console.log("referrer dictionaries:", referrerDic);
     let change = BigInt(toNano(pigCostInTon)) - totalPaymentsSum;
     if (change > BigInt(0)) {
       const eachAdminShare = change / BigInt(adminsDic.keys().length);
