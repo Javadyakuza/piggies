@@ -10,7 +10,7 @@ message ChangeCollection {
 message PigApproval {
   pig: Address?;
   userAddress: Address;
-  referrerNftAddress: Address;
+  referrerNftAddress: Address?;
   referrerAmount: Int as coins;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
@@ -26,7 +26,7 @@ message WithdrawFromPigEvent {
 }
 message PigApprovalEvent {
   userAddress: Address;
-  referrerNftAddress: Address;
+  referrerNftAddress: Address?;
   referrerAmount: Int as coins;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
@@ -109,7 +109,7 @@ contract PigShop {
       totalAmount += v + ton("0.05"); // admin shares + gas
     }
     totalAmount += ton("0.1"); // NFT operation cost
-    
+
     nativeReserve(totalAmount, ReserveAllExcept);
     // shouldn't be here because of the first ever transaction
     // require(!msg.userBountyHunters.isEmpty() && !msg.adminsShares.isEmpty(),
@@ -124,24 +124,26 @@ contract PigShop {
           value: amount,
           mode: SendPayGasSeparately,
           bounce: true,
-          body: PigBounty {
+          body: PigBounty{
             limits: self.limits,
             surplusDestination: self.owner
           }.toCell()
         }
       );
     }
-    send(SendParameters{
-        to: msg.referrerNftAddress,
-        value: msg.referrerAmount,
-        mode: SendPayGasSeparately,
-        bounce: true,
-        body: PigBounty {
-          limits: self.limits,
-          surplusDestination: self.owner
-        }.toCell()
-      }
-    );
+    if (msg.referrerNftAddress != null) {
+      send(SendParameters{
+          to: msg.referrerNftAddress!!,
+          value: msg.referrerAmount,
+          mode: SendPayGasSeparately,
+          bounce: true,
+          body: PigBounty{
+            limits: self.limits,
+            surplusDestination: self.owner
+          }.toCell()
+        }
+      );
+    }
     foreach (address, amount in msg.adminsShares) {
       require(amount > 0, "Amount must be greater than 0");
       send(SendParameters{
@@ -180,7 +182,7 @@ contract PigShop {
     // emit the approval event
     emit(PigApprovalEvent{
         userAddress: msg.userAddress,
-        referrerNftAddress: msg.referrerNftAddress,
+        referrerNftAddress: msg.referrerNftAddress!!,
         referrerAmount: msg.referrerAmount,
         userBountyHunters: msg.userBountyHunters,
         adminsShares: msg.adminsShares

@@ -54,7 +54,7 @@ export const updateBountyHuntersBalances = async (
   users.forEach((user) =>
     bh.users.set(
       Address.parse(user.wallet_address),
-      BigInt(user.piggy_bank_balance) +
+      BigInt(user.piggy_bank_balance ?? 0) +
       bh.users.get(Address.parse(user.wallet_address))!
     )
   );
@@ -62,7 +62,7 @@ export const updateBountyHuntersBalances = async (
   admins.forEach((admin) =>
     bh.admins.set(
       Address.parse(admin.wallet_address),
-      BigInt(admin.piggy_bank_balance) +
+      BigInt(admin.piggy_bank_balance ?? 0 ) +
       bh.admins.get(Address.parse(admin.wallet_address))!
     )
   );
@@ -70,7 +70,7 @@ export const updateBountyHuntersBalances = async (
   referrer.forEach((referrer) =>
     bh.referrer.set(
       Address.parse(referrer.wallet_address),
-      BigInt(referrer.piggy_bank_balance) +
+      BigInt(referrer.piggy_bank_balance ?? 0) +
       bh.referrer.get(Address.parse(referrer.wallet_address))!
     )
   );

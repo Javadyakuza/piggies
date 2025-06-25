@@ -184,13 +184,14 @@ async function catchPigShopEvents(after_lt?: bigint) {
       }
     }
   }
-  let some = true;
+
   console.log("the parsed event is", event);
   fileSystemLogger.log("the parsed event is", event);
-  if (some) {
+  if (!after_lt) {
+
     const nextLt = txs.transactions[txs.transactions.length - 1].lt;
-    console.log("⏭️ Returning next lt:", nextLt.toString());
-    fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
+    console.log("⏭️Not processing the old event and Returning next lt:", nextLt.toString());
+    fileSystemLogger.log("⏭️ ⏭️Not processing the old event and Returning next lt:", nextLt.toString());
 
     return nextLt;
   }
@@ -265,10 +266,13 @@ async function catchPigShopEvents(after_lt?: bigint) {
       console.log("✅ Approval received for:", userAddr);
       fileSystemLogger.log("✅ Approval received for:", userAddr);
 
-      event.referrer = Dictionary.empty<Address, bigint>().set(
-        event.referrerNftAddress,
-        event.referrerAmount
-      );
+      event.referrer = Dictionary.empty<Address, bigint>();
+      if (event.referrerNftAddress != null) {
+        event.referrer.set(
+          event.referrerNftAddress,
+          event.referrerAmount
+        );
+      }
 
       //-----------------------------------------
       // update the bounty hunter balances (piggy_bank_balance on the users table)

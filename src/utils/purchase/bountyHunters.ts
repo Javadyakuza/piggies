@@ -122,6 +122,7 @@ export async function findUsersBountyHunters(
     }
 
 
+
     // ----------------------------------------------------
     // Step 5: Updating the upper users, admins and the referrer shares
     // ----------------------------------------------------
@@ -139,11 +140,15 @@ export async function findUsersBountyHunters(
       );
     });
     admins.map((admin) => {
+      // it should be one admin
+
       adminsDic.set(
         Address.parse(admin.wallet_address),
         BigInt(toNano(calcShares("admin", upgradedPigLevel, pigCostInTon)))
       );
     });
+
+    // -- Updating referrer share
     console.log(adminsDic);
     referrerDic.set(
       Address.parse(referrer.wallet_address),
@@ -169,6 +174,33 @@ export async function findUsersBountyHunters(
         adminsDic.set(key, currentValue + eachAdminShare);
       }
     }
+
+    // ----------------------------------------------------
+    // Step 6: Check if there is any money assigned to admin(genesis) in the users or in referrer and moving it into the admins side 
+    // ----------------------------------------------------
+    let adminAddress: Address = adminsDic.keys()[0];
+    for (const key of usersDic.keys()) {
+      if (key.toString() === adminAddress.toString()) {
+        const valToMove = usersDic.get(key) || BigInt(0);
+        const adminValToTopUp = adminsDic.get(key) || BigInt(0);
+        adminsDic.set(adminAddress, adminValToTopUp + valToMove);
+        usersDic.delete(key);
+      }
+    }
+
+    let refAddr = referrerDic.keys()[0];
+
+    if (refAddr.toString() === adminAddress.toString()) {
+      const valToMove = referrerDic.get(refAddr) || BigInt(0);
+      const adminValToTopUp = adminsDic.get(adminAddress) || BigInt(0);
+      adminsDic.set(adminAddress, adminValToTopUp + valToMove);
+      referrerDic.delete(refAddr);
+    }
+
+    console.log("usersDic", usersDic);
+    console.log("referrerDic", referrerDic);
+    console.log("adminsDic", adminsDic);
+
     return {
       referrer: referrerDic,
       users: usersDic,

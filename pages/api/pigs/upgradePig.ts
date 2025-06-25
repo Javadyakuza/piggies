@@ -44,13 +44,13 @@ export default async function handler(
   // starting the event listener by the wallet address
 
   try {
-    // let purchaseResponse: PurchasePigResponse = await handlePigPurchase(
-    //   wallet_address,
-    //   user.current_pig + 1
-    // );
+    let purchaseResponse: PurchasePigResponse = await handlePigPurchase(
+      wallet_address,
+      user.current_pig + 1
+    );
 
-    let purchaseResponse = await mockPigPurchase(wallet_address);
-    
+    // let purchaseResponse = await mockPigPurchase(wallet_address);
+
     return res.status(200).json(purchaseResponse);
   } catch (error) {
     console.error("Error handling pig purchase:", error);

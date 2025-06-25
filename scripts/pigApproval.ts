@@ -32,8 +32,8 @@ export async function sendPigApproval(
       userBountyHunters: bh.users,
       adminsShares: bh.admins,
       userAddress: Address.parse(mainUser),
-      referrerNftAddress: bh.referrer.keys()[0],
-      referrerAmount: bh.referrer.values()[0],
+      referrerNftAddress: bh.referrer.keys()[0] || null,
+      referrerAmount: bh.referrer.values()[0] || BigInt(0) ,
       pig,
     };
 
