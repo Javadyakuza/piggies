@@ -12,6 +12,7 @@
     "bp:bp": "blueprint",
     "bp:start": "blueprint run",
     "bp:build": "blueprint build",
+    "bp:deploy": "blueprint run deploy",
     "bp:test": "jest --verbose"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import { Address } from "@ton/core";
 
 export const ContractAddresses = {
-  pigShop: Address.parse("EQBoYAWAd5Wjzij1fX1iLw9mfRhwutNzsHX6rG7TB6qk3o_P"),
+  pigShop: Address.parse("EQDJ4FlN-UYf0MR6x1SI-SRQGpSAD8Lc2H3CN5N89CukNLZg"),
 
   pigShopRawString:
     "0:686005807795a3ce28f57d7d622f0f667d1870bad373b075faac6ed307aaa4de",

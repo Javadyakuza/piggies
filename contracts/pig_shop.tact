@@ -31,6 +31,19 @@ message PigApprovalEvent {
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
 }
+message ChangeLimits {
+  level: Int as uint8;
+  limit: Int as coins;
+}
+
+struct PigShopParams {
+  limit1: Int as coins;
+  limit2: Int as coins;
+  limit3: Int as coins;
+  limit4: Int as coins;
+  owner: Address;
+  collection: Address;
+}
 
 inline fun calcItemAddress(nftCollectionAddress: Address,
   itemIndex: Int): Address {
@@ -61,6 +74,31 @@ contract PigShop {
         bounce: false
       }
     );
+  }
+
+  receive(msg: ChangeLimits){
+    require(sender() == self.owner, "Only owner can change limits");
+    
+    self.limits.set(msg.level, msg.limit);
+    send(SendParameters{
+        to: sender(),
+        value: 0,
+        mode: SendRemainingBalance,
+        bounce: false
+      }
+    );
+  }
+
+
+  get fun getParams(): PigShopParams {
+    return PigShopParams{
+      limit1: self.limits.get(1)!!,
+      limit2: self.limits.get(2)!!,
+      limit3: self.limits.get(3)!!,
+      limit4: self.limits.get(4)!!,
+      owner: self.owner,
+      collection: self.collection!!,
+    };
   }
 
   // Empty receiver
