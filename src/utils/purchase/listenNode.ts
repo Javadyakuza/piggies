@@ -77,7 +77,7 @@ async function catchPigShopEvents(after_lt?: bigint) {
   const txs = await tac.blockchain.getBlockchainAccountTransactions(
     ContractAddresses.pigShop,
     {
-      limit: 1,
+      limit: after_lt ? 10 : 1,
       after_lt
     }
   );
@@ -90,12 +90,12 @@ async function catchPigShopEvents(after_lt?: bigint) {
   console.log("📦 Transactions fetched:", txs.transactions.length);
   fileSystemLogger.log("📦 Transactions fetched:", txs.transactions.length);
 
-  let event:
+  let events: Array<
     | extendedPigUpgradeEvent
     | extendedPigApprovalEvent
     | extendedPigCreationEvent
     | extendedWithdrawFromPigEvent
-    | undefined;
+    | undefined> = [];
 
   for (const tx of txs.transactions) {
     console.log("🔁 Processing transaction:", tx.hash);
@@ -133,10 +133,10 @@ async function catchPigShopEvents(after_lt?: bigint) {
           msg.opCode === BigInt(PigShop.opcodes.UpgradePig) &&
           msg.rawBody
         ) {
-          event = {
+          events.push({
             ...loadUpgradePig(msg.rawBody?.asSlice()),
             tx_hash: tx.hash,
-          };
+          });
           console.log("✅ Detected UpgradePig event");
           fileSystemLogger.log("✅ Detected UpgradePig event");
         } else if (
@@ -144,10 +144,10 @@ async function catchPigShopEvents(after_lt?: bigint) {
           msg.opCode === BigInt(PigShop.opcodes.PigApprovalEvent) &&
           msg.rawBody
         ) {
-          event = {
+          events.push({
             ...loadPigApprovalEvent(msg.rawBody?.asSlice()),
             tx_hash: tx.hash,
-          };
+          });
           console.log("✅ Detected PigApprovalEvent");
           fileSystemLogger.log("✅ Detected PigApprovalEvent");
         } else if (
@@ -155,10 +155,10 @@ async function catchPigShopEvents(after_lt?: bigint) {
           msg.opCode === BigInt(PigShop.opcodes.WithdrawFromPigEvent) &&
           msg.rawBody
         ) {
-          event = {
+          events.push({
             ...loadWithdrawFromPigEvent(msg.rawBody?.asSlice()),
             tx_hash: tx.hash,
-          };
+          });
           console.log("✅ Detected WithdrawFromPigEvent");
           fileSystemLogger.log("✅ Detected WithdrawFromPigEvent");
         } else if (
@@ -166,10 +166,10 @@ async function catchPigShopEvents(after_lt?: bigint) {
           msg.opCode === BigInt(PigShop.opcodes.PigCreationEvent) &&
           msg.rawBody
         ) {
-          event = {
+          events.push({
             ...loadPigCreationEvent(msg.rawBody?.asSlice()),
             tx_hash: tx.hash,
-          };
+          });
           console.log("✅ Detected PigCreationEvent");
           fileSystemLogger.log("✅ Detected PigCreationEvent");
         }
@@ -184,16 +184,17 @@ async function catchPigShopEvents(after_lt?: bigint) {
       }
     }
   }
-  let some = true;
-  console.log("the parsed event is", event);
-  fileSystemLogger.log("the parsed event is", event);
-  if (some) {
+  console.log("the parsed events are", events);
+  fileSystemLogger.log("the parsed events are", events);
+  if (!after_lt) {
     const nextLt = txs.transactions[txs.transactions.length - 1].lt;
     console.log("⏭️ Returning next lt:", nextLt.toString());
     fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
 
     return nextLt;
   }
+
+  for (const event of events) {
   if (event && event.userAddress) {
     console.log("📍 Processing event for user:", event.userAddress.toString());
     fileSystemLogger.log(
@@ -332,11 +333,12 @@ async function catchPigShopEvents(after_lt?: bigint) {
       console.log("💰 User piggy bank balance updated");
       fileSystemLogger.log("💰 User piggy bank balance updated");
     }
-
+    
   } else {
     console.log("⚠️ No event with userAddress was detected");
     fileSystemLogger.log("⚠️ No event with userAddress was detected");
   }
+}
 
   const nextLt = txs.transactions[txs.transactions.length - 1].lt;
   console.log("⏭️ Returning next lt:", nextLt.toString());
