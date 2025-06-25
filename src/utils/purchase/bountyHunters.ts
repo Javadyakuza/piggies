@@ -115,10 +115,6 @@ export async function findUsersBountyHunters(
     }
 
     for (const admin of wholeAdmins) {
-      // added this check
-      if (admin.telegram_id === "@genesis") {
-        continue;
-      }
       admins.push({
         ...admin,
         total_invited: await calcTotalInvited(admin.id),

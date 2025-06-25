@@ -124,7 +124,7 @@ contract PigShop {
           value: amount,
           mode: SendPayGasSeparately,
           bounce: true,
-          body: PigBounty{
+          body: PigBounty {
             limits: self.limits,
             surplusDestination: self.owner
           }.toCell()
@@ -136,7 +136,7 @@ contract PigShop {
         value: msg.referrerAmount,
         mode: SendPayGasSeparately,
         bounce: true,
-        body: PigBounty{
+        body: PigBounty {
           limits: self.limits,
           surplusDestination: self.owner
         }.toCell()

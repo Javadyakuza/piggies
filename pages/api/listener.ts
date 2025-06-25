@@ -3,7 +3,6 @@ import { supabase } from "@/utils/supebase";
 import { cookies } from "next/headers";
 import { findOpenSlotInSubtree } from "@/utils/tree";
 import { RegisterRequest } from "@/models/register";
-import { getParentId } from "@/utils/purchase/dbOps";
 import { listenPigShopForever } from "@/utils/purchase/listenNode";
 import { loadUpgradePig } from "../../wrappers/PigShop";
 import { Cell } from "@ton/core";
@@ -14,7 +13,7 @@ export default async function handler(
 ) {
   const authHeader = req.headers["authorization"];
   const expectedToken = `Bearer ${process.env.API_SECRET_TOKEN}`;
-
+  console.log(expectedToken, authHeader)
   if (authHeader !== expectedToken) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }

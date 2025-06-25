@@ -42,8 +42,9 @@ import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
 import { fileSystemLogger } from "../fsLogger";
 import { getUser } from "../history-helper";
+import { PigCollection } from "../../../wrappers/PigCollection";
 
-async function catchPigShopEvents(afterLt: bigint) {
+async function catchPigShopEvents(after_lt?: bigint) {
   console.log("➡️ Starting to catch PigShop events");
   fileSystemLogger.log("➡️ Starting to catch PigShop events");
   console.log("🔍 Listen address:", ContractAddresses.pigShop.toString());
@@ -51,9 +52,9 @@ async function catchPigShopEvents(afterLt: bigint) {
     "🔍 Listen address:",
     ContractAddresses.pigShop.toString()
   );
-  console.log("📌 Last known lt:", afterLt.toString());
-  fileSystemLogger.log("📌 Last known lt:", afterLt.toString());
-  fileSystemLogger.log("📌 Last known lt:", afterLt.toString());
+  console.log("📌 Last known lt:", after_lt?.toString());
+  fileSystemLogger.log("📌 Last known lt:", after_lt?.toString());
+  fileSystemLogger.log("📌 Last known lt:", after_lt?.toString());
 
   const tc = getTonClient();
   const tac = getTonApiClient();
@@ -76,15 +77,15 @@ async function catchPigShopEvents(afterLt: bigint) {
   const txs = await tac.blockchain.getBlockchainAccountTransactions(
     ContractAddresses.pigShop,
     {
-      limit: 10,
-      after_lt: afterLt,
+      limit: 1,
+      after_lt
     }
   );
 
   if (txs && txs.transactions.length === 0) {
     console.log("⚠️ No new transactions found");
     fileSystemLogger.log("⚠️ No new transactions found");
-    return afterLt;
+    return after_lt;
   }
   console.log("📦 Transactions fetched:", txs.transactions.length);
   fileSystemLogger.log("📦 Transactions fetched:", txs.transactions.length);
@@ -115,13 +116,13 @@ async function catchPigShopEvents(afterLt: bigint) {
     for (const msg of tx.outMsgs) {
       console.log(
         "💬 Out message:",
-        Object.entries(PigShop.opcodes).find(
+        Object.entries({ ...PigCollection.opcodes, ...PigShop.opcodes }).find(
           ([key, value]) => BigInt(value) === msg.opCode
         )?.[0]
       );
       fileSystemLogger.log(
         "💬 Out message:",
-        Object.entries(PigShop.opcodes).find(
+        Object.entries({ ...PigCollection.opcodes, ...PigShop.opcodes }).find(
           ([key, value]) => BigInt(value) === msg.opCode
         )?.[0]
       );
@@ -186,13 +187,13 @@ async function catchPigShopEvents(afterLt: bigint) {
   let some = true;
   console.log("the parsed event is", event);
   fileSystemLogger.log("the parsed event is", event);
-  // if (some) {
-  //   const nextLt = txs.transactions[txs.transactions.length - 1].lt;
-  //   console.log("⏭️ Returning next lt:", nextLt.toString());
-  //   fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
+  if (some) {
+    const nextLt = txs.transactions[txs.transactions.length - 1].lt;
+    console.log("⏭️ Returning next lt:", nextLt.toString());
+    fileSystemLogger.log("⏭️ Returning next lt:", nextLt.toString());
 
-  //   return nextLt;
-  // }
+    return nextLt;
+  }
   if (event && event.userAddress) {
     console.log("📍 Processing event for user:", event.userAddress.toString());
     fileSystemLogger.log(
@@ -223,8 +224,8 @@ async function catchPigShopEvents(afterLt: bigint) {
         fileSystemLogger.log("⁉️ UpgradePig tx initiated check for potential user tree update ...");
 
         if (pig_data.address === null && user.parent_id === null) {
-          console.log("🆗 User parent should be updated since the tx is definietly going through");
-          fileSystemLogger.log("🆗 User parent should be updated since the tx is definietly going through");
+          console.log("🆗 User parent should be updated since the tx is definitely going through");
+          fileSystemLogger.log("🆗 User parent should be updated since the tx is definitely going through");
           let ids = await getParentId(userAddr);
           if (ids.pi) {
             console.log("🔁 Updating the user parent id...");
@@ -348,7 +349,7 @@ export async function listenPigShopForever() {
   console.log("🔁 Starting to listen for PigShop events");
   fileSystemLogger.log("🔁 Starting to listen for PigShop events");
   try {
-    let lastLt = BigInt(35820187000003);
+    let lastLt;
     while (true) {
       try {
         lastLt = await catchPigShopEvents(lastLt);
