@@ -135,7 +135,7 @@ contract PigShop {
         to: msg.referrerNftAddress,
         value: msg.referrerAmount,
         mode: SendPayGasSeparately,
-        bounce: true,
+        bounce: false,
         body: PigBounty {
           limits: self.limits,
           surplusDestination: self.owner
