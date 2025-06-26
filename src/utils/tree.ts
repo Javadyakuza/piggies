@@ -1,5 +1,5 @@
 // src/utils/tree.ts
-import { supabase } from "@/utils/supebase";
+import { supabase } from "@/utils/supabase";
 import { cookies } from "next/headers";
 /**
  * Finds the ID of the first node in the subtree of `rootId` that has fewer than 3 children.

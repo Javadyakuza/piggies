@@ -1,6 +1,6 @@
 import { PurchasePigResponse } from "@/models/purchase";
 import { txHistory, TxId } from "@/models/history";
-import { supabase } from "../supebase";
+import { supabase } from "../supabase";
 import { PigLevel } from "@/models/pigs";
 import { isDuplicatePurchase } from "./dbOps";
 import { Address } from "@ton/core";

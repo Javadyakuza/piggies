@@ -220,11 +220,12 @@ contract PigShop {
     // emit the approval event
     emit(PigApprovalEvent{
         userAddress: msg.userAddress,
-        referrerNftAddress: msg.referrerNftAddress!!,
+        referrerNftAddress: msg.referrerNftAddress,
         referrerAmount: msg.referrerAmount,
         userBountyHunters: msg.userBountyHunters,
         adminsShares: msg.adminsShares
       }.toCell()
     );
   }
+
 }

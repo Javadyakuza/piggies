@@ -1,4 +1,4 @@
-import { supabase } from "@/utils/supebase";
+import { supabase } from "@/utils/supabase";
 import { User } from "@/models/userTree";
 import { bountyHuntersResponse } from "@/models/purchase";
 import { Address, Dictionary, toNano } from "@ton/core";

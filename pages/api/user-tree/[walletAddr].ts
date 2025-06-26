@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/utils/supebase";
+import { supabase } from "@/utils/supabase";
 import * as crypto from "crypto";
 import { Address } from "@ton/ton";
 import { findUsersBountyHunters } from "@/utils/purchase/bountyHunters";

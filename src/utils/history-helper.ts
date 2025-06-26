@@ -1,6 +1,6 @@
 import { ReferralResponse, User } from "@/models/userTree";
 import { countReferralsByLevel } from "../../pages/api/user-tree/referrals";
-import { supabase } from "./supebase";
+import { supabase } from "./supabase";
 import { error } from "console";
 import { PigLevel } from "@/models/pigs";
 

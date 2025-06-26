@@ -38,7 +38,7 @@ function useWalletConnection() {
 
       const tonClient = new TonClient({
         endpoint: `https://toncenter.com/api/v2/jsonRPC`,
-        apiKey: process.env.NEXT_PUBLIC_TONCENTER_APIKEY!,
+        apiKey: process.env.NEXT_PUBLIC_TESTNET_TON_CENTER_API_KEY!,
       });
       setTonClient(tonClient);
 

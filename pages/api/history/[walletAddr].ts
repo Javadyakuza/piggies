@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/utils/supebase";
+import { supabase } from "@/utils/supabase";
 import { PurchasePigResponse } from "@/models/purchase";
 import { UserHistory } from "@/models/history";
 import {

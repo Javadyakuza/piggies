@@ -4,7 +4,7 @@ import {
   extendedPigApprovalEvent,
   upgradeUserPigsInternalResponse,
 } from "@/models/purchase";
-import { supabase } from "../supebase";
+import { supabase } from "../supabase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
 import { Address, fromNano, toNano } from "@ton/core";

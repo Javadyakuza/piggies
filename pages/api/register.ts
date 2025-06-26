@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/utils/supebase";
+import { supabase } from "@/utils/supabase";
 import { cookies } from "next/headers";
 import { findOpenSlotInSubtree } from "@/utils/tree";
 import { RegisterRequest } from "@/models/register";
