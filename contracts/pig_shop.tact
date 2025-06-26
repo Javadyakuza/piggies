@@ -1,6 +1,11 @@
 import "@stdlib/deploy"; // Ensure standard library is imported
 import "./messages.tact";
 import "./NFT.tact";
+
+message WithdrawFromPigShop {
+  amount: Int as coins;
+  destination: Address;
+}
 message UpgradePig {
   userAddress: Address;
 }
@@ -62,6 +67,19 @@ contract PigShop {
     self.limits.set(2, ton("0.25"));
     self.limits.set(3, ton("0.5"));
     self.limits.set(4, ton("0.75"));
+  }
+
+  receive(msg: WithdrawFromPigShop) {
+    require(sender() == self.owner, "Only owner can withdraw from pig shop");
+    require(msg.amount > 0, "Amount must be greater than 0");
+    require(myBalance() >= msg.amount + ton("0.05"), "Insufficient balance");
+    send(SendParameters{
+        to: msg.destination,
+        value: msg.amount,
+        mode: SendPayGasSeparately,
+        bounce: false
+      }
+    );
   }
 
   receive(msg: ChangeCollection){
