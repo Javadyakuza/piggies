@@ -191,15 +191,6 @@ export async function findUsersBountyHunters(
       }
     }
 
-    let refAddr = referrerDic.keys()[0];
-
-    if (refAddr.toString() === adminAddress.toString()) {
-      const valToMove = referrerDic.get(refAddr) || BigInt(0);
-      const adminValToTopUp = adminsDic.get(adminAddress) || BigInt(0);
-      adminsDic.set(adminAddress, adminValToTopUp + valToMove);
-      referrerDic.delete(refAddr);
-    }
-
     console.log("usersDic", usersDic);
     console.log("referrerDic", referrerDic);
     console.log("adminsDic", adminsDic);

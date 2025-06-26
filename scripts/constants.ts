@@ -1,19 +1,19 @@
 import { Address } from "@ton/core";
 
 export const ContractAddresses = {
-  pigShop: Address.parse("EQABfBixj3ZD1GQRXQUJou00tluUxJ935jEJyv2UwWZwsaj_"),
+  pigShop: Address.parse("EQAO7KBxQM8syk-uldqEAfhIHXEdLMGB2wAuE0_nivniEsH9"),
 
-  pigShopRawString: "0:017c18b18f7643d464115d0509a2ed34b65b94c49f77e63109cafd94c16670b1",
+  pigShopRawString: "0:0eeca07140cf2cca4fae95da8401f8481d711d2cc181db002e134fe78af9e212",
 
   old_pigShop: Address.parse("EQDJ4FlN-UYf0MR6x1SI-SRQGpSAD8Lc2H3CN5N89CukNLZg"),
 
   old_pigShopRawString:
     "0:686005807795a3ce28f57d7d622f0f667d1870bad373b075faac6ed307aaa4de",
 
-  pigsCollection: Address.parse("EQAz5nAz_0GByYf0X7UfuLBk6RQ0MZ3WaF9cJoiRB49uklbZ"),
+  pigsCollection: Address.parse("EQCDCex5ZXtTbYOINhgTsX20gt84rNAljFrrvnsl2B2CdfWX"),
 
   PigShopCollectionRawString:
-    "0:33e67033ff4181c987f45fb51fb8b064e91434319dd6685f5c268891078f6e92",
+    "0:8309ec79657b536d8388361813b17db482df38acd0258c5aebbe7b25d81d8275",
 
   old_pigsCollection: Address.parse("EQB1wVMBxSN0kR4fU1WducxPdGeJKsUwVabyfCddAhGHw6EH"),
 

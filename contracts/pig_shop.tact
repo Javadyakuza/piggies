@@ -10,7 +10,7 @@ message ChangeCollection {
 message PigApproval {
   pig: Address?;
   userAddress: Address;
-  referrerNftAddress: Address?;
+  referrerNftAddress: Address;
   referrerAmount: Int as coins;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
@@ -26,7 +26,7 @@ message WithdrawFromPigEvent {
 }
 message PigApprovalEvent {
   userAddress: Address;
-  referrerNftAddress: Address?;
+  referrerNftAddress: Address;
   referrerAmount: Int as coins;
   userBountyHunters: map<Address, Int as coins>;
   adminsShares: map<Address, Int as coins>;
@@ -35,7 +35,6 @@ message ChangeLimits {
   level: Int as uint8;
   limit: Int as coins;
 }
-
 struct PigShopParams {
   limit1: Int as coins;
   limit2: Int as coins;
@@ -78,7 +77,6 @@ contract PigShop {
 
   receive(msg: ChangeLimits){
     require(sender() == self.owner, "Only owner can change limits");
-    
     self.limits.set(msg.level, msg.limit);
     send(SendParameters{
         to: sender(),
@@ -89,19 +87,20 @@ contract PigShop {
     );
   }
 
-
   get fun getParams(): PigShopParams {
-    return PigShopParams{
-      limit1: self.limits.get(1)!!,
-      limit2: self.limits.get(2)!!,
-      limit3: self.limits.get(3)!!,
-      limit4: self.limits.get(4)!!,
-      owner: self.owner,
-      collection: self.collection!!,
-    };
+    return
+      PigShopParams{
+        limit1: self.limits.get(1)!!,
+        limit2: self.limits.get(2)!!,
+        limit3: self.limits.get(3)!!,
+        limit4: self.limits.get(4)!!,
+        owner: self.owner,
+        collection: self.collection!!
+      };
   }
 
   // Empty receiver
+
   receive(){
     // Refund the remaining value in the incoming message back to the sender
     // send(SendParameters{
@@ -169,19 +168,17 @@ contract PigShop {
         }
       );
     }
-    if (msg.referrerNftAddress != null) {
-      send(SendParameters{
-          to: msg.referrerNftAddress!!,
-          value: msg.referrerAmount,
-          mode: SendPayGasSeparately,
-          bounce: false,
-          body: PigBounty{
-            limits: self.limits,
-            surplusDestination: self.owner
-          }.toCell()
-        }
-      );
-    }
+    send(SendParameters{
+        to: msg.referrerNftAddress,
+        value: msg.referrerAmount,
+        mode: SendPayGasSeparately,
+        bounce: false,
+        body: PigBounty{
+          limits: self.limits,
+          surplusDestination: self.owner
+        }.toCell()
+      }
+    );
     foreach (address, amount in msg.adminsShares) {
       require(amount > 0, "Amount must be greater than 0");
       send(SendParameters{
@@ -227,5 +224,4 @@ contract PigShop {
       }.toCell()
     );
   }
-
 }
