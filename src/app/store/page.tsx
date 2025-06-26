@@ -73,7 +73,10 @@ export default function StorePage() {
       } as unknown as Sender;
 
       const params: AxiosResponse<PurchasePigResponse> = await axios.get(
-        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`
+        `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`, 
+        {
+          timeout: 240000
+        }
       );
 
       let pigShop = tonClient.open(
