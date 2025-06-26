@@ -16,7 +16,7 @@ export const updateBountyHuntersBalances = async (
 ) => {
   let bh = bounty_hunters;
   //----------------------------------------------------
-  // Step 1: Fetch the user stats (previous piggy bank balance)
+  // Step 1: updating user balances to update the db
   //----------------------------------------------------
   const { data: users, error: fetchUsersError } = await supabase
     .from("users")
@@ -27,30 +27,6 @@ export const updateBountyHuntersBalances = async (
     );
   if (fetchUsersError) throw fetchUsersError;
 
-  const { data: admins, error: fetchAdminsError } = await supabase
-    .from("users")
-    .select("wallet_address, piggy_bank_balance")
-    .in(
-      "wallet_address",
-      bh.admins.keys().map((adminAddr) => adminAddr.toRawString())
-    );
-
-  if (fetchAdminsError) throw fetchAdminsError;
-
-  const { data: referrer, error: fetchReferrerError } = await supabase
-    .from("users")
-    .select("wallet_address, piggy_bank_balance")
-    .in(
-      "wallet_address",
-      bh.referrer.keys().map((referrerAddr) => referrerAddr.toRawString())
-    );
-
-  if (fetchReferrerError) throw fetchReferrerError;
-
-  //----------------------------------------------------
-  // Step 2: updating the user balances to update the db
-  //----------------------------------------------------
-
   users.forEach((user) =>
     bh.users.set(
       Address.parse(user.wallet_address),
@@ -58,26 +34,6 @@ export const updateBountyHuntersBalances = async (
       bh.users.get(Address.parse(user.wallet_address))!
     )
   );
-
-  admins.forEach((admin) =>
-    bh.admins.set(
-      Address.parse(admin.wallet_address),
-      BigInt(admin.piggy_bank_balance ?? 0 ) +
-      bh.admins.get(Address.parse(admin.wallet_address))!
-    )
-  );
-
-  referrer.forEach((referrer) =>
-    bh.referrer.set(
-      Address.parse(referrer.wallet_address),
-      BigInt(referrer.piggy_bank_balance ?? 0) +
-      bh.referrer.get(Address.parse(referrer.wallet_address))!
-    )
-  );
-
-  //----------------------------------------------------
-  // Step 3: updating the user balances on the DB
-  //----------------------------------------------------
 
   for (const userAddr of bh.users.keys()) {
     const { error } = await supabase
@@ -92,6 +48,28 @@ export const updateBountyHuntersBalances = async (
       );
     }
   }
+  //----------------------------------------------------
+  // Step 2: updating admins balances to update the db
+  //----------------------------------------------------
+
+
+  const { data: admins, error: fetchAdminsError } = await supabase
+    .from("users")
+    .select("wallet_address, piggy_bank_balance")
+    .in(
+      "wallet_address",
+      bh.admins.keys().map((adminAddr) => adminAddr.toRawString())
+    );
+
+  if (fetchAdminsError) throw fetchAdminsError;
+
+  admins.forEach((admin) =>
+    bh.admins.set(
+      Address.parse(admin.wallet_address),
+      BigInt(admin.piggy_bank_balance ?? 0) +
+      bh.admins.get(Address.parse(admin.wallet_address))!
+    )
+  );
 
   for (const adminAddr of bh.admins.keys()) {
     const { error } = await supabase
@@ -109,6 +87,28 @@ export const updateBountyHuntersBalances = async (
       );
     }
   }
+
+  //----------------------------------------------------
+  // Step 3: updating referrer balances to update the db
+  //----------------------------------------------------
+
+  const { data: referrer, error: fetchReferrerError } = await supabase
+    .from("users")
+    .select("wallet_address, piggy_bank_balance")
+    .in(
+      "wallet_address",
+      bh.referrer.keys().map((referrerAddr) => referrerAddr.toRawString())
+    );
+
+  if (fetchReferrerError) throw fetchReferrerError;
+
+  referrer.forEach((referrer) =>
+    bh.referrer.set(
+      Address.parse(referrer.wallet_address),
+      BigInt(referrer.piggy_bank_balance ?? 0) +
+      bh.referrer.get(Address.parse(referrer.wallet_address))!
+    )
+  );
 
   for (const referrerAddr of bh.referrer.keys()) {
     const { error } = await supabase

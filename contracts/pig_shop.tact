@@ -199,7 +199,7 @@ contract PigShop {
             queryId: 0,
             receiver: msg.userAddress,
             responseDestination: msg.userAddress,
-            forwardAmount: 1,
+            forwardAmount: ton("0.00001"),
             forwardPayload: emptyCell()
           }.toCell()
         }

@@ -52,13 +52,13 @@ export async function handlePigPurchase(
     }
 
     if (tx.request_status === "PigPurchaseApproved") {
+      found = true;
       return {
         success: true,
         message: tx as txHistory,
       };
     }
 
-    found = true;
   }
 
   return {

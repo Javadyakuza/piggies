@@ -84,7 +84,7 @@ export default async function handler(
 
   try {
 
-    await findUsersBountyHunters(walletAddr, 1)
+    // await findUsersBountyHunters(walletAddr, 1)
     const { data, error } = await supabase
       .from("users")
       .select()

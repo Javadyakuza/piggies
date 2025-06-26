@@ -392,7 +392,7 @@ trait NftItem with Common {
 
         send(SendParameters {
             to: self.pigshop!!,
-            value: ton("0.1"),
+            value: ton("0.00001"),
             bounce: false,
             mode: SendPayGasSeparately,
             body: PigCreation {
