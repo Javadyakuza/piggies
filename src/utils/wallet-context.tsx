@@ -37,8 +37,8 @@ function useWalletConnection() {
       setSender(sender_);
 
       const tonClient = new TonClient({
-        endpoint: `https://toncenter.com/api/v2/jsonRPC`,
-        apiKey: process.env.NEXT_PUBLIC_TESTNET_TON_CENTER_API_KEY!,
+        endpoint: `https://${process.env.NEXT_PUBLIC_TESTNET === "true" ? "testnet." : ""}toncenter.com/api/v2/jsonRPC`,
+        apiKey: process.env.NEXT_PUBLIC_TESTNET === "true" ? process.env.NEXT_PUBLIC_TESTNET_TON_CENTER_API_KEY! : process.env.NEXT_PUBLIC_MAINNET_TON_CENTER_API_KEY!,
       });
       setTonClient(tonClient);
 
@@ -62,7 +62,7 @@ function useWalletConnection() {
     walletAddress,
     tonConnectUI
   };
-} 
+}
 
 
 interface WalletContextType {
@@ -97,14 +97,14 @@ export function WalletContextProvider({ children }: { children: ReactNode }) {
   const nftCollectionAddress = Address.parse(
     process.env.NEXT_PUBLIC_NFT_COLLECTION_ADDRESS!
   );
-  const nftCollectionAddress_old = Address.parse( 
+  const nftCollectionAddress_old = Address.parse(
     process.env.NEXT_PUBLIC_NFT_COLLECTION_ADDRESS_OLD!
   );
   const omGiverAddress = Address.parse(process.env.NEXT_PUBLIC_OMGIVER_ADDRESS!);
   const omGiverAddress_old = Address.parse(process.env.NEXT_PUBLIC_OMGIVER_ADDRESS_OLD!);
   const adminAddress = Address.parse(process.env.NEXT_PUBLIC_ADMIN_ADDRESS!);
   // Check if the connected wallet is the admin
-  const isAdmin = isConnected && walletAddress === adminAddress.toString({bounceable: false});
+  const isAdmin = isConnected && walletAddress === adminAddress.toString({ bounceable: false });
   const exchangerAddress = Address.parse(process.env.NEXT_PUBLIC_EXCHANGER_ADDRESS!);
   return (
     <WalletContext.Provider

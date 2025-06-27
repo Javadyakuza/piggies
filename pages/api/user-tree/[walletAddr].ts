@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supabase";
 import * as crypto from "crypto";
-import { Address } from "@ton/ton";
+import { Address, WalletContractV5R1 } from "@ton/ton";
 import { findUsersBountyHunters } from "@/utils/purchase/bountyHunters";
+import { mnemonicToPrivateKey } from "@ton/crypto";
 /**
  * @swagger
  * /api/user-tree/{walletAddr}:
@@ -81,7 +82,11 @@ export default async function handler(
   if (!walletAddr || typeof walletAddr !== "string") {
     return res.status(400).json({ error: "Invalid or missing wallet address" });
   }
-
+  const mnemonics = process.env.WALLET_MNEMONIC!.split(" ");
+  const keyPair = await mnemonicToPrivateKey(mnemonics);
+  const wallet = WalletContractV5R1.create({ publicKey: keyPair.publicKey, workchain: 0 });
+  const address = wallet.address.toString();
+  console.log(address);
   try {
 
     // await findUsersBountyHunters(walletAddr, 1)

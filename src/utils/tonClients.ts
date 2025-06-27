@@ -13,6 +13,6 @@ export function getTonClient() {
   const endpoint = `https://${TESTNET ? "testnet." : ""}toncenter.com/api/v2/jsonRPC`;
   const apiKey = TESTNET
     ? process.env.NEXT_PUBLIC_TESTNET_TON_CENTER_API_KEY
-    : process.env.NEXT_PUBLIC_MAINNET_TON_CENTER_APIKEY;
+    : process.env.NEXT_PUBLIC_MAINNET_TON_CENTER_API_KEY;
   return new TonClient({ endpoint, apiKey });
 }
