@@ -14,7 +14,7 @@ export const itemPrefix = "https://";
 
 export async function run(provider: NetworkProvider) {
   const pigShop = provider.open(
-    await PigShop.fromInit(provider.sender().address!)
+    await PigShop.fromInit(1n, provider.sender().address!)
   );
 
   await pigShop.send(
@@ -43,7 +43,7 @@ export async function run(provider: NetworkProvider) {
       {
         $$type: "RoyaltyParams",
         numerator: 0n,
-        denominator: 1n,
+        denominator: 2n,
         destination: provider.sender().address!,
       }
     )

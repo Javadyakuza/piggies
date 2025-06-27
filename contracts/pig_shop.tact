@@ -55,7 +55,7 @@ contract PigShop {
   owner: Address;
   limits: map<Int as uint8, Int as coins> = emptyMap();
   // Initialize the owner in the init() function
-  init(owner: Address){
+  init(id: Int as uint64, owner: Address){
     self.owner = owner;
     self.limits.set(1, ton("0.1"));
     self.limits.set(2, ton("0.25"));
@@ -199,7 +199,7 @@ contract PigShop {
             queryId: 0,
             receiver: msg.userAddress,
             responseDestination: msg.userAddress,
-            forwardAmount: ton("0.00001"),
+            forwardAmount: ton("0.01"),
             forwardPayload: emptyCell()
           }.toCell()
         }
