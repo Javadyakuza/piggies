@@ -40,7 +40,7 @@ export default async function handler(
   });
 }
 
-    const tx_fee = toNano("0.5");
+    const tx_fee = toNano("0.01");
 
     const params: WithdrawPigParams = {
       amount: tx_fee.toString(),
