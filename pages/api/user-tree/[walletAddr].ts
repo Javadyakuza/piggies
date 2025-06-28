@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supabase";
+import { Address, Dictionary } from "@ton/core";
+
 
 /**
  * @swagger
@@ -79,10 +81,9 @@ export default async function handler(
   if (!walletAddr || typeof walletAddr !== "string") {
     return res.status(400).json({ error: "Invalid or missing wallet address" });
   }
-
+  
   try {
-
-    // await findUsersBountyHunters(walletAddr, 1)
+    
     const { data, error } = await supabase
       .from("users")
       .select()
@@ -103,4 +104,11 @@ export default async function handler(
     console.error("Error fetching user(user-tree):", error);
     return res.status(500).json({ error: String(error) });
   }
+}
+
+function mock(param: Dictionary<Address, bigint>) {
+  param.set(
+    Address.parse("EQANnesbgblWYSQtpEAJbWcJvXWELidrGreQtGR4inqvj5q8"),
+    BigInt(500000000)
+  );
 }

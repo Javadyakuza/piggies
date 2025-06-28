@@ -7,7 +7,7 @@ import {
 import { supabase } from "../supabase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
-import { Address, fromNano, toNano } from "@ton/core";
+import { Address, Dictionary, fromNano, toNano } from "@ton/core";
 import { findOpenSlotInSubtree } from "../tree";
 
 // update the db based on the user purchase on the following fields
@@ -15,6 +15,7 @@ export const updateBountyHuntersBalances = async (
   bounty_hunters: bountyHuntersResponse
 ) => {
   let bh = bounty_hunters;
+  let dic: Dictionary<Address, bigint> = Dictionary.empty<Address, bigint>();
   //----------------------------------------------------
   // Step 1: updating user balances to update the db
   //----------------------------------------------------
@@ -28,17 +29,17 @@ export const updateBountyHuntersBalances = async (
   if (fetchUsersError) throw fetchUsersError;
 
   users.forEach((user) =>
-    bh.users.set(
+    dic.set(
       Address.parse(user.wallet_address),
       BigInt(user.piggy_bank_balance ?? 0) +
-      bh.users.get(Address.parse(user.wallet_address))!
+        bh.users.get(Address.parse(user.wallet_address))!
     )
   );
 
   for (const userAddr of bh.users.keys()) {
     const { error } = await supabase
       .from("users")
-      .update({ piggy_bank_balance: Number(bh.users.get(userAddr)) })
+      .update({ piggy_bank_balance: Number(dic.get(userAddr)) })
       .eq("wallet_address", userAddr.toRawString());
 
     if (error) {
@@ -51,7 +52,7 @@ export const updateBountyHuntersBalances = async (
   //----------------------------------------------------
   // Step 2: updating admins balances to update the db
   //----------------------------------------------------
-
+  dic = Dictionary.empty<Address, bigint>();
 
   const { data: admins, error: fetchAdminsError } = await supabase
     .from("users")
@@ -64,17 +65,17 @@ export const updateBountyHuntersBalances = async (
   if (fetchAdminsError) throw fetchAdminsError;
 
   admins.forEach((admin) =>
-    bh.admins.set(
+    dic.set(
       Address.parse(admin.wallet_address),
       BigInt(admin.piggy_bank_balance ?? 0) +
-      bh.admins.get(Address.parse(admin.wallet_address))!
+        bh.admins.get(Address.parse(admin.wallet_address))!
     )
   );
 
   for (const adminAddr of bh.admins.keys()) {
     const { error } = await supabase
       .from("users")
-      .update({ piggy_bank_balance: Number(bh.admins.get(adminAddr)) })
+      .update({ piggy_bank_balance: Number(dic.get(adminAddr)) })
       .eq("wallet_address", adminAddr.toRawString());
 
     if (error) {
@@ -91,7 +92,7 @@ export const updateBountyHuntersBalances = async (
   //----------------------------------------------------
   // Step 3: updating referrer balances to update the db
   //----------------------------------------------------
-
+  dic = Dictionary.empty<Address, bigint>();
   const { data: referrer, error: fetchReferrerError } = await supabase
     .from("users")
     .select("wallet_address, piggy_bank_balance")
@@ -103,17 +104,17 @@ export const updateBountyHuntersBalances = async (
   if (fetchReferrerError) throw fetchReferrerError;
 
   referrer.forEach((referrer) =>
-    bh.referrer.set(
+    dic.set(
       Address.parse(referrer.wallet_address),
       BigInt(referrer.piggy_bank_balance ?? 0) +
-      bh.referrer.get(Address.parse(referrer.wallet_address))!
+        bh.referrer.get(Address.parse(referrer.wallet_address))!
     )
   );
 
   for (const referrerAddr of bh.referrer.keys()) {
     const { error } = await supabase
       .from("users")
-      .update({ piggy_bank_balance: Number(bh.referrer.get(referrerAddr)) })
+      .update({ piggy_bank_balance: Number(dic.get(referrerAddr)) })
       .eq("wallet_address", referrerAddr.toRawString());
 
     if (error) {
@@ -200,7 +201,6 @@ export const getPigs = async (
     new_pig_level: (current_pig?.current_pig ?? 0) + 1,
     address,
   };
-
 };
 
 export const initTxHistory = async (txData: txHistory): Promise<txHistory> => {

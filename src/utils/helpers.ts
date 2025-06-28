@@ -3,6 +3,7 @@ import { countReferralsByLevel } from "../../pages/api/user-tree/referrals";
 import { supabase } from "./supabase";
 import { error } from "console";
 import { PigLevel } from "@/models/pigs";
+import { BitString, Dictionary, DictionaryKeyTypes } from "@ton/core";
 
 export async function getUser(wallet_address: string) {
   const { data, error: fetchError } = await supabase
@@ -138,3 +139,15 @@ const levelsMap = (level: number) => {
       return 0;
   }
 };
+
+export function copyDictionary<K extends DictionaryKeyTypes, V>(
+  obj: Dictionary<K, V>
+): Dictionary<K, V> {
+  let obj2: Dictionary<K, V> = Dictionary.empty<K, V>();
+
+  obj.keys().forEach((key) => {
+    obj2.set(key, obj.get(key)!);
+  });
+
+  return obj2;
+}

@@ -46,7 +46,7 @@ import { PigLevel } from "../../models/pigs";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
 import { fileSystemLogger } from "../fsLogger";
-import { getUser } from "../history-helper";
+import { getUser } from "../helpers";
 import { PigCollection } from "../../../wrappers/PigCollection";
 import { TonClient, WalletContractV5R1 } from "@ton/ton";
 
@@ -255,7 +255,7 @@ async function catchPigShopEvents(
             pig_data.new_pig_level
           );
 
-          const tx_id = TxId.create(userAddr, pig_data.old_pig_level);
+          const tx_id = TxId.create(userAddr, pig_data.new_pig_level);
 
           console.log("🚀 Sending pig approval message");
           fileSystemLogger.log("🚀 Sending pig approval message");
@@ -281,6 +281,7 @@ async function catchPigShopEvents(
       }
 
       if (event.$$type === "PigApprovalEvent") {
+
         console.log("✅ Approval received for:", userAddr);
         fileSystemLogger.log("✅ Approval received for:", userAddr);
 
@@ -288,10 +289,14 @@ async function catchPigShopEvents(
           event.referrerNftAddress,
           event.referrerAmount
         );
-
+          
+        console.log("👔 Updated the referrer amount for:", event.referrer);
+        fileSystemLogger.log("👔 Updated the referrer amount for:", event.referrer);
+        
         //-----------------------------------------
         // update the bounty hunter balances (piggy_bank_balance on the users table)
         //-----------------------------------------
+        
         await updateBountyHuntersBalances({
           referrer: event.referrer,
           users: event.userBountyHunters,
@@ -307,7 +312,7 @@ async function catchPigShopEvents(
         // update the transaction history (tx_history table)
         //-----------------------------------------
         await updateTxHistory({
-          tx_id: TxId.create(userAddr, pig_data.old_pig_level),
+          tx_id: TxId.create(userAddr, pig_data.new_pig_level),
           tx_hash: event.tx_hash,
           wallet_address: userAddr,
           request_status: "PigPurchaseApproved",

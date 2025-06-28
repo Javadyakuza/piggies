@@ -7,7 +7,7 @@ import {
   getUpgradedPigLevel,
   getUser,
   prepareUserHistoryObj,
-} from "@/utils/history-helper";
+} from "@/utils/helpers";
 import { PigLevel } from "@/models/pigs";
 
 /**
