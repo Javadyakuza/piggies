@@ -23,8 +23,8 @@ function logToFile(type: "log" | "error", ...args: any[]) {
   logStream.write(message);
 
   // Also output to console
-  if (type === "log") console.log(...args);
-  else console.error(...args);
+  // if (type === "log") console.log(...args);
+  // else console.error(...args);
 }
 
 export const fileSystemLogger = {

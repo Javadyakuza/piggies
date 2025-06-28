@@ -41,7 +41,7 @@ export default async function handler(
       toNano(pigsMapV2(undefined, 1)[user.current_pig].rawPriceInTon)
     );
 
-    const tx_fee = toNano("0.01");
+    const tx_fee = toNano("0.2");
 
     const params: UpgradePigParams = {
       amount: (tx_fee + PigCost).toString(),
