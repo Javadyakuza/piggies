@@ -4,5 +4,6 @@
         "src/core/i18n"
     ],
     "i18n-ally.keystyle": "nested",
-    "i18n-ally.sourceLanguage": "en"
+    "i18n-ally.sourceLanguage": "en",
+    "postman.settings.dotenv-detection-notification-visibility": false
 }

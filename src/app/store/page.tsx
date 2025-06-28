@@ -16,7 +16,7 @@ import { logger } from "../../../logger";
 import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
-import { getTonClient } from "@/utils/tonClients";
+import { getTonCenterClient } from "@/utils/tonClients";
 import {
   PurchasePigResponse,
   UpgradePigParams,
@@ -45,7 +45,7 @@ export default function StorePage() {
   const userTelegramId = initDataState?.user?.id;
 
   const [wallet] = useTonConnectUI();
-  const tonClient = getTonClient();
+  const tonClient = getTonCenterClient();
 
   const walletAddress = wallet?.account?.address;
   const pigsMap = pigsMapV2(t, tonPrice);

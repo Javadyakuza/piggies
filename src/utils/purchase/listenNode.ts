@@ -7,7 +7,12 @@ import {
 } from "../../models/purchase";
 import { TxId } from "../../models/history";
 import { TonApiClient } from "@ton-api/client";
-import { Address, contractAddress, Dictionary } from "@ton/core";
+import {
+  Address,
+  contractAddress,
+  Dictionary,
+  OpenedContract,
+} from "@ton/core";
 import {
   loadPigApproval,
   loadPigApprovalEvent,
@@ -21,7 +26,7 @@ import {
 
 import { findUsersBountyHunters } from "./bountyHunters";
 import { getAdminWallet } from "../admin";
-import { getTonApiClient, getTonClient } from "../tonClients";
+import { getTonApiClient, getTonCenterClient } from "../tonClients";
 import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
@@ -43,8 +48,15 @@ import { ContractAddresses } from "../../../scripts/constants";
 import { fileSystemLogger } from "../fsLogger";
 import { getUser } from "../history-helper";
 import { PigCollection } from "../../../wrappers/PigCollection";
+import { TonClient, WalletContractV5R1 } from "@ton/ton";
 
-async function catchPigShopEvents(after_lt?: bigint) {
+async function catchPigShopEvents(
+  adminWallet: OpenedContract<WalletContractV5R1>,
+  PigShopContract: OpenedContract<PigShop>,
+  tonCenterClient: TonClient,
+  tonAPiClient: TonApiClient,
+  after_lt?: bigint
+) {
   console.log("➡️ Starting to catch PigShop events");
   fileSystemLogger.log("➡️ Starting to catch PigShop events");
   console.log("🔍 Listen address:", ContractAddresses.pigShop.toString());
@@ -56,29 +68,11 @@ async function catchPigShopEvents(after_lt?: bigint) {
   fileSystemLogger.log("📌 Last known lt:", after_lt?.toString());
   fileSystemLogger.log("📌 Last known lt:", after_lt?.toString());
 
-  const tc = getTonClient();
-  const tac = getTonApiClient();
-  const adminWallet = await getAdminWallet(tc);
-
-  console.log("👛 Admin wallet loaded:", adminWallet.address.toString());
-  fileSystemLogger.log(
-    "👛 Admin wallet loaded:",
-    adminWallet.address.toString()
-  );
-
-  const pigShop = tc.open(PigShop.fromAddress(ContractAddresses.pigShop));
-
-  console.log("🏪 PigShop contract opened at:", pigShop.address.toString());
-  fileSystemLogger.log(
-    "🏪 PigShop contract opened at:",
-    pigShop.address.toString()
-  );
-
-  const txs = await tac.blockchain.getBlockchainAccountTransactions(
+  const txs = await tonAPiClient.blockchain.getBlockchainAccountTransactions(
     ContractAddresses.pigShop,
     {
       limit: after_lt ? 10 : 1,
-      after_lt
+      after_lt,
     }
   );
 
@@ -95,7 +89,8 @@ async function catchPigShopEvents(after_lt?: bigint) {
     | extendedPigApprovalEvent
     | extendedPigCreationEvent
     | extendedWithdrawFromPigEvent
-    | undefined> = [];
+    | undefined
+  > = [];
 
   for (const tx of txs.transactions) {
     console.log("🔁 Processing transaction:", tx.hash);
@@ -188,15 +183,24 @@ async function catchPigShopEvents(after_lt?: bigint) {
   fileSystemLogger.log("the parsed events are", events);
   if (!after_lt) {
     const nextLt = txs.transactions[txs.transactions.length - 1].lt;
-    console.log("⏭️Not processing the old event and Returning next lt:", nextLt.toString());
-    fileSystemLogger.log("⏭️ ⏭️Not processing the old event and Returning next lt:", nextLt.toString());
+    console.log(
+      "⏭️Not processing the old event and Returning next lt:",
+      nextLt.toString()
+    );
+    fileSystemLogger.log(
+      "⏭️ ⏭️Not processing the old event and Returning next lt:",
+      nextLt.toString()
+    );
 
     return nextLt;
   }
 
   for (const event of events) {
     if (event && event.userAddress) {
-      console.log("📍 Processing event for user:", event.userAddress.toString());
+      console.log(
+        "📍 Processing event for user:",
+        event.userAddress.toString()
+      );
       fileSystemLogger.log(
         "📍 Processing event for user:",
         event.userAddress.toString()
@@ -216,17 +220,28 @@ async function catchPigShopEvents(after_lt?: bigint) {
         console.log("🛠️ Handling UpgradePig event");
         fileSystemLogger.log("🛠️ Handling UpgradePig event");
 
-        const isDup = await isDuplicatePurchase(userAddr, pig_data.old_pig_level);
+        const isDup = await isDuplicatePurchase(
+          userAddr,
+          pig_data.old_pig_level
+        );
         console.log("🔁 Is duplicate purchase?", isDup);
         fileSystemLogger.log("🔁 Is duplicate purchase?", isDup);
 
         if (!isDup) {
-          console.log("⁉️ UpgradePig tx initiated check for potential user tree update ...");
-          fileSystemLogger.log("⁉️ UpgradePig tx initiated check for potential user tree update ...");
+          console.log(
+            "⁉️ UpgradePig tx initiated check for potential user tree update ..."
+          );
+          fileSystemLogger.log(
+            "⁉️ UpgradePig tx initiated check for potential user tree update ..."
+          );
 
           if (pig_data.address === null && user.parent_id === null) {
-            console.log("🆗 User parent should be updated since the tx is definitely going through");
-            fileSystemLogger.log("🆗 User parent should be updated since the tx is definitely going through");
+            console.log(
+              "🆗 User parent should be updated since the tx is definitely going through"
+            );
+            fileSystemLogger.log(
+              "🆗 User parent should be updated since the tx is definitely going through"
+            );
             let ids = await getParentId(userAddr);
             if (ids.pi) {
               console.log("🔁 Updating the user parent id...");
@@ -235,7 +250,10 @@ async function catchPigShopEvents(after_lt?: bigint) {
             }
           }
 
-          const bh = await findUsersBountyHunters(userAddr, pig_data.new_pig_level);
+          const bh = await findUsersBountyHunters(
+            userAddr,
+            pig_data.new_pig_level
+          );
 
           const tx_id = TxId.create(userAddr, pig_data.old_pig_level);
 
@@ -244,7 +262,7 @@ async function catchPigShopEvents(after_lt?: bigint) {
           await sendPigApproval(
             bh,
             adminWallet,
-            pigShop,
+            PigShopContract,
             pig_data.address,
             userAddr
           );
@@ -270,7 +288,6 @@ async function catchPigShopEvents(after_lt?: bigint) {
           event.referrerNftAddress,
           event.referrerAmount
         );
-
 
         //-----------------------------------------
         // update the bounty hunter balances (piggy_bank_balance on the users table)
@@ -334,7 +351,6 @@ async function catchPigShopEvents(after_lt?: bigint) {
         console.log("💰 User piggy bank balance updated");
         fileSystemLogger.log("💰 User piggy bank balance updated");
       }
-
     } else {
       console.log("⚠️ No event with userAddress was detected");
       fileSystemLogger.log("⚠️ No event with userAddress was detected");
@@ -353,9 +369,34 @@ export async function listenPigShopForever() {
   fileSystemLogger.log("🔁 Starting to listen for PigShop events");
   try {
     let lastLt;
+
+    const tc = getTonCenterClient();
+    const tac = getTonApiClient();
+    const adminWallet = await getAdminWallet(tc);
+
+    console.log("👛 Admin wallet loaded:", adminWallet.address.toString());
+    fileSystemLogger.log(
+      "👛 Admin wallet loaded:",
+      adminWallet.address.toString()
+    );
+
+    const pigShop = tc.open(PigShop.fromAddress(ContractAddresses.pigShop));
+
+    console.log("🏪 PigShop contract opened at:", pigShop.address.toString());
+    fileSystemLogger.log(
+      "🏪 PigShop contract opened at:",
+      pigShop.address.toString()
+    );
+
     while (true) {
       try {
-        lastLt = await catchPigShopEvents(lastLt);
+        lastLt = await catchPigShopEvents(
+          adminWallet,
+          pigShop,
+          tc,
+          tac,
+          lastLt
+        );
 
         // waiting for 1 second before checking the next lt
         await new Promise((resolve) => setTimeout(resolve, 2000));
