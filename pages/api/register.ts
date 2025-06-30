@@ -101,6 +101,9 @@ export default async function handler(
   const { telegram_id, referral_id, wallet_address, fullname } =
     req.body as RegisterRequest;
 
+    console.log(telegram_id, referral_id, wallet_address, fullname, req.body as RegisterRequest)
+
+    
   if (!telegram_id || !wallet_address) {
     return res.status(400).json({
       success: false,

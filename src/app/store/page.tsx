@@ -13,10 +13,11 @@ import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
-import { Address, fromNano, Sender, SenderArguments, toNano } from "@ton/ton";
+import { fromNano, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { getTonCenterClient } from "@/utils/tonClients";
+import { Address } from "@ton/core";
 import {
   PurchasePigResponse,
   UpgradePigParams,
@@ -142,7 +143,7 @@ export default function StorePage() {
           `/api/pigs/withdrawParams?wallet_address=${walletAddress}`
         )
       ).data as WithdrawPigParams;
-
+      
       let pig = tonClient.open(
         Pig.fromAddress(Address.parse(params.pig_address))
       );

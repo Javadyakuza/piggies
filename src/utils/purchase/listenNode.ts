@@ -242,7 +242,7 @@ async function catchPigShopEvents(
             fileSystemLogger.log(
               "🆗 User parent should be updated since the tx is definitely going through"
             );
-            let ids = await getParentId(userAddr);
+            let ids = await getParentId("");
             if (ids.pi) {
               console.log("🔁 Updating the user parent id...");
               fileSystemLogger.log("🔁 Updating the user parent id...");
