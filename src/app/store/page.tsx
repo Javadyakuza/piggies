@@ -511,7 +511,7 @@ export default function StorePage() {
       {isConfirmModalOpen ? (
         confirmModal
       ) : (
-        <Page>
+        <Page back=false>
           <div className="bank-container">{mainPage}</div>
         </Page>
       )}
