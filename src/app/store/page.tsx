@@ -13,7 +13,7 @@ import ImageSlider from "@/components/ImageSlider/ImageSlider";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
-import { Address, Sender, SenderArguments, toNano } from "@ton/ton";
+import { Address, fromNano, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
 import { getTonCenterClient } from "@/utils/tonClients";
@@ -204,8 +204,8 @@ export default function StorePage() {
       const response: AxiosResponse<{
         piggy_bank_balance: number;
       }> = await axios.get(`/api/user-tree/${walletAddress}`);
-      const referralId = response.data.piggy_bank_balance;
-      setPiggyBankBalance(referralId);
+      const pgbb = response.data.piggy_bank_balance;
+      setPiggyBankBalance(pgbb);
     } catch (err) {
       throw new Error(`Error fetching user data: ${err}`);
     }
@@ -417,7 +417,7 @@ export default function StorePage() {
         <div className="balance-info">
           <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
           <span className="text">
-            <h4 className="earning">{piggyBankBalance}</h4>{" "}
+            <h4 className="earning">{fromNano(piggyBankBalance)}</h4>{" "}
             <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
           </span>
         </div>
