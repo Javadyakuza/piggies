@@ -27,7 +27,7 @@ export function Page({
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!backButton.isSupported()) {
+    if (!backButton.isSupported() || !backButton.isMounted()) {
       return;
     }
     if (back) {
