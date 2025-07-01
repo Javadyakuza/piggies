@@ -11,12 +11,7 @@ export async function handlePigPurchase(
   userAddress: string,
   pigLevel: PigLevel
 ): Promise<PurchasePigResponse> {
-  if (pigLevel === 4) {
-    return {
-      success: false,
-      message: "your pig is already maxed out",
-    };
-  }
+  
   let userAddr = Address.parse(userAddress);
   let tx_id = TxId.create(userAddr.toRawString(), pigLevel);
   let isDuplicate = await isDuplicatePurchase(userAddr.toRawString(), pigLevel);

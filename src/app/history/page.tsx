@@ -8,6 +8,7 @@ import "./styles.css";
 import { pigsMapV2 } from "@/utils/pigs_map";
 import axios from "axios";
 import { useTonWallet } from "@tonconnect/ui-react";
+import { fromNano } from "@ton/core";
 
 type Reward = {
   created_at: Date;
@@ -113,7 +114,7 @@ export default function HistoryPage() {
                           <>
                             {t("historiesPage.balance")}:{" "}
                             <span className="balance">
-                              +{history.self_balance_change} TON
+                              +{fromNano(history.self_balance_change)} TON
                             </span>
                           </>
                         )) || <></>}

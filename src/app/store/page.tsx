@@ -128,7 +128,7 @@ export default function StorePage() {
             messages: [
               {
                 address: args.to.toString(),
-                amount: toNano("0.01").toString(), // args.value.toString(),
+                amount:  args.value.toString(),
                 payload: args.body?.toBoc()?.toString("base64"),
               },
             ],
@@ -144,10 +144,14 @@ export default function StorePage() {
         )
       ).data as WithdrawPigParams;
       
+      alert("passed the api call, params are " + JSON.stringify(params))
+      alert("parsed address " + Address.parse(params.pig_address).toString())
+      alert("parsed nft address " + String(Pig.fromAddress(Address.parse(params.pig_address))))
+      alert("passed all")
       let pig = tonClient.open(
         Pig.fromAddress(Address.parse(params.pig_address))
       );
-
+      alert("passed creating the nft item")
       await pig.send(
         sender_,
         {
