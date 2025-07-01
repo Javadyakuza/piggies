@@ -25,7 +25,8 @@ export function Page({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-
+  backButton.mount();
+  
   useEffect(() => {
     if (back) {
       backButton.show();
