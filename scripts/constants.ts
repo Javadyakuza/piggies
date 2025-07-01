@@ -13,25 +13,25 @@ import { Address } from "@ton/core";
 // };
 
 export const ContractAddresses = {
-  pigShop: Address.parse("EQANnesbgblWYSQtpEAJbWcJvXWELidrGreQtGR4inqvj5q8"),
+  pigShop: Address.parse("EQC5i5bxh71N3wH-R8RHU8XFWpOC3MSwRO4tWqJWGiulXpq4"),
 
-  pigShopRawString: "0:0d9deb1b81b95661242da440096d6709bd75842e276b1ab790b464788a7aaf8f",
+  pigShopRawString: "0:b98b96f187bd4ddf01fe47c44753c5c55a9382dcc4b044ee2d5aa2561a2ba55e",
 
-  pigsCollection: Address.parse("EQD5VpgITVlwOg_PVLPoSbVsp2jIqrxn1NLdYmV4jOYOc5PE"),
+  pigsCollection: Address.parse("EQBxZCKfgAwYAQx0sclZ-uNNkpKzgOucCejssHAH5gAZXmBX"),
 
   PigShopCollectionRawString:
-    "0:f95698084d59703a0fcf54b3e849b56ca768c8aabc67d4d2dd6265788ce60e73",
+      "0:7164229f800c18010c74b1c959fae34d9292b380eb9c09e8ecb07007e600195e",
 
 };
 
 // Connected to wallet at address: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
 // Sent transaction
-// Contract deployed at address EQANnesbgblWYSQtpEAJbWcJvXWELidrGreQtGR4inqvj5q8
-// You can view it at https://testnet.tonscan.org/address/EQANnesbgblWYSQtpEAJbWcJvXWELidrGreQtGR4inqvj5q8
-// PigShop contract deployed successfully at: 0:0d9deb1b81b95661242da440096d6709bd75842e276b1ab790b464788a7aaf8f
+// Contract deployed at address EQC5i5bxh71N3wH-R8RHU8XFWpOC3MSwRO4tWqJWGiulXpq4
+// You can view it at https://tonscan.org/address/EQC5i5bxh71N3wH-R8RHU8XFWpOC3MSwRO4tWqJWGiulXpq4
+// PigShop contract deployed successfully at: 0:b98b96f187bd4ddf01fe47c44753c5c55a9382dcc4b044ee2d5aa2561a2ba55e
 // Sent transaction
-// Contract deployed at address EQD5VpgITVlwOg_PVLPoSbVsp2jIqrxn1NLdYmV4jOYOc5PE
-// You can view it at https://testnet.tonscan.org/address/EQD5VpgITVlwOg_PVLPoSbVsp2jIqrxn1NLdYmV4jOYOc5PE
-// PigCollection contract deployed successfully at: 0:f95698084d59703a0fcf54b3e849b56ca768c8aabc67d4d2dd6265788ce60e73
+// Contract deployed at address EQBxZCKfgAwYAQx0sclZ-uNNkpKzgOucCejssHAH5gAZXmBX
+// You can view it at https://tonscan.org/address/EQBxZCKfgAwYAQx0sclZ-uNNkpKzgOucCejssHAH5gAZXmBX
+// PigCollection contract deployed successfully at: 0:7164229f800c18010c74b1c959fae34d9292b380eb9c09e8ecb07007e600195e
 // Sent transaction
 // Pigshop contract updated with collection address successfully

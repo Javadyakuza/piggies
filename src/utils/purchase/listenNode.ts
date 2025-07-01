@@ -222,7 +222,7 @@ async function catchPigShopEvents(
 
         const isDup = await isDuplicatePurchase(
           userAddr,
-          pig_data.old_pig_level
+          pig_data.new_pig_level
         );
         console.log("🔁 Is duplicate purchase?", isDup);
         fileSystemLogger.log("🔁 Is duplicate purchase?", isDup);

@@ -126,6 +126,8 @@
 }
 .bank-container .confirm-modal-container .action-container {
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 .bank-container .confirm-modal-container .action-container .btns .action-btn {
   margin: auto;
