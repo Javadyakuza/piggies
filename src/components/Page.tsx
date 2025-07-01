@@ -25,9 +25,11 @@ export function Page({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-  backButton.mount();
-  
+
   useEffect(() => {
+    if (!backButton.isSupported()) {
+      return;
+    }
     if (back) {
       backButton.show();
     } else {
