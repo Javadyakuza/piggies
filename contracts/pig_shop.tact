@@ -192,7 +192,7 @@ contract PigShop {
     if (msg.pig == null) {
       send(SendParameters{
           to: self.collection!!,
-          value: ton("0.1"),
+          value: ton("0.15"),
           mode: SendPayGasSeparately,
           bounce: false,
           body: MintNFT{
