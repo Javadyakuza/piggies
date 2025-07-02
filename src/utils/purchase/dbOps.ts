@@ -157,11 +157,6 @@ export const upgradeUserPig = async (userAddress: string) => {
   if (updateError) {
     throw new Error(`Wallet update error: ${updateError.message}`);
   }
-
-  // updating the user parent id in the tree if he just updated to the bronze pig
-  if (currentPig === 0) {
-    await UpdateUSerInTree(userAddress, (await getParentId(userAddress)).pi);
-  }
 };
 
 export const upgradeUserPigAddress = async (
