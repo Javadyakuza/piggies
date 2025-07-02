@@ -214,10 +214,13 @@ export default function StorePage() {
 
     try {
       const response: AxiosResponse<{
-        piggy_bank_balance: number;
+        pig_address: string;
       }> = await axios.get(`/api/user-tree/${walletAddress}`);
-      const pgbb = response.data.piggy_bank_balance;
-      setPiggyBankBalance(pgbb);
+      let pig = tonClient.open(
+        Pig.fromAddress(Address.parse(response.data.pig_address))
+      );
+      const pigBalance = (await pig.getTonBalance()) - toNano("0.05");
+      setPiggyBankBalance(Number(pigBalance));
     } catch (err) {
       throw new Error(`Error fetching user data: ${err}`);
     }
