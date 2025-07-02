@@ -40,7 +40,7 @@ export async function sendPigApproval(
     await pigShop.send(
       wallet.sender(secretKey),
       {
-        value: toNano("0.1"),
+        value: toNano("0.2"),
       },
       approvalMsg
     );

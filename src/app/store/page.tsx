@@ -138,11 +138,18 @@ export default function StorePage() {
         address: walletAddress,
       } as unknown as Sender;
 
-      const params: WithdrawPigParams = (
+      const response = (
         await axios.get(
           `/api/pigs/withdrawParams?wallet_address=${walletAddress}`
         )
-      ).data as WithdrawPigParams;
+      ).data as { success: false; message: string; } | { success: true; message: WithdrawPigParams; };
+
+      let params: WithdrawPigParams;
+      if (response.success) {
+        params = response.message;
+      } else {
+        throw new Error(response.message);
+      }
       
       alert("passed the api call, params are " + JSON.stringify(params))
       alert("parsed address " + Address.parse(params.pig_address).toString())
