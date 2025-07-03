@@ -13,14 +13,8 @@ import { Address } from "@ton/core";
 // };
 
 export const ContractAddresses = {
-  pigShop: Address.parse("EQC5i5bxh71N3wH-R8RHU8XFWpOC3MSwRO4tWqJWGiulXpq4"),
+  pigShop: Address.parse("EQDmCFCBNnfmtE8utJhgGqHVjKlq4i2j2oEZsYdgbFHe0XQS"),
 
-  pigShopRawString: "0:b98b96f187bd4ddf01fe47c44753c5c55a9382dcc4b044ee2d5aa2561a2ba55e",
-
-  pigsCollection: Address.parse("EQBxZCKfgAwYAQx0sclZ-uNNkpKzgOucCejssHAH5gAZXmBX"),
-
-  PigShopCollectionRawString:
-      "0:7164229f800c18010c74b1c959fae34d9292b380eb9c09e8ecb07007e600195e",
 
 };
 
