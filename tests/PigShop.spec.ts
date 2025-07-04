@@ -526,13 +526,14 @@ describe("PigCreation Event Test", () => {
     console.log("NFT Balance before withdrawal:", nftBalanceBeforeAft);
     expect(nftBalanceBeforeAft).toBeGreaterThan(bountyAmount);
 
+    console.log("user balance before", await user1.getBalance());
     // ACT: user1 sends a withdrawal message to their NFT
     const withdrawResult = await pigNft1.send(
       user1.getSender(),
       { value: toNano("0.1") },
       { $$type: "WithdrawFromNftPig" }
     );
-
+    console.log("user balance after", await user1.getBalance());
     // ASSERT:
     // 1. The NFT successfully sent the funds to the owner (user1)
     expect(withdrawResult.transactions).toHaveTransaction({

@@ -24,7 +24,10 @@ import {
   WithdrawFromPigEvent,
 } from "../../../build/PigShop/tact_PigShop";
 
-import { findUsersBountyHunters } from "./bountyHunters";
+import {
+  BountyHuntersForPigApproval,
+  findUsersBountyHunters,
+} from "./bountyHunters";
 import { getAdminWallet } from "../admin";
 import { getTonApiClient, getTonCenterClient } from "../tonClients";
 import { get } from "http";
@@ -260,7 +263,7 @@ async function catchPigShopEvents(
           console.log("🚀 Sending pig approval message");
           fileSystemLogger.log("🚀 Sending pig approval message");
           await sendPigApproval(
-            bh,
+            await BountyHuntersForPigApproval(bh),
             adminWallet,
             PigShopContract,
             pig_data.address,
@@ -281,7 +284,6 @@ async function catchPigShopEvents(
       }
 
       if (event.$$type === "PigApprovalEvent") {
-
         console.log("✅ Approval received for:", userAddr);
         fileSystemLogger.log("✅ Approval received for:", userAddr);
 
@@ -289,14 +291,17 @@ async function catchPigShopEvents(
           event.referrerNftAddress,
           event.referrerAmount
         );
-          
+
         console.log("👔 Updated the referrer amount for:", event.referrer);
-        fileSystemLogger.log("👔 Updated the referrer amount for:", event.referrer);
-        
+        fileSystemLogger.log(
+          "👔 Updated the referrer amount for:",
+          event.referrer
+        );
+
         //-----------------------------------------
         // update the bounty hunter balances (piggy_bank_balance on the users table)
         //-----------------------------------------
-        
+
         await updateBountyHuntersBalances({
           referrer: event.referrer,
           users: event.userBountyHunters,

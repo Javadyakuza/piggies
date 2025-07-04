@@ -4,6 +4,7 @@ import { bountyHuntersResponse } from "@/models/purchase";
 import { Address, Dictionary, toNano } from "@ton/core";
 import { PigLevel } from "@/models/pigs";
 import { pigsMapV2 } from "../pigs_map";
+import { Pig } from "../../../wrappers/Pig";
 
 export async function findUsersBountyHunters(
   walletAddress: string,
@@ -36,7 +37,6 @@ export async function findUsersBountyHunters(
       .select("wallet_address")
       .eq("id", user.inviter_id)
       .single();
-      
 
     if (referrerError || !referrer) {
       throw new Error("referrer not found via user.inviter_id");
@@ -122,8 +122,6 @@ export async function findUsersBountyHunters(
       });
     }
 
-
-
     // ----------------------------------------------------
     // Step 5: Updating the upper users, admins and the referrer shares
     // ----------------------------------------------------
@@ -150,7 +148,7 @@ export async function findUsersBountyHunters(
     });
 
     // -- Updating referrer share
-    console.log(adminsDic);
+
     referrerDic.set(
       Address.parse(referrer.wallet_address),
       BigInt(toNano(calcShares("referrer", upgradedPigLevel, pigCostInTon)))
@@ -164,10 +162,10 @@ export async function findUsersBountyHunters(
       .concat(usersDic.values())
       .concat(adminsDic.values());
     let totalPaymentsSum = totalPayments.reduce((a, b) => a + b, BigInt(0));
-    console.log("totalPaymentsSum", totalPaymentsSum);
-    console.log("admin dictionaries:", adminsDic);
-    console.log("user dictionaries:", usersDic);
-    console.log("referrer dictionaries:", referrerDic);
+    // console.log("totalPaymentsSum", totalPaymentsSum);
+    // console.log("admin dictionaries:", adminsDic);
+    // console.log("user dictionaries:", usersDic);
+    // console.log("referrer dictionaries:", referrerDic);
     let change = BigInt(toNano(pigCostInTon)) - totalPaymentsSum;
     if (change > BigInt(0)) {
       const eachAdminShare = change / BigInt(adminsDic.keys().length);
@@ -180,7 +178,7 @@ export async function findUsersBountyHunters(
     }
 
     // ----------------------------------------------------
-    // Step 6: Check if there is any money assigned to admin(genesis) in the users or in referrer and moving it into the admins side 
+    // Step 6: Check if there is any money assigned to admin(genesis) in the users or in referrer and moving it into the admins side
     // ----------------------------------------------------
     let adminAddress: Address = adminsDic.keys()[0];
     for (const key of usersDic.keys()) {
@@ -192,9 +190,9 @@ export async function findUsersBountyHunters(
       }
     }
 
-    console.log("usersDic", usersDic);
-    console.log("referrerDic", referrerDic);
-    console.log("adminsDic", adminsDic);
+    // console.log("usersDic", usersDic);
+    // console.log("referrerDic", referrerDic);
+    // console.log("adminsDic", adminsDic);
 
     return {
       referrer: referrerDic,
@@ -234,4 +232,53 @@ function calcShares(
     default:
       return 0;
   }
+}
+
+export async function BountyHuntersForPigApproval(
+  bh: bountyHuntersResponse
+): Promise<bountyHuntersResponse> {
+  let PA_BH: bountyHuntersResponse = {
+    referrer: Dictionary.empty<Address, bigint>(),
+    users: Dictionary.empty<Address, bigint>(),
+    admins: Dictionary.empty<Address, bigint>(),
+  };
+  for (const user of bh.users.keys()) {
+    const { data: pig, error: pigError } = await supabase
+      .from("users")
+      .select("pig_address")
+      .eq("wallet_address", user.toRawString())
+      .single();
+
+    if (pigError || !pig) {
+      throw new Error("Failed to fetch pig: " + pigError?.message);
+    }
+
+    PA_BH.users.set(Address.parse(pig.pig_address), bh.users.get(user)!);
+  }
+
+  // fixing the referrer pig address
+  if (bh.referrer.keys().length > 0) {
+    const referrerAddress = bh.referrer.keys()[0];
+    const { data: pig, error: pigError } = await supabase
+      .from("users")
+      .select("pig_address")
+      .eq("wallet_address", referrerAddress.toRawString())
+      .single();
+
+    if (pigError || !pig) {
+      throw new Error("Failed to fetch referrer pig: " + pigError?.message);
+    }
+
+    PA_BH.referrer.set(
+      Address.parse(pig.pig_address),
+      bh.referrer.get(referrerAddress)!
+    );
+  }
+
+  // setting the admins shares of the new bh
+  for (const [key, value] of bh.admins) {
+    PA_BH.admins.set(key, value);
+  }
+
+  return PA_BH;
 }
