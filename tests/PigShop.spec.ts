@@ -499,7 +499,7 @@ describe("PigCreation Event Test", () => {
       nftBalanceBeforeBef
     );
     // Fund user1's NFT by creating a second NFT and sending bounty to user1
-    const bountyAmount = toNano("0.4");
+    const bountyAmount = toNano("0.04");
     await pigShop.send(
       deployer.getSender(),
       { value: toNano("2") },
