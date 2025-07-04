@@ -115,10 +115,11 @@ contract Pig with NftItem {
         require(limit != null, "Invalid level or limit map");
         let balance = myBalance();
         if (balance > limit!! + ton("0.0222")) {
+            nativeReserve(limit!!, 0);
             send(SendParameters {
                 to: msg.surplusDestination,
-                value: balance - limit!! - ton("0.0222"),
-                mode: SendRemainingValue,
+                value: 0,
+                mode: SendRemainingBalance,
                 bounce: false,
             });
         }
