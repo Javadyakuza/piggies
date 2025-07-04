@@ -36,6 +36,7 @@ export async function findUsersBountyHunters(
       .select("wallet_address")
       .eq("id", user.inviter_id)
       .single();
+      
 
     if (referrerError || !referrer) {
       throw new Error("referrer not found via user.inviter_id");
