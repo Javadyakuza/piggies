@@ -7,6 +7,7 @@ message UpgradePig {
 message ChangeCollection {
   newCollection: Address;
 }
+message WithdrawLeftovers {}
 message PigApproval {
   pig: Address?;
   userAddress: Address;
@@ -110,6 +111,16 @@ contract PigShop {
     //     bounce: true
     //   }
     // );
+  }
+
+  receive(msg: WithdrawLeftovers) {
+    nativeReserve(ton("0.01"), 0);
+    send(SendParameters {
+      to: self.owner,
+      value: 0,
+      mode: SendRemainingBalance,
+      bounce: false,
+    });
   }
 
   receive("UpgradePig"){

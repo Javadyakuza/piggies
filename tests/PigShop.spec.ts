@@ -447,4 +447,30 @@ describe("PigCreation Event Test", () => {
         .loadStringTail()
     ).toEqual("2.json");
   });
+
+  it("should withdraw leftovers", async () => {
+    await pigShop.send(
+      deployer.getSender(),
+      { value: toNano("1") },
+      null,
+    );
+    const deployerBalanceBefore = await deployer.getBalance();
+    console.log("Deployer Balance before withdrawal:", deployerBalanceBefore);
+    const pigShopBalanceBefore = (await blockchain.getContract(pigShop.address)).balance;
+    console.log("PigShop Balance before withdrawal:", pigShopBalanceBefore);
+
+    await pigShop.send(
+      deployer.getSender(),
+      { value: toNano("0.1") },
+      { $$type: "WithdrawLeftovers" },
+    );
+
+    const deployerBalanceAfter = await deployer.getBalance();
+    console.log("Deployer Balance after withdrawal:", deployerBalanceAfter);
+    const pigShopBalanceAfter = (await blockchain.getContract(pigShop.address)).balance;
+    console.log("PigShop Balance after withdrawal:", pigShopBalanceAfter);
+
+    expect(deployerBalanceAfter).toBeGreaterThan(deployerBalanceBefore);
+    expect(pigShopBalanceAfter).toBeLessThan(pigShopBalanceBefore);
+  });
 });
