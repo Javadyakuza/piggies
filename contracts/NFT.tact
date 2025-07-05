@@ -7,7 +7,7 @@ contract PigCollection with NftCollection {
     staticTax: Int as coins = ton("0");
     lockedValue: Int as coins = ton("0.05");
 
-    nextItemIndex: Int as uint256 = 398;
+    nextItemIndex: Int as uint256 = 0;
     collectionContent: Cell;
     // itemContentUrlPrefix is the prefix of the individual NFT's content url.
     // the full url should be: `${itemContentUrlPrefix}${individualContent}.json`

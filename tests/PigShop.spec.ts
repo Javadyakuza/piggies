@@ -103,7 +103,7 @@ describe("PigCreation Event Test", () => {
     console.log("Verifying PigCollection parameters...");
     const collectionData = await pigCollection.getGetCollectionData();
     expect(collectionData.ownerAddress).toEqualAddress(deployer.address);
-    expect(collectionData.nextItemIndex).toBe(BigInt(398));
+    expect(collectionData.nextItemIndex).toBe(BigInt(0));
 
     console.log("✅ PigCollection configured correctly.");
   });
@@ -147,7 +147,7 @@ describe("PigCreation Event Test", () => {
       success: true,
     });
 
-    const nftAddress = await pigCollection.getGetNftAddressByIndex(BigInt(398));
+    const nftAddress = await pigCollection.getGetNftAddressByIndex(BigInt(0));
     console.log("Expected NFT address:", nftAddress.toString());
 
     expect(approvalResult.transactions).toHaveTransaction({
@@ -197,7 +197,7 @@ describe("PigCreation Event Test", () => {
       }
     );
 
-    const nftAddress1 = await pigCollection.getGetNftAddressByIndex(398n);
+    const nftAddress1 = await pigCollection.getGetNftAddressByIndex(0n);
     console.log("user 1 nft address", nftAddress1);
 
     let pigCreationEventFound1 = false;
@@ -239,12 +239,12 @@ describe("PigCreation Event Test", () => {
     expect(approvalResult2.transactions).toHaveTransaction({
       from: pigShop.address,
       to: nftAddress1,
-      op: 1004,
+      op: PigShop.opcodes.PigBounty,
       success: true,
       value: toNano("0.05"),
     });
 
-    const nftAddress2 = await pigCollection.getGetNftAddressByIndex(399n);
+    const nftAddress2 = await pigCollection.getGetNftAddressByIndex(1n);
     let pigCreationEventFound2 = false;
 
     approvalResult2.externals.forEach((ext, index) => {
@@ -279,7 +279,7 @@ describe("PigCreation Event Test", () => {
     );
 
     const nftAddress1 = await pigCollection.getGetNftAddressByIndex(
-      BigInt(398)
+      BigInt(0)
     );
 
     const pigNft1 = blockchain.openContract(Pig.fromAddress(nftAddress1));
@@ -331,7 +331,7 @@ describe("PigCreation Event Test", () => {
     expect(withdrawResult.transactions).toHaveTransaction({
       from: nftAddress1,
       to: pigShop.address,
-      op: 2002,
+      op: PigShop.opcodes.WithdrawFromPig,
       success: true,
     });
   });
@@ -355,7 +355,7 @@ describe("PigCreation Event Test", () => {
     );
 
     const nftAddress1 = await pigCollection.getGetNftAddressByIndex(
-      BigInt(398)
+      BigInt(0)
     );
 
     const pigNft1 = blockchain.openContract(Pig.fromAddress(nftAddress1));
@@ -417,7 +417,7 @@ describe("PigCreation Event Test", () => {
       }
     );
 
-    const nftAddress = await pigCollection.getGetNftAddressByIndex(BigInt(398));
+    const nftAddress = await pigCollection.getGetNftAddressByIndex(BigInt(0));
     const pigNft1 = blockchain.openContract(Pig.fromAddress(nftAddress));
     expect(
       (await pigNft1.getGetNftData()).individualContent
