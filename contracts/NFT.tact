@@ -53,7 +53,7 @@ contract PigCollection with NftCollection {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -65,7 +65,7 @@ contract PigCollection with NftCollection {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -103,7 +103,7 @@ contract Pig with NftItem {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -186,7 +186,7 @@ trait NftCollection with Common {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -248,7 +248,7 @@ trait NftCollection with Common {
         send(SendParameters {
             to: msg.responseDestination,
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
             body: Excesses {
                 queryId: msg.queryId,
@@ -424,7 +424,7 @@ trait NftItem with Common {
         send(SendParameters {
             to: ctx.sender,
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: true,
             body: ReportStaticData {
                 queryId: msg.queryId,

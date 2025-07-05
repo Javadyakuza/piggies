@@ -69,7 +69,7 @@ contract PigShop {
     send(SendParameters{
         to: sender(),
         value: 0,
-        mode: SendRemainingBalance,
+        mode: SendRemainingValue,
         bounce: false
       }
     );
@@ -81,7 +81,7 @@ contract PigShop {
     send(SendParameters{
         to: sender(),
         value: 0,
-        mode: SendRemainingBalance,
+        mode: SendRemainingValue,
         bounce: false
       }
     );
