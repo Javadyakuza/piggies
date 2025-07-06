@@ -33,8 +33,8 @@ import { getTonApiClient, getTonCenterClient } from "../tonClients";
 import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
-  getParentId,
-  getPigs,
+  getGenesisUser,
+  getPigs, getUserByPigAddress,
   initTxHistory,
   isDuplicatePurchase,
   updateBountyHuntersBalances,
@@ -43,7 +43,7 @@ import {
   UpdateUSerInTree,
   updateUserPiggyBankBalance,
   upgradeUserPig,
-  upgradeUserPigAddress,
+  upgradeUserPigAddressAndParentId,
 } from "./dbOps";
 import { PigLevel } from "../../models/pigs";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
@@ -56,6 +56,7 @@ import { TonClient, WalletContractV5R1 } from "@ton/ton";
 async function catchPigShopEvents(
   adminWallet: OpenedContract<WalletContractV5R1>,
   PigShopContract: OpenedContract<PigShop>,
+  PigCollectionContract: OpenedContract<PigCollection>,
   tonCenterClient: TonClient,
   tonAPiClient: TonApiClient,
   after_lt?: bigint
@@ -238,21 +239,6 @@ async function catchPigShopEvents(
             "⁉️ UpgradePig tx initiated check for potential user tree update ..."
           );
 
-          if (pig_data.address === null && user.parent_id === null) {
-            console.log(
-              "🆗 User parent should be updated since the tx is definitely going through"
-            );
-            fileSystemLogger.log(
-              "🆗 User parent should be updated since the tx is definitely going through"
-            );
-            let ids = await getParentId("");
-            if (ids.pi) {
-              console.log("🔁 Updating the user parent id...");
-              fileSystemLogger.log("🔁 Updating the user parent id...");
-              await UpdateUSerInTree(userAddr, ids.pi);
-            }
-          }
-
           const bh = await findUsersBountyHunters(
             userAddr,
             pig_data.new_pig_level
@@ -339,11 +325,22 @@ async function catchPigShopEvents(
         console.log("🐣 Handling PigCreationEvent");
         fileSystemLogger.log("🐣 Handling PigCreationEvent");
         //-----------------------------------------
-        // update the user pig address (pig_address on the users table)
+        // get the parent pig in ternary tree
         //-----------------------------------------
-        await upgradeUserPigAddress(userAddr, event.nft.toRawString());
-        console.log("✅ User pig address upgraded");
-        fileSystemLogger.log("✅ User pig address upgraded");
+        let parent_id: number | undefined;
+        const parentPigTreeIndex = (event.nftIndex - 1n) / 3n;
+        if (parentPigTreeIndex > 0n) {
+          const parentPigAddress = await PigCollectionContract.getGetNftAddressByIndex(parentPigTreeIndex);
+          parent_id = (await getUserByPigAddress(parentPigAddress.toRawString()) || await getGenesisUser())?.id ?? 1;
+        } else { // 0 is root/genesis
+          parent_id = (await getGenesisUser())?.id ?? 1;
+        }
+        //-----------------------------------------
+        // update the user pig address (pig_address on the users table) and parent_id
+        //-----------------------------------------
+        await upgradeUserPigAddressAndParentId(userAddr, event.nft.toRawString(), parent_id);
+        console.log("✅ User pig address and parent_id upgraded");
+        fileSystemLogger.log("✅ User pig address and parent_id upgraded");
       }
 
       if (event.$$type === "WithdrawFromPigEvent") {
@@ -391,6 +388,7 @@ export async function listenPigShopForever() {
     );
 
     const pigShop = tc.open(PigShop.fromAddress(ContractAddresses.pigShop));
+    const pigCollection = tc.open(PigCollection.fromAddress(ContractAddresses.pigsCollection));
 
     console.log("🏪 PigShop contract opened at:", pigShop.address.toString());
     fileSystemLogger.log(
@@ -403,6 +401,7 @@ export async function listenPigShopForever() {
         lastLt = await catchPigShopEvents(
           adminWallet,
           pigShop,
+          pigCollection,
           tc,
           tac,
           lastLt

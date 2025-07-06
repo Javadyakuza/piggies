@@ -85,15 +85,17 @@ export default function HistoryPage() {
                     <div className="head">
                       <h2>
                         {history.fullname}{" "}
-                        <span className="level">
-                          (
-                          {history.self_balance_change
-                            ? t("historiesPage.level", {
+                        {!history.self_balance_change && ( // TODO: fix level fetching
+                          <span className="level">
+                            (
+                            {history.self_balance_change
+                              ? t("historiesPage.level", {
                                 level: history.referral_depth,
                               })
-                            : t("historiesPage.you")}
-                          )
-                        </span>
+                              : t("historiesPage.you")}
+                            )
+                          </span>
+                        )}
                       </h2>
                     </div>
                     <div className="middle">

@@ -7,7 +7,7 @@ contract PigCollection with NftCollection {
     staticTax: Int as coins = ton("0");
     lockedValue: Int as coins = ton("0.05");
 
-    nextItemIndex: Int as uint256 = 0;
+    nextItemIndex: Int as uint256 = 1;
     collectionContent: Cell;
     // itemContentUrlPrefix is the prefix of the individual NFT's content url.
     // the full url should be: `${itemContentUrlPrefix}${individualContent}.json`
@@ -317,7 +317,7 @@ trait NftCollection with Common {
     }
 
     virtual fun getNftAddressByIndex(index: Int): Address {
-        nativeThrowUnless(codeNftIndexNotExists, index < self.nextItemIndex);
+        nativeThrowUnless(codeNftIndexNotExists, index > 0 && index < self.nextItemIndex);
         return contractAddress(self.getNftItemContract(index));
     }
 

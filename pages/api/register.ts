@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supabase";
 import { cookies } from "next/headers";
-import { findOpenSlotInSubtree } from "@/utils/tree";
 import { RegisterRequest } from "@/models/register";
-import { getParentId } from "@/utils/purchase/dbOps";
+import { getGenesisUser, getUserByReferralId } from "@/utils/purchase/dbOps";
 
 /**
  * @swagger
@@ -125,15 +124,18 @@ export default async function handler(
       .json({ success: false, message: "User already registered" });
   }
 
-  // Determine the parent_id for the new user via referral logic
-  let ids = await getParentId("", String(referral_id))
-  
+  // get the inviter id
+  let { id: inviter_id } = await getUserByReferralId(String(referral_id)) || await getGenesisUser() || { id: null }; //TODO: delete fallback to genesis user?
+  if (inviter_id === null) return res.status(400).json({
+      success: false,
+      message: "Invalid referral_id",
+  });
 
   const { data: insertData, error } = await supabase
     .from("users")
     .insert({
       telegram_id: telegram_id,
-      inviter_id: ids.ii,
+      inviter_id: inviter_id,
       parent_id: null,
       fullname: fullname,
       wallet_address: wallet_address,
