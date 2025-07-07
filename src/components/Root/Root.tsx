@@ -1,6 +1,6 @@
 "use client";
 
-import { type PropsWithChildren, useEffect } from "react";
+import { type PropsWithChildren, useEffect, useMemo } from "react";
 import {
   initData,
   miniApp,
@@ -22,6 +22,7 @@ import { init } from "@/core/init";
 
 import "./styles.css";
 import { useRouter, useSearchParams } from "next/navigation";
+import { WalletGuard } from "@/components/WalletGuard";
 
 const isDev =
   // false;
@@ -30,7 +31,9 @@ const isDev =
 function RootInner({ children }: PropsWithChildren) {
   const router = useRouter();
   const query = useSearchParams();
-  const startApp = query?.get("startapp");
+  const lp = useLaunchParams();
+
+  const startApp = useMemo(() => query?.get("startapp"), [query]);
 
   useEffect(() => {
     if (startApp) {
@@ -45,8 +48,7 @@ function RootInner({ children }: PropsWithChildren) {
     useTelegramMock();
   }
 
-  const lp = useLaunchParams();
-  const debug = isDev || lp.startParam === "debug";
+  const debug = useMemo(() => isDev || lp.startParam === "debug", [lp]);
 
   // Initialize the library.
   useClientOnce(() => {
@@ -70,7 +72,9 @@ function RootInner({ children }: PropsWithChildren) {
       <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/tonconnect-manifest.json">
         <WalletContextProvider>
           <AccountContextProvider>
-            {children}
+            <WalletGuard>
+              {children}
+            </WalletGuard>
           </AccountContextProvider>
         </WalletContextProvider>
       </TonConnectUIProvider>
@@ -86,7 +90,6 @@ export function Root(props: PropsWithChildren) {
   }
 
   const didMount = useDidMount();
-  const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
 
   return didMount ? (

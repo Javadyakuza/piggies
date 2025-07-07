@@ -3,7 +3,6 @@
 import { backButton } from "@telegram-apps/sdk-react";
 import { PropsWithChildren, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { WalletGuard } from "./WalletGuard";
 import Header from "./Header/Header";
 import { Footer } from "./Footer/Footer";
 
@@ -48,12 +47,12 @@ export function Page({
   }, [router, pathname]);
 
   return (
-    <WalletGuard>
+    <>
       {headerAndFooter && <Header />}
       <div className="page-content">
         {children}
         {headerAndFooter && <Footer />}
       </div>
-    </WalletGuard>
+    </>
   );
 }
