@@ -7,6 +7,7 @@ message UpgradePig {
 message ChangeCollection {
   newCollection: Address;
 }
+message WithdrawLeftovers {}
 message PigApproval {
   pig: Address?;
   userAddress: Address;
@@ -18,6 +19,7 @@ message PigApproval {
 message PigCreationEvent {
   userAddress: Address;
   nft: Address;
+  nftIndex: Int as uint256;
 }
 message WithdrawFromPigEvent {
   userAddress: Address;
@@ -69,7 +71,7 @@ contract PigShop {
     send(SendParameters{
         to: sender(),
         value: 0,
-        mode: SendRemainingBalance,
+        mode: SendRemainingValue,
         bounce: false
       }
     );
@@ -81,7 +83,7 @@ contract PigShop {
     send(SendParameters{
         to: sender(),
         value: 0,
-        mode: SendRemainingBalance,
+        mode: SendRemainingValue,
         bounce: false
       }
     );
@@ -112,6 +114,16 @@ contract PigShop {
     // );
   }
 
+  receive(msg: WithdrawLeftovers) {
+    nativeReserve(ton("0.01"), 0);
+    send(SendParameters {
+      to: self.owner,
+      value: 0,
+      mode: SendRemainingBalance,
+      bounce: false,
+    });
+  }
+
   receive("UpgradePig"){
     emit(UpgradePig{userAddress: sender()}.toCell());
   }
@@ -120,7 +132,7 @@ contract PigShop {
     require(sender() == calcItemAddress(self.collection!!, msg.nftIndex),
       "Only NFT item is authorized"
     );
-    emit(PigCreationEvent{userAddress: msg.owner, nft: sender()}.toCell());
+    emit(PigCreationEvent{userAddress: msg.owner, nft: sender(), nftIndex: msg.nftIndex}.toCell());
   }
 
   receive(msg: WithdrawFromPig){

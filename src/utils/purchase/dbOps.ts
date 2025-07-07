@@ -8,7 +8,6 @@ import { supabase } from "../supabase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
 import { Address, Dictionary, fromNano, toNano } from "@ton/core";
-import { findOpenSlotInSubtree } from "../tree";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (
@@ -159,13 +158,14 @@ export const upgradeUserPig = async (userAddress: string) => {
   }
 };
 
-export const upgradeUserPigAddress = async (
+export const upgradeUserPigAddressAndParentId = async (
   wallet_address: string,
-  pig_address: string
+  pig_address: string,
+  parent_id?: number
 ) => {
   const { error: updateError } = await supabase
     .from("users")
-    .update({ pig_address })
+    .update({ pig_address, parent_id })
     .eq("wallet_address", wallet_address);
 
   if (updateError) {
@@ -280,11 +280,17 @@ export async function updateReferralsRewardsHistory(
 
   if (event_data.referrer) {
     for (const referrer of Array.from(event_data.referrer.keys())) {
+      const { data: referrer_user } = await supabase
+        .from("users")
+        .select("wallet_address")
+        .eq("pig_address", referrer.toRawString())
+        .single();
+      if (!referrer_user) throw new Error(`Unknown referrer's pig address: ${referrer.toRawString()}`);
       const reward = event_data.referrer.get(referrer);
       const { error: insertError } = await supabase
         .from("rewards_history")
         .insert({
-          wallet_address: referrer.toRawString(),
+          wallet_address: referrer_user.wallet_address,
           reward: Number(reward),
           referral: event_data.userAddress.toRawString(),
           related_tx: event_data.tx_hash,
@@ -293,7 +299,7 @@ export async function updateReferralsRewardsHistory(
         .single();
 
       console.log(
-        `rewarded referrer ${referrer.toRawString()} with ${Number(fromNano(reward!))} TON`
+        `rewarded referrer ${referrer_user.wallet_address} with ${Number(fromNano(reward!))} TON`
       );
 
       if (insertError) {
@@ -347,69 +353,34 @@ export async function UpdateUSerInTree(
   }
 }
 
-export async function getParentId(
-  wallet_address: string,
-  referral_id?: string
-): Promise<{ pi: string; ii: string }> {
-  //----------------------------------------------------
-  // Step 1: getting the user, its inviter and the genesis account
-  //----------------------------------------------------
+export async function getUserByReferralId(referral_id: string) {
+  const { data: user } = await supabase
+    .from("users")
+    .select("id")
+    .eq("referral_id", referral_id)
+    .single();
 
+  return user;
+}
+
+export async function getUserByPigAddress(pig_address: string) {
+  const { data: user } = await supabase
+    .from("users")
+    .select("id")
+    .eq("pig_address", pig_address)
+    .single();
+
+  return user;
+}
+
+export async function getGenesisUser() {
   const { data: genesisUser } = await supabase
     .from("users")
     .select("id")
     .eq("telegram_id", "@genesis")
     .single();
 
-  if (!genesisUser) {
-    throw new Error("couldn't fetch the genesis account");
-  }
-
-  let inviter_id: string | null = null;
-
-  if (wallet_address) {
-    const { data: inviter } = await supabase
-      .from("users")
-      .select("inviter_id")
-      .eq("wallet_address", wallet_address)
-      .single();
-
-    if (!inviter) {
-      throw new Error("couldn't fetch the inviter_id account");
-    }
-
-    inviter_id = inviter.inviter_id;
-  } else if (referral_id) {
-    const { data: inviter } = await supabase
-      .from("users")
-      .select("id")
-      .eq("referral_id", referral_id)
-      .single();
-
-    if (!inviter) {
-      throw new Error("couldn't fetch the inviter_id account");
-    }
-    inviter_id = inviter.id;
-  }
-
-  //----------------------------------------------------
-  // Step 2: Fetching the parent_id
-  //----------------------------------------------------
-  let parentId: string | number | null = null;
-
-  if (inviter_id) {
-    // Find an open slot in inviter's subtree for the new user
-    parentId = await findOpenSlotInSubtree(String(inviter_id));
-    if (!parentId) {
-      // If for some reason no slot found (tree completely full), default to attaching to inviter
-      parentId = await findOpenSlotInSubtree(String(genesisUser.id));
-    }
-  } else {
-    parentId = await findOpenSlotInSubtree(String(genesisUser.id));
-    inviter_id = genesisUser.id;
-  }
-
-  return { pi: String(parentId), ii: String(inviter_id) };
+  return genesisUser;
 }
 
 export async function updateUserPiggyBankBalance(
@@ -420,7 +391,7 @@ export async function updateUserPiggyBankBalance(
   // fetch te user first to see if it exists and if its pig address is the same
   const { data: user, error: userError } = await supabase
     .from("users")
-    .select("piggy_bank_balance, piggy_address")
+    .select("piggy_bank_balance, pig_address")
     .eq("wallet_address", userAddress)
     .single();
 
@@ -432,7 +403,7 @@ export async function updateUserPiggyBankBalance(
   }
 
   // comparing the balance and the pig address
-  if (user.piggy_address !== pigAddress) {
+  if (user.pig_address !== pigAddress) {
     throw new Error(
       `User ${userAddress} has a different pig address than the one in the db`
     );

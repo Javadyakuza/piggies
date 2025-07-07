@@ -151,14 +151,14 @@ export default function StorePage() {
         throw new Error(response.message);
       }
       
-      alert("passed the api call, params are " + JSON.stringify(params))
-      alert("parsed address " + Address.parse(params.pig_address).toString())
-      alert("parsed nft address " + String(Pig.fromAddress(Address.parse(params.pig_address))))
-      alert("passed all")
+      console.log("passed the api call, params are " + JSON.stringify(params))
+      console.log("parsed address " + Address.parse(params.pig_address).toString())
+      console.log("parsed nft address " + String(Pig.fromAddress(Address.parse(params.pig_address))))
+      console.log("passed all")
       let pig = tonClient.open(
         Pig.fromAddress(Address.parse(params.pig_address))
       );
-      alert("passed creating the nft item")
+      console.log("passed creating the nft item")
       await pig.send(
         sender_,
         {

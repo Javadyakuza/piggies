@@ -98,7 +98,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
         tx.related_tx
       )) as PigLevel,
       self_balance_change: tx.reward,
-      referral_depth: await findDepth(tx.wallet_address, tx.referral),
+      //referral_depth: await findDepth(tx.wallet_address, tx.referral), //TODO: check referral or bounty hunter
     };
   } else {
     return {
@@ -106,7 +106,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
       fullname: (await getUser(tx.wallet_address)).fullname,
       upgraded_pig_level: tx.upgraded_pig_level,
       self_balance_change: 0,
-      referral_depth: 0,
+      //referral_depth: 0,
     };
   }
 }

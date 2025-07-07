@@ -46,7 +46,12 @@ export async function findUsersBountyHunters(
     const upperUsers: User[] = [];
     const admins: User[] = [];
     const userIdsToFetch: string[] = [];
-    const upperUsersLimit = upgradedPigLevel === 1 ? 3 : 12;
+    const upperUsersLimit = {
+      [1]: 3,
+      [2]: 7,
+      [3]: 10,
+      [4]: 12,
+    }[upgradedPigLevel];
 
     let currentUserId: string | null = user.id;
     //----------------------------------------------------
@@ -86,8 +91,8 @@ export async function findUsersBountyHunters(
       }
 
       for (const user of users) {
-        const totalInvited = await calcTotalInvited(user.id);
-        if (user.current_pig <= upgradedPigLevel) {
+        if (user.current_pig >= upgradedPigLevel) {
+          const totalInvited = await calcTotalInvited(user.id);
           upperUsers.push({
             telegram_id: user.telegram_id,
             wallet_address: user.wallet_address || "",

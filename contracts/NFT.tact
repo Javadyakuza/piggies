@@ -7,7 +7,7 @@ contract PigCollection with NftCollection {
     staticTax: Int as coins = ton("0");
     lockedValue: Int as coins = ton("0.05");
 
-    nextItemIndex: Int as uint256 = 398;
+    nextItemIndex: Int as uint256 = 1;
     collectionContent: Cell;
     // itemContentUrlPrefix is the prefix of the individual NFT's content url.
     // the full url should be: `${itemContentUrlPrefix}${individualContent}.json`
@@ -53,7 +53,7 @@ contract PigCollection with NftCollection {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -65,7 +65,7 @@ contract PigCollection with NftCollection {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -103,7 +103,7 @@ contract Pig with NftItem {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -115,10 +115,11 @@ contract Pig with NftItem {
         require(limit != null, "Invalid level or limit map");
         let balance = myBalance();
         if (balance > limit!! + ton("0.0222")) {
+            nativeReserve(limit!!, 0);
             send(SendParameters {
                 to: msg.surplusDestination,
-                value: balance - limit!! - ton("0.0222"),
-                mode: SendRemainingValue,
+                value: 0,
+                mode: SendRemainingBalance,
                 bounce: false,
             });
         }
@@ -185,7 +186,7 @@ trait NftCollection with Common {
         send(SendParameters {
             to: sender(),
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
         });
     }
@@ -247,7 +248,7 @@ trait NftCollection with Common {
         send(SendParameters {
             to: msg.responseDestination,
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: false,
             body: Excesses {
                 queryId: msg.queryId,
@@ -316,7 +317,7 @@ trait NftCollection with Common {
     }
 
     virtual fun getNftAddressByIndex(index: Int): Address {
-        nativeThrowUnless(codeNftIndexNotExists, index < self.nextItemIndex);
+        nativeThrowUnless(codeNftIndexNotExists, index > 0 && index < self.nextItemIndex);
         return contractAddress(self.getNftItemContract(index));
     }
 
@@ -423,7 +424,7 @@ trait NftItem with Common {
         send(SendParameters {
             to: ctx.sender,
             value: 0,
-            mode: SendRemainingBalance,
+            mode: SendRemainingValue,
             bounce: true,
             body: ReportStaticData {
                 queryId: msg.queryId,
