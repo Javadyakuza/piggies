@@ -10,6 +10,7 @@ import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { useWallet } from "@/app/context/WalletProvider";
+import { useAccount } from "@/app/context/AccountProvider";
 
 type PigData = {
   pig_level: number;
@@ -66,7 +67,7 @@ export type BatchReferrals = {
 export default function FriendsPage() {
   const t = useTranslations("i18n");
   const { walletAddress } = useWallet();
-  const [referralId, setReferralId] = useState("");
+  const { user, initDataState } = useAccount();
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [openedAccordion, setOpenedAccordion] = useState<
     "ref" | number | undefined
@@ -75,8 +76,9 @@ export default function FriendsPage() {
   const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
   const [batchReferrals, setBatchReferrals] = useState<BatchReferrals>({});
 
-  const initDataState = useSignal(initData.state);
   const userTelegramId = useMemo(() => initDataState?.user?.id, [initDataState]);
+
+  const referralId = useMemo(() => user?.referral_id ?? '', [user]);
 
   const truncate = (str: string, maxLength: number) => {
     if (str.length <= maxLength) return str;
@@ -140,23 +142,6 @@ export default function FriendsPage() {
   }, [pigsData]);
 
   useEffect(() => {
-    if (!walletAddress && referralId) return;
-
-    const fetchUserData = async () => {
-      try {
-        const response: AxiosResponse<{
-          referral_id: string;
-        }> = await axios.get(`/api/user-tree/${walletAddress}`);
-        const referralId = response.data.referral_id;
-        setReferralId(referralId);
-      } catch (err) {
-        throw new Error(`Error fetching user data: ${err}`);
-      }
-    };
-    fetchUserData();
-  }, [walletAddress, referralId]);
-
-  useEffect(() => {
     if (!walletAddress) return;
 
     const fetchBatchReferrals = async () => {
@@ -167,10 +152,10 @@ export default function FriendsPage() {
         const referrals = response.data;
         setBatchReferrals(referrals);
       } catch (err) {
-        throw new Error(`Error fetching user data: ${err}`);
+        throw new Error(`Error fetching referrals data: ${err}`);
       }
     };
-    fetchBatchReferrals();
+    fetchBatchReferrals().catch(e => console.error(e));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
   const pigsMap = pigsMapV2(t);

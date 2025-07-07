@@ -10,29 +10,26 @@ import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { Button, IconButton } from "@telegram-apps/telegram-ui";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import axios, { AxiosResponse } from "axios";
 import { generateRefLink } from "@/utils/reflink";
 import "./styles.css";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
-import { useTonConnectUI } from "@tonconnect/ui-react";
 import Image from "next/image";
+import { useAccount } from "@/app/context/AccountProvider";
 
 export default function Header() {
   const t = useTranslations("i18n");
+  const { initDataState, user } = useAccount();
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const [wallet] = useTonConnectUI();
-  const walletAddress = wallet?.account?.address;
-
-  const initDataState = useSignal(initData.state);
-  const userData = initDataState?.user;
+  const userData = useMemo(() => initDataState?.user, [initDataState]);
 
   const [isRefLinkCopied, setIsRefLinkCopied] = useState(false);
-  const [referralId, setReferralId] = useState<string>();
+  const referralId = useMemo(() => user?.referral_id ?? '' , [user]);
 
   const handleCopyRefLink = () => {
     if (isRefLinkCopied || !referralId) return;
@@ -48,23 +45,6 @@ export default function Header() {
       }, 800);
     }
   }, [isRefLinkCopied]);
-
-  useEffect(() => {
-    if (!walletAddress && referralId) return;
-
-    const fetchUserData = async () => {
-      try {
-        const response: AxiosResponse<{
-          referral_id: string;
-        }> = await axios.get(`/api/user-tree/${walletAddress}`);
-        const referralId = response.data.referral_id;
-        setReferralId(referralId);
-      } catch (err) {
-        throw new Error(`Error fetching user data: ${err}`);
-      }
-    };
-    fetchUserData();
-  }, [walletAddress, referralId]);
 
   const handleNavigateProfile = () => {
     if (pathname === "/profile") return;

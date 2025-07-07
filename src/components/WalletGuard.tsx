@@ -13,10 +13,12 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
 import { useTranslations } from "next-intl";
 import { useWallet } from "@/app/context/WalletProvider";
+import { useAccount } from "@/app/context/AccountProvider";
 
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const t = useTranslations("i18n");
   const { wallet, tonConnectUI } = useWallet();
+  const { initDataState } = useAccount();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -26,8 +28,6 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   const [isUserRegistered, setIsUserRegistered] = useState<boolean | null>(
     null
   );
-
-  const initDataState = useSignal(initData.state);
 
   const startParam = initDataState?.startParam;
 

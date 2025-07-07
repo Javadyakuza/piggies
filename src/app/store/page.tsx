@@ -2,7 +2,7 @@
 "use client";
 import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./styles.css";
 import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
@@ -28,6 +28,7 @@ import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { Pig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
 import { useWallet } from "@/app/context/WalletProvider";
+import { useAccount } from "@/app/context/AccountProvider";
 
 type PigData = {
   pig_level: number;
@@ -37,6 +38,7 @@ type PigData = {
 export default function StorePage() {
   const t = useTranslations("i18n");
   const { walletAddress, sender, tonClient } = useWallet();
+  const { user, initDataState } = useAccount();
   const [piggyBankBalance, setPiggyBankBalance] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
@@ -44,8 +46,7 @@ export default function StorePage() {
   const [tonPrice, setTonPrice] = useState(0);
   const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
 
-  const initDataState = useSignal(initData.state);
-  const userTelegramId = initDataState?.user?.id;
+  const userTelegramId = useMemo(() => initDataState?.user?.id, [initDataState]);
 
   const pigsMap = pigsMapV2(t);
 
@@ -174,19 +175,16 @@ export default function StorePage() {
   };
 
   const fetchUserData = async () => {
-    if (!walletAddress || !tonClient) return;
+    if (!walletAddress || !tonClient || !user?.pig_address) return;
 
     try {
-      const response: AxiosResponse<{
-        pig_address: string;
-      }> = await axios.get(`/api/user-tree/${walletAddress}`);
-      let pig = tonClient.open(
-        Pig.fromAddress(Address.parse(response.data.pig_address))
+      const pig = tonClient.open(
+        Pig.fromAddress(Address.parse(user.pig_address))
       );
       const pigBalance = (await pig.getTonBalance()) - toNano("0.05");
       setPiggyBankBalance(Number(pigBalance));
     } catch (err) {
-      throw new Error(`Error fetching user data: ${err}`);
+      throw new Error(`Error fetching pig balance: ${err}`);
     }
   };
 
@@ -196,7 +194,7 @@ export default function StorePage() {
     fetchUserData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress]);
+  }, [walletAddress, user?.pig_address]);
 
   useEffect(() => {
     if (!pigsData) return;
