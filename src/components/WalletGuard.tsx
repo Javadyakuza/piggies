@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Button,
@@ -18,56 +18,18 @@ import { useAccount } from "@/app/context/AccountProvider";
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const t = useTranslations("i18n");
   const { wallet, tonConnectUI } = useWallet();
-  const { initDataState } = useAccount();
+  const { initDataState, user } = useAccount();
 
   const router = useRouter();
   const pathname = usePathname();
-  const [isRegisterRequestSent, setIsRegisterRequestSent] = useState(false);
 
   const [initialized, setInitialized] = useState(false);
-  const [isUserRegistered, setIsUserRegistered] = useState<boolean | null>(
-    null
+
+  const refId = useMemo(() => initDataState?.startParam?.startsWith("register_")
+      ? initDataState.startParam.split("_")[1]
+      : null,
+    [initDataState?.startParam]
   );
-
-  const startParam = initDataState?.startParam;
-
-  const refId = startParam?.startsWith("register_")
-    ? startParam.split("_")[1]
-    : null;
-
-  const userTelegramId = initDataState?.user?.id;
-  let userTelegramFullName =
-    initDataState?.user?.firstName || initDataState?.user?.lastName
-      ? `${initDataState?.user?.firstName || ""} 
-    ${initDataState?.user?.lastName || ""}`
-      : initDataState?.user?.username || initDataState?.user?.id;
-  userTelegramFullName = String(userTelegramFullName).replace(/\n/g, " ");
-
-  useEffect(() => {
-    if (wallet && userTelegramId && !isRegisterRequestSent) {
-      const handleRegister = async () => {
-        await axios
-          .patch(`/api/register`, {
-            wallet_address: wallet.account.address,
-            telegram_id: userTelegramId,
-            referral_id: refId || "",
-            fullname: userTelegramFullName,
-          })
-          .catch((err) => {
-            return null;
-          });
-      };
-
-      handleRegister();
-      setIsRegisterRequestSent(true);
-    }
-  }, [
-    wallet,
-    userTelegramId,
-    userTelegramFullName,
-    refId,
-    isRegisterRequestSent,
-  ]);
 
   useEffect(() => {
     if (!tonConnectUI) return;
@@ -106,7 +68,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
         router.replace("/wallet-connect");
       }
     }
-  }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
+  }, [initialized, wallet, pathname, router, user, refId]);
 
   if ((!initialized || !wallet) && pathname !== "/wallet-connect") {
     return (
