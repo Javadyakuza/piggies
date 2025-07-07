@@ -10,6 +10,7 @@ import {
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { AppRoot, Spinner } from "@telegram-apps/telegram-ui";
 
+import { WalletContextProvider } from "@/app/context/WalletProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ErrorPage } from "@/components/ErrorPage";
 import { useTelegramMock } from "@/hooks/useTelegramMock";
@@ -66,7 +67,9 @@ function RootInner({ children }: PropsWithChildren) {
       platform={"ios"}
     >
       <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/tonconnect-manifest.json">
-        {children}
+        <WalletContextProvider>
+          {children}
+        </WalletContextProvider>
       </TonConnectUIProvider>
     </AppRoot>
   );

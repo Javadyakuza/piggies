@@ -12,7 +12,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Accordion, Button, IconButton } from "@telegram-apps/telegram-ui";
 import { DisplayData } from "@/components/DisplayData/DisplayData";
-import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";
@@ -22,6 +21,7 @@ import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
 import Image from "next/image";
+import { useWallet } from "@/app/context/WalletProvider";
 
 type PigData = {
   pig_level: number;
@@ -30,10 +30,7 @@ type PigData = {
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
-  const [tonConnectUI] = useTonConnectUI();
-
-  const wallet = useTonWallet();
-  const walletAddress = wallet?.account?.address || "";
+  const { tonConnectUI, walletAddress } = useWallet();
 
   const [isDisconnectConfirmVisible, setIsDisconnectConfirmVisible] =
     useState(false);
@@ -47,7 +44,7 @@ export default function ProfilePage() {
   }, [isDisconnectConfirmVisible]);
 
   const handleDisconnectWallet = () => {
-    tonConnectUI.disconnect();
+    tonConnectUI?.disconnect();
   };
 
   const truncate = (str: string, maxLength: number) => {

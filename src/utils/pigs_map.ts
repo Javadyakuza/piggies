@@ -49,7 +49,7 @@ export const pigsMap = (t: any) => [
 
 const usdToTon = (usd: number, tonPrice: number) => (usd / tonPrice).toFixed(2);
 
-export const pigsMapV2 = (t: any, tonPrice: number) => [
+export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop?
   {
     title: t?.("storePage.bronzePig") as string,
     code: 1,
@@ -61,7 +61,7 @@ export const pigsMapV2 = (t: any, tonPrice: number) => [
     earnings: 117,
     cover: "/imgs/pigs/bronze.png",
     capacity: 100,
-    capacityInTon: usdToTon(100, tonPrice),
+    capacityInTon: "0.1",
   },
   {
     title: t?.("storePage.silverPig") as string,
@@ -74,7 +74,7 @@ export const pigsMapV2 = (t: any, tonPrice: number) => [
     earnings: 32700,
     cover: "/imgs/pigs/silver.png",
     capacity: 250,
-    capacityInTon: usdToTon(250, tonPrice),
+    capacityInTon: "0.25",
   },
   {
     title: t?.("storePage.goldPig") as string,
@@ -87,7 +87,7 @@ export const pigsMapV2 = (t: any, tonPrice: number) => [
     earnings: 5971510,
     cover: "/imgs/pigs/gold.png",
     capacity: 500,
-    capacityInTon: usdToTon(500, tonPrice),
+    capacityInTon: "0.5",
   },
   {
     title: t?.("storePage.diamondPig") as string,
@@ -100,6 +100,6 @@ export const pigsMapV2 = (t: any, tonPrice: number) => [
     earnings: 106288200,
     cover: "/imgs/pigs/diamond.png",
     capacity: 1000,
-    capacityInTon: usdToTon(1000, tonPrice),
+    capacityInTon: "0.75",
   },
 ];

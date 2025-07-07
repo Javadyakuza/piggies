@@ -9,6 +9,7 @@ import { pigsMapV2 } from "@/utils/pigs_map";
 import axios from "axios";
 import { useTonWallet } from "@tonconnect/ui-react";
 import { fromNano } from "@ton/core";
+import { useWallet } from "@/app/context/WalletProvider";
 
 type Reward = {
   created_at: Date;
@@ -20,9 +21,7 @@ type Reward = {
 export default function HistoryPage() {
   const t = useTranslations("i18n");
   const [histories, setHistories] = useState<Reward[]>([]);
-
-  const wallet = useTonWallet();
-  const walletAddress = wallet?.account?.address;
+  const { walletAddress } = useWallet();
 
   useEffect(() => {
     const fetchRewards = async () => {
@@ -56,7 +55,7 @@ export default function HistoryPage() {
     </div>
   );
 
-  const pigsMap = pigsMapV2(t, 0);
+  const pigsMap = pigsMapV2(t);
 
   const findPig = (code: number) => {
     return pigsMap.find((item) => item.code === code);

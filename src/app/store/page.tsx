@@ -27,6 +27,7 @@ import {
 import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { Pig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
+import { useWallet } from "@/app/context/WalletProvider";
 
 type PigData = {
   pig_level: number;
@@ -35,6 +36,7 @@ type PigData = {
 
 export default function StorePage() {
   const t = useTranslations("i18n");
+  const { walletAddress, sender, tonClient } = useWallet();
   const [piggyBankBalance, setPiggyBankBalance] = useState(0);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
@@ -45,34 +47,12 @@ export default function StorePage() {
   const initDataState = useSignal(initData.state);
   const userTelegramId = initDataState?.user?.id;
 
-  const [wallet] = useTonConnectUI();
-  const tonClient = getTonCenterClient();
-
-  const walletAddress = wallet?.account?.address;
-  const pigsMap = pigsMapV2(t, tonPrice);
-
-  const txRequestLifetime = Date.now() + 3 * 60 * 1000; // 3 minutes for user to approve
+  const pigsMap = pigsMapV2(t);
 
   const handlePurchasePig = async () => {
-    if (!walletAddress || isPurchaseInProgress) return;
+    if (!walletAddress || !tonClient || isPurchaseInProgress) return;
 
     try {
-      const sender_ = {
-        send: async (args: SenderArguments) => {
-          await wallet!.sendTransaction({
-            messages: [
-              {
-                address: args.to.toString(),
-                amount: args.value.toString(),
-                payload: args.body?.toBoc()?.toString("base64"),
-              },
-            ],
-            validUntil: txRequestLifetime,
-          });
-        },
-        address: walletAddress,
-      } as unknown as Sender;
-
       const params: AxiosResponse<PurchasePigResponse> = await axios.get(
         `/api/pigs/upgradePigParams?wallet_address=${walletAddress}`, 
         {
@@ -85,7 +65,7 @@ export default function StorePage() {
       );
 
       await pigShop.send(
-        sender_,
+        sender!,
         {
           value: BigInt((params.data.message as UpgradePigParams).amount),
         },
@@ -118,26 +98,9 @@ export default function StorePage() {
   };
 
   const handleWithdrawal = async () => {
-    if (!walletAddress || isPurchaseInProgress) return;
+    if (!walletAddress || !tonClient || isPurchaseInProgress) return;
 
     try {
-      const sender_ = {
-        send: async (args: SenderArguments) => {
-          console.log("args", args, args.to.toString());
-          await wallet!.sendTransaction({
-            messages: [
-              {
-                address: args.to.toString(),
-                amount:  args.value.toString(),
-                payload: args.body?.toBoc()?.toString("base64"),
-              },
-            ],
-            validUntil: txRequestLifetime,
-          });
-        },
-        address: walletAddress,
-      } as unknown as Sender;
-
       const response = (
         await axios.get(
           `/api/pigs/withdrawParams?wallet_address=${walletAddress}`
@@ -160,7 +123,7 @@ export default function StorePage() {
       );
       console.log("passed creating the nft item")
       await pig.send(
-        sender_,
+        sender!,
         {
           value: BigInt(params.amount),
         },
@@ -188,6 +151,7 @@ export default function StorePage() {
     setIsPurchaseInProgress(false);
     setIsConfirmModalOpen(false);
   };
+
   const fetchTonPrice = async () => {
     const res = await axios.get(
       `https://api.coinpaprika.com/v1/tickers/ton-toncoin`
@@ -210,7 +174,7 @@ export default function StorePage() {
   };
 
   const fetchUserData = async () => {
-    if (!walletAddress) return;
+    if (!walletAddress || !tonClient) return;
 
     try {
       const response: AxiosResponse<{

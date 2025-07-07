@@ -1,6 +1,5 @@
 "use client";
 
-import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -13,12 +12,12 @@ import { initData, useSignal } from "@telegram-apps/sdk-react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
 import { useTranslations } from "next-intl";
+import { useWallet } from "@/app/context/WalletProvider";
 
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const t = useTranslations("i18n");
-  const wallet = useTonWallet();
+  const { wallet, tonConnectUI } = useWallet();
 
-  const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
   const pathname = usePathname();
   const [isRegisterRequestSent, setIsRegisterRequestSent] = useState(false);
@@ -47,10 +46,8 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (wallet && userTelegramId && !isRegisterRequestSent) {
       const handleRegister = async () => {
-        setIsRegisterRequestSent(true);
-
         await axios
-          .post(`/api/register`, {
+          .patch(`/api/register`, {
             wallet_address: wallet.account.address,
             telegram_id: userTelegramId,
             referral_id: refId || "",
@@ -60,7 +57,9 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
             return null;
           });
       };
+
       handleRegister();
+      setIsRegisterRequestSent(true);
     }
   }, [
     wallet,
@@ -71,6 +70,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
   ]);
 
   useEffect(() => {
+    if (!tonConnectUI) return;
     tonConnectUI.connectionRestored.then(() => {
       setInitialized(true);
     });

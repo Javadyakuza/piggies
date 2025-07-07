@@ -38,7 +38,7 @@ export default async function handler(
     }
 
     const PigCost = BigInt(
-      toNano(pigsMapV2(undefined, 1)[user.current_pig].rawPriceInTon)
+      toNano(pigsMapV2(undefined)[user.current_pig].rawPriceInTon)
     );
 
     const tx_fee = toNano("0.2");

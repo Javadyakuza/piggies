@@ -3,13 +3,13 @@
 import { Page } from "@/components/Page";
 import { useTranslations } from "next-intl";
 import "./styles.css";
-import { useTonWallet } from "@tonconnect/ui-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { pigsMapV2 } from "@/utils/pigs_map";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
 import { useSignal, initData } from "@telegram-apps/sdk-react";
+import { useWallet } from "@/app/context/WalletProvider";
 
 type PigData = {
   pig_level: number;
@@ -65,6 +65,7 @@ export type BatchReferrals = {
 
 export default function FriendsPage() {
   const t = useTranslations("i18n");
+  const { walletAddress } = useWallet();
   const [referralId, setReferralId] = useState("");
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [openedAccordion, setOpenedAccordion] = useState<
@@ -74,11 +75,8 @@ export default function FriendsPage() {
   const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
   const [batchReferrals, setBatchReferrals] = useState<BatchReferrals>({});
 
-  const wallet = useTonWallet();
-  const walletAddress = wallet?.account?.address;
-
   const initDataState = useSignal(initData.state);
-  const userTelegramId = initDataState?.user?.id;
+  const userTelegramId = useMemo(() => initDataState?.user?.id, [initDataState]);
 
   const truncate = (str: string, maxLength: number) => {
     if (str.length <= maxLength) return str;
@@ -175,7 +173,7 @@ export default function FriendsPage() {
     fetchBatchReferrals();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
-  const pigsMap = pigsMapV2(t, 0);
+  const pigsMap = pigsMapV2(t);
 
   const currentPig =
     currentPigCode || currentPigCode === 0
