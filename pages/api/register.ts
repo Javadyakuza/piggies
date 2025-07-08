@@ -91,7 +91,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") {
+  if (req.method !== "PATCH") {
     return res
       .status(405)
       .json({ success: false, message: "Method not allowed" });
@@ -119,9 +119,22 @@ export default async function handler(
 
   // user exists
   if (user) {
-    return res
-      .status(409)
-      .json({ success: false, message: "User already registered" });
+    const { data: updateData, error } = await supabase
+      .from("users")
+      .update({
+        telegram_id: telegram_id,
+        fullname: fullname,
+      })
+      .eq("wallet_address", wallet_address)
+      .select()
+      .single();
+    if (error) {
+      console.error("Error updating user:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: `Database update error ${error}` });
+    }
+    return res.status(200).json({ success: true, user: updateData });
   }
 
   // get the inviter id

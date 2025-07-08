@@ -12,7 +12,7 @@
 
 //     const tonPriceInUSD = res?.data?.quotes?.USD.price || 0;
 
-//     const pigsMap = pigsMapV2(undefined, tonPriceInUSD);
+//     const pigsMap = pigsMapV2(undefined);
 
 // const targetPig = pigsMap.find((pig) => pig.code === pig_level);
 

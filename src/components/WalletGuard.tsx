@@ -1,7 +1,6 @@
 "use client";
 
-import { useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Button,
@@ -13,64 +12,27 @@ import { initData, useSignal } from "@telegram-apps/sdk-react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
 import { useTranslations } from "next-intl";
+import { useWallet } from "@/app/context/WalletProvider";
+import { useAccount } from "@/app/context/AccountProvider";
 
 export function WalletGuard({ children }: { children: React.ReactNode }) {
   const t = useTranslations("i18n");
-  const wallet = useTonWallet();
+  const { wallet, tonConnectUI } = useWallet();
+  const { initDataState, user } = useAccount();
 
-  const [tonConnectUI] = useTonConnectUI();
   const router = useRouter();
   const pathname = usePathname();
-  const [isRegisterRequestSent, setIsRegisterRequestSent] = useState(false);
 
   const [initialized, setInitialized] = useState(false);
-  const [isUserRegistered, setIsUserRegistered] = useState<boolean | null>(
-    null
+
+  const refId = useMemo(() => initDataState?.startParam?.startsWith("register_")
+      ? initDataState.startParam.split("_")[1]
+      : null,
+    [initDataState?.startParam]
   );
 
-  const initDataState = useSignal(initData.state);
-
-  const startParam = initDataState?.startParam;
-
-  const refId = startParam?.startsWith("register_")
-    ? startParam.split("_")[1]
-    : null;
-
-  const userTelegramId = initDataState?.user?.id;
-  let userTelegramFullName =
-    initDataState?.user?.firstName || initDataState?.user?.lastName
-      ? `${initDataState?.user?.firstName || ""} 
-    ${initDataState?.user?.lastName || ""}`
-      : initDataState?.user?.username || initDataState?.user?.id;
-  userTelegramFullName = String(userTelegramFullName).replace(/\n/g, " ");
-
   useEffect(() => {
-    if (wallet && userTelegramId && !isRegisterRequestSent) {
-      const handleRegister = async () => {
-        setIsRegisterRequestSent(true);
-
-        await axios
-          .post(`/api/register`, {
-            wallet_address: wallet.account.address,
-            telegram_id: userTelegramId,
-            referral_id: refId || "",
-            fullname: userTelegramFullName,
-          })
-          .catch((err) => {
-            return null;
-          });
-      };
-      handleRegister();
-    }
-  }, [
-    wallet,
-    userTelegramId,
-    userTelegramFullName,
-    refId,
-    isRegisterRequestSent,
-  ]);
-
-  useEffect(() => {
+    if (!tonConnectUI) return;
     tonConnectUI.connectionRestored.then(() => {
       setInitialized(true);
     });
@@ -106,7 +68,7 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
         router.replace("/wallet-connect");
       }
     }
-  }, [initialized, wallet, pathname, router, isUserRegistered, refId]);
+  }, [initialized, wallet, pathname, router, user, refId]);
 
   if ((!initialized || !wallet) && pathname !== "/wallet-connect") {
     return (
