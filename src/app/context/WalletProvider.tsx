@@ -26,7 +26,7 @@ const txRequestLifetime = Date.now() + 3 * 60 * 1000; // 3 minutes for user to a
 export const WalletContextProvider = ({ children }: WalletContextProviderProps) => {
   const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
-  const walletAddress = useTonAddress();
+  const walletAddress = useTonAddress(false);
   const [isConnected, setIsConnected] = useState(false);
   const [sender, setSender] = useState<Sender | null>(null);
   const [tonApi, setTonApi] = useState<TonApiClient | null>(null);

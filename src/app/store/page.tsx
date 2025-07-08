@@ -39,7 +39,7 @@ export default function StorePage() {
   const t = useTranslations("i18n");
   const { walletAddress, sender, tonClient } = useWallet();
   const { user, initDataState } = useAccount();
-  const [piggyBankBalance, setPiggyBankBalance] = useState(0);
+  const [piggyBankBalance, setPiggyBankBalance] = useState(BigInt(0));
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -174,15 +174,15 @@ export default function StorePage() {
     setPigsData(pigsDataToSet);
   };
 
-  const fetchUserData = async () => {
+  const fetchUserPigData = async () => {
     if (!walletAddress || !tonClient || !user?.pig_address) return;
 
     try {
       const pig = tonClient.open(
         Pig.fromAddress(Address.parse(user.pig_address))
       );
-      const pigBalance = (await pig.getTonBalance()) - toNano("0.05");
-      setPiggyBankBalance(Number(pigBalance));
+      const pigBalance = (await pig.getTonBalance()) - toNano("0.01");
+      setPiggyBankBalance(pigBalance > BigInt(0) ? pigBalance : BigInt(0));
     } catch (err) {
       throw new Error(`Error fetching pig balance: ${err}`);
     }
@@ -191,7 +191,7 @@ export default function StorePage() {
   useEffect(() => {
     fetchPigsData();
     fetchTonPrice();
-    fetchUserData();
+    fetchUserPigData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress, user?.pig_address]);
@@ -394,7 +394,7 @@ export default function StorePage() {
         <div className="balance-info">
           <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
           <span className="text">
-            <h4 className="earning">{fromNano(piggyBankBalance)}</h4>{" "}
+            <h4 className="earning">{+parseFloat(fromNano(piggyBankBalance)).toFixed(3)}</h4>{" "}
             <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
           </span>
         </div>
