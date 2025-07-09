@@ -115,6 +115,7 @@ contract PigShop {
   }
 
   receive(msg: WithdrawLeftovers) {
+    require(sender() == self.owner, "Only owner can withdraw leftovers");
     nativeReserve(ton("0.01"), 0);
     send(SendParameters {
       to: self.owner,
