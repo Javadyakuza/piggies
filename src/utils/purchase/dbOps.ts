@@ -20,18 +20,18 @@ export const updateBountyHuntersBalances = async (
   //----------------------------------------------------
   const { data: users, error: fetchUsersError } = await supabase
     .from("users")
-    .select("pig_address, piggy_bank_balance")
+    .select("wallet_address, piggy_bank_balance")
     .in(
-      "pig_address",
+      "wallet_address",
       bh.users.keys().map((userAddr) => userAddr.toRawString())
     );
   if (fetchUsersError) throw fetchUsersError;
 
   users.forEach((user) =>
     dic.set(
-      Address.parse(user.pig_address),
+      Address.parse(user.wallet_address),
       BigInt(user.piggy_bank_balance ?? 0) +
-        bh.users.get(Address.parse(user.pig_address))!
+        bh.users.get(Address.parse(user.wallet_address))!
     )
   );
 
@@ -39,7 +39,7 @@ export const updateBountyHuntersBalances = async (
     const { error } = await supabase
       .from("users")
       .update({ piggy_bank_balance: Number(dic.get(userAddr)) })
-      .eq("pig_address", userAddr.toRawString());
+      .eq("wallet_address", userAddr.toRawString());
 
     if (error) {
       console.error(`Failed to update user ${userAddr.toRawString()}:`, error);
@@ -55,9 +55,9 @@ export const updateBountyHuntersBalances = async (
 
   const { data: admins, error: fetchAdminsError } = await supabase
     .from("users")
-    .select("pig_address, piggy_bank_balance")
+    .select("wallet_address, piggy_bank_balance")
     .in(
-      "pig_address",
+      "wallet_address",
       bh.admins.keys().map((adminAddr) => adminAddr.toRawString())
     );
 
@@ -65,9 +65,9 @@ export const updateBountyHuntersBalances = async (
 
   admins.forEach((admin) =>
     dic.set(
-      Address.parse(admin.pig_address),
+      Address.parse(admin.wallet_address),
       BigInt(admin.piggy_bank_balance ?? 0) +
-        bh.admins.get(Address.parse(admin.pig_address))!
+        bh.admins.get(Address.parse(admin.wallet_address))!
     )
   );
 
@@ -75,7 +75,7 @@ export const updateBountyHuntersBalances = async (
     const { error } = await supabase
       .from("users")
       .update({ piggy_bank_balance: Number(dic.get(adminAddr)) })
-      .eq("pig_address", adminAddr.toRawString());
+      .eq("wallet_address", adminAddr.toRawString());
 
     if (error) {
       console.error(
@@ -94,9 +94,9 @@ export const updateBountyHuntersBalances = async (
   dic = Dictionary.empty<Address, bigint>();
   const { data: referrer, error: fetchReferrerError } = await supabase
     .from("users")
-    .select("pig_address, piggy_bank_balance")
+    .select("wallet_address, piggy_bank_balance")
     .in(
-      "pig_address",
+      "wallet_address",
       bh.referrer.keys().map((referrerAddr) => referrerAddr.toRawString())
     );
 
@@ -104,9 +104,9 @@ export const updateBountyHuntersBalances = async (
 
   referrer.forEach((referrer) =>
     dic.set(
-      Address.parse(referrer.pig_address),
+      Address.parse(referrer.wallet_address),
       BigInt(referrer.piggy_bank_balance ?? 0) +
-        bh.referrer.get(Address.parse(referrer.pig_address))!
+        bh.referrer.get(Address.parse(referrer.wallet_address))!
     )
   );
 
@@ -114,7 +114,7 @@ export const updateBountyHuntersBalances = async (
     const { error } = await supabase
       .from("users")
       .update({ piggy_bank_balance: Number(dic.get(referrerAddr)) })
-      .eq("pig_address", referrerAddr.toRawString());
+      .eq("wallet_address", referrerAddr.toRawString());
 
     if (error) {
       console.error(
@@ -158,14 +158,13 @@ export const upgradeUserPig = async (userAddress: string) => {
   }
 };
 
-export const upgradeUserPigAddressAndParentId = async (
+export const upgradeUserPigAddress = async (
   wallet_address: string,
-  pig_address: string,
-  parent_id?: number
+  pig_address: string
 ) => {
   const { error: updateError } = await supabase
     .from("users")
-    .update({ pig_address, parent_id })
+    .update({ pig_address })
     .eq("wallet_address", wallet_address);
 
   if (updateError) {
@@ -280,17 +279,11 @@ export async function updateReferralsRewardsHistory(
 
   if (event_data.referrer) {
     for (const referrer of Array.from(event_data.referrer.keys())) {
-      const { data: referrer_user } = await supabase
-        .from("users")
-        .select("wallet_address")
-        .eq("pig_address", referrer.toRawString())
-        .single();
-      if (!referrer_user) throw new Error(`Unknown referrer's pig address: ${referrer.toRawString()}`);
       const reward = event_data.referrer.get(referrer);
       const { error: insertError } = await supabase
         .from("rewards_history")
         .insert({
-          wallet_address: referrer_user.wallet_address,
+          wallet_address: referrer.toRawString(),
           reward: Number(reward),
           referral: event_data.userAddress.toRawString(),
           related_tx: event_data.tx_hash,
@@ -299,7 +292,7 @@ export async function updateReferralsRewardsHistory(
         .single();
 
       console.log(
-        `rewarded referrer ${referrer_user.wallet_address} with ${Number(fromNano(reward!))} TON`
+        `rewarded referrer ${referrer.toRawString()} with ${Number(fromNano(reward!))} TON`
       );
 
       if (insertError) {
@@ -363,14 +356,13 @@ export async function getUserByReferralId(referral_id: string) {
   return user;
 }
 
-export async function getUserByPigAddress(pig_address: string) {
-  const { data: user } = await supabase
+export async function getUsersByPigAddresses(pig_addresses: string[]) {
+  const { data: users } = await supabase
     .from("users")
-    .select("id")
-    .eq("pig_address", pig_address)
-    .single();
+    .select("id, wallet_address, pig_address")
+    .in("pig_address", pig_addresses);
 
-  return user;
+  return users || [];
 }
 
 export async function getGenesisUser() {
@@ -381,6 +373,21 @@ export async function getGenesisUser() {
     .single();
 
   return genesisUser;
+}
+
+export async function attachUserToTree(p_user_id: number, p_inviter_id: number) {
+  const { data, error } = await supabase
+    .rpc('attach_user_to_tree', {
+      p_user_id,
+      p_inviter_id,
+    });
+
+  if (error || !data) {
+    throw new Error(
+      `Failed to attach user to tree ${p_user_id} (inviter: ${p_inviter_id}): ${error?.message}`
+    );
+  }
+  return data as number;
 }
 
 export async function updateUserPiggyBankBalance(

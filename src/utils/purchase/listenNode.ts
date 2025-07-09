@@ -33,8 +33,9 @@ import { getTonApiClient, getTonCenterClient } from "../tonClients";
 import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
+  attachUserToTree,
   getGenesisUser,
-  getPigs, getUserByPigAddress,
+  getPigs, getUsersByPigAddresses,
   initTxHistory,
   isDuplicatePurchase,
   updateBountyHuntersBalances,
@@ -43,7 +44,7 @@ import {
   UpdateUSerInTree,
   updateUserPiggyBankBalance,
   upgradeUserPig,
-  upgradeUserPigAddressAndParentId,
+  upgradeUserPigAddress,
 } from "./dbOps";
 import { PigLevel } from "../../models/pigs";
 import { WithdrawFromNftPig } from "../../../wrappers/Pig";
@@ -216,6 +217,16 @@ async function catchPigShopEvents(
       console.log("🐷 Pig data loaded:", pig_data);
       fileSystemLogger.log("🐷 Pig data loaded:", pig_data);
 
+      if (pig_data.old_pig_level === 0 && !pig_data.address) {
+        const { id: user_id_to_attach, inviter_id, parent_id } = user;
+        if (!parent_id) {
+          // set the parent pig in ternary subtree with root = inviter
+          const new_parent_id = await attachUserToTree(user_id_to_attach, inviter_id);
+          console.log("🌳 Attached user to parent:", user_id_to_attach, '->', new_parent_id);
+          fileSystemLogger.log("🌳 Attached user to parent:", user_id_to_attach, '->', new_parent_id);
+        }
+      }
+
       const bh = await findUsersBountyHunters(userAddr, pig_data.new_pig_level);
       console.log("🏹 Bounty hunters fetched:", bh);
       fileSystemLogger.log("🏹 Bounty hunters fetched:", bh);
@@ -273,10 +284,44 @@ async function catchPigShopEvents(
         console.log("✅ Approval received for:", userAddr);
         fileSystemLogger.log("✅ Approval received for:", userAddr);
 
+        const bountyHuntersPigAddresses: Address[] = [event.referrerNftAddress]
+          .concat(event.userBountyHunters.keys())
+          .concat(event.adminsShares.keys());
+
+        const bountyHuntersArr = await getUsersByPigAddresses(
+          bountyHuntersPigAddresses.map(addr => addr.toRawString())
+        );
+
+        const bountyHunters = Dictionary.empty<Address, Address>();
+        for (const bountyHunter of bountyHuntersArr) {
+          bountyHunters.set(
+            Address.parseRaw(bountyHunter.pig_address),
+            Address.parseRaw(bountyHunter.wallet_address)
+          );
+        }
+
         event.referrer = Dictionary.empty<Address, bigint>().set(
-          event.referrerNftAddress,
+          bountyHunters.get(event.referrerNftAddress) ?? event.referrerNftAddress,
           event.referrerAmount
         );
+
+        const userBountyHunters = Dictionary.empty() as (typeof event)["userBountyHunters"];
+        for (const bhPigAddress of event.userBountyHunters.keys()) {
+          userBountyHunters.set(
+            bountyHunters.get(bhPigAddress) ?? bhPigAddress,
+            event.userBountyHunters.get(bhPigAddress)!,
+          );
+        }
+        event.userBountyHunters = userBountyHunters;
+
+        const adminsShares = Dictionary.empty() as (typeof event)["adminsShares"];
+        for (const bhPigAddress of event.adminsShares.keys()) {
+          adminsShares.set(
+            bountyHunters.get(bhPigAddress) ?? bhPigAddress,
+            event.adminsShares.get(bhPigAddress)!,
+          );
+        }
+        event.adminsShares = adminsShares;
 
         console.log("👔 Updated the referrer amount for:", event.referrer);
         fileSystemLogger.log(
@@ -325,22 +370,11 @@ async function catchPigShopEvents(
         console.log("🐣 Handling PigCreationEvent");
         fileSystemLogger.log("🐣 Handling PigCreationEvent");
         //-----------------------------------------
-        // get the parent pig in ternary tree
+        // update the user pig address (pig_address on the users table)
         //-----------------------------------------
-        let parent_id: number | undefined;
-        const parentPigTreeIndex = (event.nftIndex - 1n) / 3n;
-        if (parentPigTreeIndex > 0n) {
-          const parentPigAddress = await PigCollectionContract.getGetNftAddressByIndex(parentPigTreeIndex);
-          parent_id = (await getUserByPigAddress(parentPigAddress.toRawString()) || await getGenesisUser())?.id ?? 1;
-        } else { // 0 is root/genesis
-          parent_id = (await getGenesisUser())?.id ?? 1;
-        }
-        //-----------------------------------------
-        // update the user pig address (pig_address on the users table) and parent_id
-        //-----------------------------------------
-        await upgradeUserPigAddressAndParentId(userAddr, event.nft.toRawString(), parent_id);
-        console.log("✅ User pig address and parent_id upgraded");
-        fileSystemLogger.log("✅ User pig address and parent_id upgraded");
+        await upgradeUserPigAddress(userAddr, event.nft.toRawString());
+        console.log("✅ User pig address upgraded");
+        fileSystemLogger.log("✅ User pig address upgraded");
       }
 
       if (event.$$type === "WithdrawFromPigEvent") {

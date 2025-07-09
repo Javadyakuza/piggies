@@ -13,9 +13,9 @@ import { Address } from "@ton/core";
 // };
 
 export const ContractAddresses = {
-  pigShop: Address.parse("EQCmjj7otfwm6WcictB2Mpyzzm-dfvG4NAkzF6QLqte8Ue7V"),
+  pigShop: Address.parse("EQAhS0Io_Pr8H1UDm8X7nVLsa9ja36WMLnJhgcmhM8ICdDMA"),
 
-  pigsCollection: Address.parse("EQA_z9aaZBsDClVLm2R0Rr1KbaybghihievPFp3nCC11oT8p"),
+  pigsCollection: Address.parse("EQDEREWPdVKqWF3_P-oWW5n9_FrW8SakeBJDKCt-Zifhg5HU"),
 };
 
 // Connected to wallet at address: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
