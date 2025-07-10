@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useWallet } from "@/app/context/WalletProvider";
 import { User } from "../../../SupabaseTypes";
@@ -8,6 +8,7 @@ import { initData, useSignal } from "@telegram-apps/sdk-react";
 
 type AccountContextType = {
   user: User | null;
+  refetchUserData: () => Promise<User>;
   initDataState: ReturnType<ReturnType<typeof useSignal<(typeof initData)["state"]>>>;
 };
 
@@ -63,24 +64,21 @@ export const AccountContextProvider = ({ children }: AccountContextProviderProps
 
   //TODO: don't try to register again if we are registered?
 
-  useEffect(() => {
-    if (!walletAddress) return;
-
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get<User>(`/api/user-tree/${walletAddress}`);
-        setUser(response.data);
-      } catch (err) {
-        throw new Error(`Error fetching user data: ${err}`);
-      }
-    };
-    fetchUserData().catch(e => console.error(e));
+  const refetchUserData = useCallback(async () => {
+    try {
+      const response = await axios.get<User>(`/api/user-tree/${walletAddress}`);
+      setUser(response.data);
+      return response.data;
+    } catch (err) {
+      throw new Error(`Error fetching user data: ${err}`);
+    }
   }, [walletAddress]);
 
   return (
     <AccountContext.Provider
       value={{
         user,
+        refetchUserData,
         initDataState,
       }}
     >

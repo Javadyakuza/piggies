@@ -8,7 +8,7 @@ import { BitString, Dictionary, DictionaryKeyTypes } from "@ton/core";
 export async function getUser(wallet_address: string) {
   const { data, error: fetchError } = await supabase
     .from("users")
-    .select("id, wallet_address, fullname, parent_id")
+    .select("id, wallet_address, fullname, parent_id, inviter_id")
     .eq("wallet_address", wallet_address.trim().toLowerCase())
     .single();
 
