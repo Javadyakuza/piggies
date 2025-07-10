@@ -390,7 +390,7 @@ export default function StorePage() {
     (slide) => slide.code > (currentPigCode || 0)
   );
   const mainPage = (
-    <div className="main-container">
+    <div className="store-container">
       <div className="balance-container">
         <div className="balance-info">
           <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />

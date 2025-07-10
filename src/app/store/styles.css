@@ -6,67 +6,68 @@
   display: block;
   animation: spin 3s linear infinite;
 }
-.bank-container .main-container {
+
+.bank-container .store-container {
   height: 75vh;
   overflow: scroll;
 }
-.bank-container .main-container .yellow {
+.bank-container .store-container .yellow {
   color: #ffbe0b;
   font-weight: bold;
   font-size: 20px;
 }
-.bank-container .main-container .thick {
+.bank-container .store-container .thick {
   font-weight: 200;
   color: #facefd;
 }
-.bank-container .main-container .slide-title {
+.bank-container .store-container .slide-title {
   font-weight: bold;
   color: #c23970;
   font-size: 32px;
 }
-.bank-container .main-container .slide-title-container {
+.bank-container .store-container .slide-title-container {
   font-size: 32px;
 }
-.bank-container .main-container .slider-slide > .title {
+.bank-container .store-container .slider-slide > .title {
   margin-top: 3px;
 }
-.bank-container .main-container .slider-slide > .hint {
+.bank-container .store-container .slider-slide > .hint {
   margin-bottom: 15px;
 }
-.bank-container .main-container .balance-container {
+.bank-container .store-container .balance-container {
   margin-left: 15px;
   text-align: center;
 }
-.bank-container .main-container .balance-container .withdraw-btn {
+.bank-container .store-container .balance-container .withdraw-btn {
   margin-top: 10px;
   height: 32px;
   color: #691d82;
   border-radius: 34px;
 }
-.bank-container .main-container .balance-container .withdraw-btn.normal {
+.bank-container .store-container .balance-container .withdraw-btn.normal {
   background-color: #e73d74;
 }
-.bank-container .main-container .balance-container .withdraw-btn.warning {
+.bank-container .store-container .balance-container .withdraw-btn.warning {
   background-color: #ebb319;
 }
-.bank-container .main-container .balance-container .balance-info {
+.bank-container .store-container .balance-container .balance-info {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.bank-container .main-container .balance-container .ton-icon {
+.bank-container .store-container .balance-container .ton-icon {
   width: 42px;
 }
-.bank-container .main-container .balance-container .text {
+.bank-container .store-container .balance-container .text {
   font-size: 26px;
 }
-.bank-container .main-container .balance-container .text h4 {
+.bank-container .store-container .balance-container .text h4 {
   display: inline;
 }
-.bank-container .main-container .balance-container .text .earning {
+.bank-container .store-container .balance-container .text .earning {
   color: #ffbe0b;
 }
-.bank-container .main-container .balance-container .text .total {
+.bank-container .store-container .balance-container .text .total {
   font-weight: 200;
   color: #facefd;
 }
@@ -126,8 +127,6 @@
 }
 .bank-container .confirm-modal-container .action-container {
   width: 100%;
-  position: relative;
-  z-index: 1;
 }
 .bank-container .confirm-modal-container .action-container .btns .action-btn {
   margin: auto;
@@ -144,54 +143,19 @@
 .bank-container .confirm-modal-container .action-container .btns .purchase-btn {
   background-color: #2cc48f;
 }
-.bank-container
-  .confirm-modal-container
-  .action-container
-  .btns
-  .purchase-btn
-  div {
+.bank-container .confirm-modal-container .action-container .btns .purchase-btn div {
   font-weight: 200;
 }
-.bank-container
-  .confirm-modal-container
-  .action-container
-  .btns
-  .purchase-btn
-  div
-  .price {
+.bank-container .confirm-modal-container .action-container .btns .purchase-btn div .price {
   font-weight: 600;
 }
 .bank-container .confirm-modal-container .action-container .btns .close-btn {
   border: 2px solid #bbbcbb;
   color: #bbbcbb;
-  background: rgba(0, 0, 0, 0);
+  background: transparent;
   margin-top: 6px;
   font-size: 14px;
   padding: 3px 10px;
-}
-.loader-container {
-  text-align: center;
-  padding: 20px;
-}
-
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #000000;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-  margin: 0 50%;
-
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes spin {
