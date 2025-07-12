@@ -84,10 +84,10 @@ export default function HistoryPage() {
                     <div className="head">
                       <h2>
                         {history.fullname}{" "}
-                        {!history.self_balance_change && ( // TODO: fix level fetching
+                        {(!history.self_balance_change || history.self_balance_change < 0) && ( // TODO: fix level fetching
                           <span className="level">
                             (
-                            {history.self_balance_change
+                            {history.referral_depth
                               ? t("historiesPage.level", {
                                 level: history.referral_depth,
                               })
@@ -103,7 +103,11 @@ export default function HistoryPage() {
                         <span className="date">
                           {formatDate(new Date(history.created_at))}:
                         </span>{" "}
-                        <span>{t("historiesPage.got")}</span>{" "}
+                        <span>{
+                          history.self_balance_change >= 0 ?
+                            t("historiesPage.got") :
+                            t("historiesPage.emptied")
+                        }</span>{" "}
                         <span className={`pig-title ${pigClassName}`}>
                           {targetPig?.title}
                         </span>
@@ -114,8 +118,8 @@ export default function HistoryPage() {
                         {(history.self_balance_change && (
                           <>
                             {t("historiesPage.balance")}:{" "}
-                            <span className="balance">
-                              +{fromNano(history.self_balance_change)} TON
+                            <span className={`balance ${history.self_balance_change < 0 ? 'withdraw' : ''}`}>
+                              {history.self_balance_change > 0 && '+'}{fromNano(history.self_balance_change)} TON
                             </span>
                           </>
                         )) || <></>}

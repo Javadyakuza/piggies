@@ -8,7 +8,7 @@ import { BitString, Dictionary, DictionaryKeyTypes } from "@ton/core";
 export async function getUser(wallet_address: string) {
   const { data, error: fetchError } = await supabase
     .from("users")
-    .select("id, wallet_address, fullname, parent_id, inviter_id")
+    .select("id, wallet_address, fullname, parent_id, inviter_id, current_pig")
     .eq("wallet_address", wallet_address.trim().toLowerCase())
     .single();
 
@@ -91,12 +91,13 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
   console.log("tx in pre", tx);
   if (tx.reward) {
     console.log("tx.referral", tx.referral);
+    const user = await getUser(tx.referral);
     return {
       created_at: tx.created_at,
-      fullname: (await getUser(tx.referral)).fullname,
+      fullname: user.fullname,
       upgraded_pig_level: (await getUpgradedPigLevel(
         tx.related_tx
-      )) as PigLevel,
+      ).catch(() => user.current_pig)) as PigLevel,
       self_balance_change: tx.reward,
       //referral_depth: await findDepth(tx.wallet_address, tx.referral), //TODO: check referral or bounty hunter
     };

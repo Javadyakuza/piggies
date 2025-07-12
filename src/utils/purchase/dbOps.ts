@@ -8,6 +8,7 @@ import { supabase } from "../supabase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
 import { Address, fromNano } from "@ton/core";
+import { BigIntMath } from "@/utils/BigIntMath";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (
@@ -338,8 +339,10 @@ export async function attachUserToTree(p_user_id: number, p_inviter_id: number) 
 export async function updateUserPiggyBankBalance(
   userAddress: string,
   pigAddress: string,
-  amount: bigint
+  amount: bigint,
+  tx_hash: string
 ) {
+  amount = BigIntMath.round(amount);
   // fetch te user first to see if it exists and if its pig address is the same
   const { data: user, error: userError } = await supabase
     .from("users")
@@ -366,10 +369,33 @@ export async function updateUserPiggyBankBalance(
     );
   }
 
+  const delta = BigIntMath.min(BigInt(user.piggy_bank_balance), amount);
+
+  if (delta > BigInt(0)) {
+    const {error: insertError} = await supabase
+        .from("rewards_history")
+        .insert({
+          wallet_address: userAddress,
+          reward: -Number(delta),
+          referral: userAddress,
+          related_tx: tx_hash,
+        })
+        .select()
+        .single();
+
+    if (insertError) {
+      console.error("Insert withdraw transaction error:", insertError);
+    } else {
+      console.log(
+          `Inserted transaction of ${userAddress} to withdraw ${fromNano(delta)} TON`
+      );
+    }
+  }
+
   const { error: updateError } = await supabase
     .from("users")
     .update({
-      piggy_bank_balance: 0,
+      piggy_bank_balance: Math.max(0, user.piggy_bank_balance - Number(amount)),
     })
     .eq("wallet_address", userAddress);
 

@@ -64,6 +64,10 @@
           font-size: 20px;
           .balance {
             color: #2cc48f;
+
+            &.withdraw {
+              color: #c42c8f;
+            }
           }
         }
       }
