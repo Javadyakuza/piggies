@@ -99,7 +99,7 @@ export const countReferralsByLevel = async (
   }
 
   const result: ReferralLevel[] = [];
-  for (let i = 1; i <= 11; i++) {
+  for (let i = 1; i <= 12; i++) {
     const idsAtLevel = levels[i] || [];
     const count = idsAtLevel.length;
     const total = calculateTotalPossible(i);
@@ -132,7 +132,7 @@ export const countReferralsByLevel = async (
  *       The `referrals` query param controls depth:
  *
  *       - `0` returns only the user's `referral_id`.
- *       - `1` to `11` returns level-by-level referral stats.
+ *       - `1` to `12` returns level-by-level referral stats.
  *       - `"batch"` returns a simplified map of levels to user arrays.
  *     parameters:
  *       - name: telegram_id
@@ -145,7 +145,7 @@ export const countReferralsByLevel = async (
  *       - name: referrals
  *         in: query
  *         required: true
- *         description: Depth of referrals to return (0–11 or "batch")
+ *         description: Depth of referrals to return (0–12 or "batch")
  *         schema:
  *           type: string
  *           example: "3"
@@ -170,7 +170,7 @@ export const countReferralsByLevel = async (
  *                       type: string
  *                       example: "ref123"
  *                 - type: object
- *                   description: Returned when referrals=1–11
+ *                   description: Returned when referrals=1–12
  *                   additionalProperties:
  *                     type: object
  *                     properties:
@@ -296,11 +296,11 @@ export default async function handler(
       .json({ error: "Invalid or missing referrals wallet address parameter" });
   }
 
-  const referralsNum = parseInt(referrals == "batch" ? "11" : referrals, 10);
-  if (isNaN(referralsNum) || referralsNum < 0 || referralsNum > 11) {
+  const referralsNum = parseInt(referrals == "batch" ? "12" : referrals, 10);
+  if (isNaN(referralsNum) || referralsNum < 0 || referralsNum > 12) {
     return res
       .status(400)
-      .json({ error: "Referrals must be a number between 0 and 11" });
+      .json({ error: "Referrals must be a number between 0 and 12" });
   }
 
   const { data: userExists, error: userError } = await supabase

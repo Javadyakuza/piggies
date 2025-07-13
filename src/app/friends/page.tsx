@@ -8,7 +8,6 @@ import axios, { AxiosResponse } from "axios";
 import { pigsMapV2 } from "@/utils/pigs_map";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
-import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { useWallet } from "@/app/context/WalletProvider";
 import { useAccount } from "@/app/context/AccountProvider";
 
@@ -326,23 +325,25 @@ export default function FriendsPage() {
               </>
             );
           })}
-          <div className="accordion level locked">
-            <div className="locked-title">
-              <h2 className="title ">
-                {t("friendsPage.levelReferrals", {
-                  level: lockedLevels.join(" - "),
-                })}
-              </h2>
-              <img
-                className="locked-img"
-                src="/imgs/icons/locked.png"
-                alt="locked"
-              />
+          {!!nextPig?.level && (
+            <div className="accordion level locked">
+              <div className="locked-title">
+                <h2 className="title ">
+                  {t("friendsPage.levelReferrals", {
+                    level: lockedLevels.join(" - "),
+                  })}
+                </h2>
+                <img
+                    className="locked-img"
+                    src="/imgs/icons/locked.png"
+                    alt="locked"
+                />
+              </div>
+              <div className="arrow">
+                <img src="/imgs/icons/arrow-right-bright.png" alt="arrow-icon" />
+              </div>
             </div>
-            <div className="arrow">
-              <img src="/imgs/icons/arrow-right-bright.png" alt="arrow-icon" />
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </Page>

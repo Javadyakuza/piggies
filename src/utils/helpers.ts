@@ -136,6 +136,8 @@ const levelsMap = (level: number) => {
       return 10;
     case 177147:
       return 11;
+    case 531441:
+      return 12;
     default:
       return 0;
   }
