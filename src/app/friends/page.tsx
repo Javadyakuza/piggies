@@ -47,21 +47,14 @@ type ReferralLevelResponse = {
   };
 };
 
-export type BatchReferrals = {
-  [level: string]: {
-    id: number;
-    telegram_id: string;
-    inviter_id: number;
-    parent_id: number;
-    created_at: string;
-    referral_id: string;
-    wallet_address: string;
-    current_pig: number;
-    fullname: string;
-    piggy_bank_balance: number;
-    user_type: number;
-    pig_address: string;
-  }[];
+export type Invitee = {
+  id: number;
+  telegram_id: string;
+  inviter_id: number;
+  parent_id: number;
+  wallet_address: string;
+  current_pig: number;
+  fullname: string;
 };
 
 export default function FriendsPage() {
@@ -74,7 +67,7 @@ export default function FriendsPage() {
   >();
   const [pigsData, setPigsData] = useState<PigData>();
   const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
-  const [batchReferrals, setBatchReferrals] = useState<BatchReferrals>({});
+  const [invitees, setInvitees] = useState<Invitee[]>([]);
 
   const userTelegramId = useMemo(() => initDataState?.user?.id, [initDataState]);
 
@@ -144,18 +137,18 @@ export default function FriendsPage() {
   useEffect(() => {
     if (!walletAddress) return;
 
-    const fetchBatchReferrals = async () => {
+    const fetchInvitees = async () => {
       try {
-        const response: AxiosResponse<BatchReferrals> = await axios.get(
-          `/api/user-tree/referrals?wallet_address=${walletAddress}&referrals=batch&telegram_id=${userTelegramId}`
+        const response: AxiosResponse<Invitee[]> = await axios.get(
+          `/api/user-tree/invitees?wallet_address=${walletAddress}&telegram_id=${userTelegramId}`
         );
         const referrals = response.data;
-        setBatchReferrals(referrals);
+        setInvitees(referrals);
       } catch (err) {
         throw new Error(`Error fetching referrals data: ${err}`);
       }
     };
-    fetchBatchReferrals().catch(e => console.error(e));
+    fetchInvitees().catch(e => console.error(e));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
   const pigsMap = pigsMapV2(t);
@@ -196,17 +189,12 @@ export default function FriendsPage() {
     return pigsMap.find((item) => item.code === code);
   };
 
-  const formattedReferrals = Object.entries(batchReferrals).flatMap((entry) => {
-    const [key, value] = entry;
-    return value.flatMap((v) => ({ ...v, level: key }));
-  });
-
   const RefAccordionContent = () => {
     return (
       <div className="ref-accordion-content">
-        {formattedReferrals.length ? (
+        {invitees.length ? (
           <div className="invites-container">
-            {formattedReferrals.map((invite, i) => {
+            {invitees.map((invite, i) => {
               const targetPig = findPig(invite.current_pig);
               const pigClassName = targetPig?.title
                 .replace(" Pig", "")
@@ -220,7 +208,7 @@ export default function FriendsPage() {
                         <span className="level">
                           (
                           {t("friendsPage.levelReferrals", {
-                            level: invite.level,
+                            level: invite.current_pig,
                           })}
                           )
                         </span>

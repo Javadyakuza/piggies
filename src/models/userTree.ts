@@ -34,6 +34,11 @@ export type ReferralRequest = {
   wallet_address: string
 };
 
+export type InviteeRequest = {
+  telegram_id: string;
+  wallet_address: string
+};
+
 
 export type batchReferralsRequest = {
   wallet_address: string;
