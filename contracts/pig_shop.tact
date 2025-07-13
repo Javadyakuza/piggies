@@ -146,6 +146,12 @@ contract PigShop {
         amount: msg.amount
       }.toCell()
     );
+    send(SendParameters {
+      to: msg.owner,
+      value: 0,
+      mode: SendRemainingValue,
+      bounce: false,
+    });
   }
 
   receive(msg: PigApproval){

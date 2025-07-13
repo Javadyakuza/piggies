@@ -317,13 +317,17 @@ describe("PigCreation Event Test", () => {
 
     const withdrawResult = await pigNft1.send(
       user1.getSender(),
-      { value: toNano("0.1") },
+      { value: toNano("0.01") },
       { $$type: "WithdrawFromNftPig" }
     );
     console.log("user balance after", await user1.getBalance());
 
+      const nftBalanceAfter = (await blockchain.getContract(nftAddress1))
+          .balance;
+      console.log("NFT Balance after withdrawal:", nftBalanceAfter);
+
     expect(withdrawResult.transactions).toHaveTransaction({
-      from: nftAddress1,
+      from: pigShop.address,
       to: user1.address,
       success: true,
     });
