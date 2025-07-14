@@ -315,7 +315,7 @@ export async function getGenesisUser() {
   const { data: genesisUser } = await supabase
     .from("users")
     .select("id")
-    .eq("telegram_id", "@genesis")
+    .eq("user_type", 0)
     .single();
 
   return genesisUser;
