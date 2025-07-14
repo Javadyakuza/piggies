@@ -1,7 +1,5 @@
 .profile-container {
-  height: 78vh;
-  overflow: scroll;
-
+  display: contents;
   .wallet-address-container {
     width: 360px;
     margin: auto;
@@ -32,6 +30,13 @@
         border: none;
         background: transparent;
         width: 24px;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
+        &:active {
+          opacity: 0.5;
+        }
         img {
           width: 24px;
         }

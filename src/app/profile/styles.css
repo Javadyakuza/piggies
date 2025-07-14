@@ -1,1 +1,49 @@
-.profile-container{height:78vh;overflow:scroll}.profile-container .wallet-address-container{width:360px;margin:auto;text-align:center}.profile-container .wallet-address-container .title{font-weight:600;text-align:center;font-size:32px;margin-bottom:12px}.profile-container .wallet-address-container .wallet-address{background:#691d82;border-radius:8px;width:calc(100% - 32px);height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}.profile-container .wallet-address-container .wallet-address .address{color:#facefd;font-size:20px}.profile-container .wallet-address-container .wallet-address .copy-btn{border:none;background:rgba(0,0,0,0);width:24px}.profile-container .wallet-address-container .wallet-address .copy-btn img{width:24px}.profile-container .wallet-address-container .disconnect-btn{margin-top:15px;border-radius:28px;padding-left:9px;background-color:#0b98eb}
+.profile-container {
+  display: contents;
+}
+.profile-container .wallet-address-container {
+  width: 360px;
+  margin: auto;
+  text-align: center;
+}
+.profile-container .wallet-address-container .title {
+  font-weight: 600;
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+.profile-container .wallet-address-container .wallet-address {
+  background: #691d82;
+  border-radius: 8px;
+  width: calc(100% - 32px);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.profile-container .wallet-address-container .wallet-address .address {
+  color: #facefd;
+  font-size: 20px;
+}
+.profile-container .wallet-address-container .wallet-address .copy-btn {
+  border: none;
+  background: transparent;
+  width: 24px;
+  cursor: pointer;
+}
+.profile-container .wallet-address-container .wallet-address .copy-btn:hover {
+  opacity: 0.7;
+}
+.profile-container .wallet-address-container .wallet-address .copy-btn:active {
+  opacity: 0.5;
+}
+.profile-container .wallet-address-container .wallet-address .copy-btn img {
+  width: 24px;
+}
+.profile-container .wallet-address-container .disconnect-btn {
+  margin-top: 15px;
+  border-radius: 28px;
+  padding-left: 9px;
+  background-color: #0b98eb;
+}

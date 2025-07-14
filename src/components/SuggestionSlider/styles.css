@@ -1,9 +1,10 @@
 .suggestion-slider-container {
   position: relative;
-  max-width: 500px;
+  max-width: 100%;
   margin: 0 auto;
   user-select: none;
   overflow: hidden;
+  flex-shrink: 0;
 }
 .suggestion-slider-container .slider-btn {
   position: absolute;

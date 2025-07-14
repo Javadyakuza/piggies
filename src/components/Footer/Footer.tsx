@@ -39,7 +39,7 @@ export function Footer() {
   return (
     <div className="main-footer-container">
       {footerItems.map((item, i) => (
-        <div
+        <button
           onClick={() => {
             handlePageChange(item.key);
           }}
@@ -52,7 +52,7 @@ export function Footer() {
         >
           <Image src={item.icon} alt={item.title} width={24} height={24} />
           <h4>{item.title}</h4>
-        </div>
+        </button>
       ))}
     </div>
   );

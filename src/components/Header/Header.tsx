@@ -69,15 +69,17 @@ export default function Header() {
           <span style={{ fontSize: "1rem" }}> v3.0.3-tst </span>
         </div>
         <div className="actions-container">
-          <div>
-            <Image
+          <button
+              className="profile-button"
               onClick={handleNavigateProfile}
+          >
+            <Image
               src="/imgs/icons/settings.png"
               alt="cart-icon"
               width={28}
               height={28}
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>

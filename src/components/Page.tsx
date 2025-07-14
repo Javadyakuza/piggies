@@ -51,8 +51,8 @@ export function Page({
       {headerAndFooter && <Header />}
       <div className="page-content">
         {children}
-        {headerAndFooter && <Footer />}
       </div>
+      {headerAndFooter && <Footer />}
     </>
   );
 }

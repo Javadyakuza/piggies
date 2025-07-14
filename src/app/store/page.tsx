@@ -9,9 +9,8 @@ import React from "react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { pigsMapV2 } from "@/utils/pigs_map";
 import axios, { AxiosResponse } from "axios";
-import ImageSlider from "@/components/ImageSlider/ImageSlider";
+import PigCard from "@/components/PigCard/PigCard";
 import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
-import ShiningImage from "@/components/ShiningImage/ShiningImage";
 import { logger } from "../../../logger";
 import { fromNano, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
@@ -389,107 +388,88 @@ export default function StorePage() {
   const filteredSuggestionSlides = suggestionSlides.filter(
     (slide) => slide.code > (currentPigCode || 0)
   );
-  const mainPage = (
-    <div className="store-container">
-      <div className="balance-container">
-        <div className="balance-info">
-          <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
-          <span className="text">
-            <h4 className="earning">{+parseFloat(fromNano(user?.piggy_bank_balance ?? 0)).toFixed(3)}</h4>{" "}
-            <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
-          </span>
-        </div>
-        <Button className="withdraw-btn normal" onClick={handleWithdrawal}>
-          {t("storePage.withdraw")}
-        </Button>
-      </div>
-      <ImageSlider slides={filteredSlides} locked />
-      <SuggestionSlider slides={filteredSuggestionSlides} />
-      <br />
-      <br />
-      <br />
-    </div>
-  );
   let nextPigClassName = (nextPig?.title || "").replace(" Pig", "") as string;
   nextPigClassName = nextPigClassName.toLowerCase();
-  const confirmModal = (
-    <div className="bank-container">
-      <div className="confirm-modal-container">
-        <div className="title-container">
-          <span className="yellow">{suggestionData.title} </span>{" "}
-          <span className={`bold ${nextPigClassName}`}>{nextPig?.title}</span>
-          <br />
-          <span className="normal">{suggestionData.description}</span>{" "}
-        </div>
-        <div className="cover-container">
-          {/* <img
-          className="shining-image"
-          src="/imgs/common/shining.png"
-          alt="cover-container"
-        /> */}
-          <ShiningImage />
-          <img className="pig-image" src={nextPig?.cover} alt="pig-cover" />
-        </div>
-        <div className="details-container">
-          <div className="detail-item">
-            <span>
-              {t("storePage.numberOfLevels", { level: nextPig?.level })}
-            </span>
-          </div>
-          <div className="detail-item">
-            <span>
-              {t("storePage.numberOfSlots", { slots: nextPig?.slots })}
-            </span>
-          </div>
-          <div className="detail-item">
-            <span>
-              {t("storePage.tonCapacity", { capacity: nextPig?.capacityInTon })}
-            </span>
-          </div>
-        </div>
-        <div className="action-container">
-          {isPurchaseInProgress ? (
-            <div className="loader-container">
-              <div className="loader" />
-              <span>{t("storePage.transactionInProgress")}</span>
-            </div>
-          ) : (
-            <div className="btns">
-              <button
-                onClick={handlePurchasePig}
-                className="action-btn purchase-btn"
-              >
-                <div>
-                  <span className="price">{nextPig?.rawPriceInTon}</span> TON
-                </div>
-              </button>
-              <button
-                onClick={toggleConfirmModal}
-                className="action-btn close-btn"
-              >
-                <div>{t("storePage.cancel")}</div>
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  // if (!pigsData)
-  //   return (
-  //     <div className="root__loading">
-  //       <Spinner size="l" />
-  //     </div>
-  //   );
 
   return (
     <>
       {isConfirmModalOpen ? (
-        confirmModal
+          <div className="confirm-modal-container">
+            <div className="title-container">
+              <span className="yellow">{suggestionData.title} </span>{" "}
+              <span className={`bold ${nextPigClassName}`}>{nextPig?.title}</span>
+              <br />
+              <span className="normal">{suggestionData.description}</span>{" "}
+            </div>
+            <div className="cover-container">
+              <img
+                  className="shining-image"
+                  src="/imgs/common/shining.png"
+                  alt="Shining"
+              />
+              <img className="pig-image" src={nextPig?.cover} alt="pig-cover" />
+            </div>
+            <div className="details-container">
+              <div className="detail-item">
+          <span>
+            {t("storePage.numberOfLevels", { level: nextPig?.level })}
+          </span>
+              </div>
+              <div className="detail-item">
+          <span>
+            {t("storePage.numberOfSlots", { slots: nextPig?.slots })}
+          </span>
+              </div>
+              <div className="detail-item">
+          <span>
+            {t("storePage.tonCapacity", { capacity: nextPig?.capacityInTon })}
+          </span>
+              </div>
+            </div>
+            <div className="action-container">
+              {isPurchaseInProgress ? (
+                  <div className="loader-container">
+                    <div className="loader" />
+                    <span>{t("storePage.transactionInProgress")}</span>
+                  </div>
+              ) : (
+                  <div className="btns">
+                    <button
+                        onClick={handlePurchasePig}
+                        className="action-btn purchase-btn"
+                    >
+                      <div>
+                        <span className="price">{nextPig?.rawPriceInTon}</span> TON
+                      </div>
+                    </button>
+                    <button
+                        onClick={toggleConfirmModal}
+                        className="action-btn close-btn"
+                    >
+                      <div>{t("storePage.cancel")}</div>
+                    </button>
+                  </div>
+              )}
+            </div>
+          </div>
       ) : (
         <Page>
-          <div className="bank-container">{mainPage}</div>
+          <div className="store-container">
+            <div className="balance-container">
+              <div className="balance-info">
+                <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
+                <span className="text">
+                  <h4 className="earning">{+parseFloat(fromNano(user?.piggy_bank_balance ?? 0)).toFixed(3)}</h4>{" "}
+                  <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
+                </span>
+              </div>
+              <Button className="withdraw-btn normal" onClick={handleWithdrawal}>
+                {t("storePage.withdraw")}
+              </Button>
+            </div>
+            <PigCard pigInfo={filteredSlides[0]} />
+            <SuggestionSlider slides={filteredSuggestionSlides} />
+          </div>
         </Page>
       )}
     </>

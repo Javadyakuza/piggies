@@ -1,9 +1,8 @@
 .history-container {
-  height: 78vh;
-  overflow: scroll;
+  display: contents;
 }
 .history-container .empty-state-container {
-  margin-top: 20vh;
+  margin: auto 0;
   text-align: center;
 }
 .history-container .empty-state-container .empty {
@@ -13,7 +12,7 @@
 }
 .history-container .empty-state-container .mag-pic {
   width: 30%;
-  min-width: 200px;
+  min-width: min(200px, 100vh - 230px);
 }
 .history-container .empty-state-container .empty-text h2 {
   font-weight: 100;

@@ -202,16 +202,7 @@ export default function FriendsPage() {
                 <div className="invite-item" key={i}>
                   <div className="details">
                     <div className="head">
-                      <h2>
-                        {invite.fullname}{" "}
-                        <span className="level">
-                          (
-                          {t("friendsPage.levelReferrals", {
-                            level: invite.current_pig,
-                          })}
-                          )
-                        </span>
-                      </h2>
+                      <h2>{invite.fullname}</h2>
                     </div>
                     <div className="footer">
                       <h5 className={pigClassName}>{targetPig?.title}</h5>
@@ -299,7 +290,7 @@ export default function FriendsPage() {
             <div
               className={`arrow ${openedAccordion === "ref" ? "--open" : ""}`}
             >
-              <img src="/imgs/icons/arrow-right.png" alt="arrow-icon" />
+              <img src="/imgs/icons/arrow-right.png" alt=">" />
             </div>
           </div>
           {openedAccordion === "ref" && <RefAccordionContent />}
