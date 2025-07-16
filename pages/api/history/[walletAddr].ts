@@ -2,13 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supabase";
 import { PurchasePigResponse } from "@/models/purchase";
 import { UserHistory } from "@/models/history";
-import {
-  findDepth,
-  getUpgradedPigLevel,
-  getUser,
-  prepareUserHistoryObj,
-} from "@/utils/helpers";
-import { PigLevel } from "@/models/pigs";
+import { prepareUserHistoryObj } from "@/utils/helpers";
 
 /**
  * @swagger

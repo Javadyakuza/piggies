@@ -1,5 +1,3 @@
-import { ReferralResponse, User } from "@/models/userTree";
-import { countReferralsByLevel } from "../../pages/api/user-tree/referrals";
 import { supabase } from "./supabase";
 import { error } from "console";
 import { PigLevel } from "@/models/pigs";
@@ -21,54 +19,6 @@ export async function getUser(wallet_address: string) {
   }
 
   return data!;
-}
-
-export async function findDepth(
-  upper_user: string,
-  wallet_address: string
-): Promise<number> {
-  let user = await getUser(upper_user);
-
-  if (!user?.wallet_address) {
-    throw new Error("Invalid upper_user (no wallet address)");
-  }
-
-  const referralNum = parseInt("10", 10);
-
-  let referralLevels = await countReferralsByLevel(user.wallet_address);
-
-  let response: ReferralResponse = {};
-  let totalUnder = 0;
-
-  for (let i = 0; i < referralNum; i++) {
-    const level = referralLevels[i];
-    if (!level) {
-      console.warn(`⚠️ Level ${i + 1} is undefined.`);
-      continue;
-    }
-
-    response[`level_${i + 1}`] = {
-      count: level.count,
-      total: level.total,
-      users: level.users,
-    };
-    totalUnder += level.count;
-  }
-
-  for (const [key, value] of Object.entries(response)) {
-    if (typeof value === "object" && "users" in value) {
-      const userFound = value.users.find(
-        (user) => user.wallet_address === wallet_address
-      );
-
-      if (userFound) {
-        const levelScore = levelsMap(value.total);
-        return levelScore;
-      }
-    }
-  }
-
-  throw new Error("User not found in referral tree.");
 }
 
 export async function getUpgradedPigLevel(tx_hash: string): Promise<number> {
@@ -99,7 +49,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
         tx.related_tx
       ).catch(() => user.current_pig)) as PigLevel,
       self_balance_change: tx.reward,
-      //referral_depth: await findDepth(tx.wallet_address, tx.referral), //TODO: check referral or bounty hunter
+      //referral_depth: 0, //TODO: check referral or bounty hunter
     };
   } else {
     return {

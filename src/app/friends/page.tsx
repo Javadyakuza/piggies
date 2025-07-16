@@ -10,6 +10,7 @@ import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
 import { useWallet } from "@/app/context/WalletProvider";
 import { useAccount } from "@/app/context/AccountProvider";
+import { ReferralResponse } from "@/models/userTree";
 
 type PigData = {
   pig_level: number;
@@ -28,23 +29,6 @@ type DataPerLevel = Record<
     diamond: number;
   }
 >;
-
-type ReferralLevelResponse = {
-  [key: string]: {
-    count: number;
-    total: number;
-    users: {
-      telegram_id: string;
-      wallet_address: string;
-      current_pig: number;
-      fullname: string;
-      inviter_id: number;
-      total_invited: number;
-      user_type: number;
-      total_under: number;
-    }[];
-  };
-};
 
 export type Invitee = {
   id: number;
@@ -100,25 +84,24 @@ export default function FriendsPage() {
     if (!walletAddress || !pig) return;
     const pigsDataToSet: DataPerLevel = {};
 
-    const response: AxiosResponse<ReferralLevelResponse> = await axios.get(
+    const response: AxiosResponse<ReferralResponse> = await axios.get(
       `/api/user-tree/referrals?wallet_address=${walletAddress}&telegram_id=${userTelegramId}&referrals=${pig.level}`
     );
 
     const referrals = response.data;
 
     Object.keys(referrals).forEach((key) => {
-      const referral = referrals[key];
-      const getPigsNumber = (pigLevel: number) =>
-        referral.users.filter((user) => user.current_pig === pigLevel).length;
+      const referralsDepthInfo = referrals[key as unknown as keyof typeof referrals];
+      const usedSlots = Object.values(referralsDepthInfo).reduce((s, v) => s + v, 0);
 
       pigsDataToSet[key] = {
-        totalSlots: referral.total,
-        slots: referral.count,
+        totalSlots: 3 ** +key,
+        slots: usedSlots,
         pig: pig.code,
-        bronze: getPigsNumber(1),
-        silver: getPigsNumber(2),
-        gold: getPigsNumber(3),
-        diamond: getPigsNumber(4),
+        bronze: referralsDepthInfo[1] || 0,
+        silver: referralsDepthInfo[2] || 0,
+        gold: referralsDepthInfo[3] || 0,
+        diamond: referralsDepthInfo[4] || 0,
       };
     });
 
@@ -226,7 +209,7 @@ export default function FriendsPage() {
   };
 
   const LevelAccordionContent = (level: number) => {
-    const targetLevel = pigsDataPerLevel[`level_${level}`];
+    const targetLevel = pigsDataPerLevel[level];
     return (
       <div className="level-accordion-content">
         <h3 className="slots">

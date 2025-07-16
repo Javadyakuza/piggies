@@ -1,125 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/utils/supabase";
-import {
-  ReferralLevel,
-  ReferralRequest,
-  ReferralResponse,
-  SelfReferralId,
-  User,
-} from "@/models/userTree";
+import { ReferralRequest, ReferralResponse } from "@/models/userTree";
 
-const calculateTotalPossible = (level: number): number => {
-  return Math.pow(3, level);
+type ReferralsByLevel = {
+  depth: number;
+  current_pig: number;
+  users_count: number;
 };
 
-
 export const countReferralsByLevel = async (
-  wallet_address: string
-): Promise<ReferralLevel[]> => {
-  const countTotalUnder = (
-    referralMap: { [key: string]: string[] },
-    userId: string
-  ): number => {
-    let total = 0;
-    const children = referralMap[userId] || [];
-    total += children.length;
-    for (const childId of children) {
-      total += countTotalUnder(referralMap, childId);
-    }
-    return total;
-  };
-
-  const { data: allUsers, error } = await supabase
-    .from("users")
-    .select(
-      "id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id, user_type"
-    );
-
-  if (error || !allUsers) {
-    throw new Error("Failed to fetch users: " + error?.message);
-  }
-
-  const targetUser = allUsers.find(
-    (u) => u.wallet_address === wallet_address
-  );
-
-  if (!targetUser) {
-    throw new Error("User not found with the given wallet address");
-  }
-
-  const referralMap: { [key: string]: string[] } = {};
-  const userMap: { [key: string]: User } = {};
-
-  allUsers.forEach((user) => {
-    if (user.id && user.telegram_id) {
-      const totalInvited = allUsers.filter(
-        (u) => u.inviter_id === user.id
-      ).length;
-
-      userMap[user.id] = {
-        telegram_id: user.telegram_id,
-        wallet_address: user.wallet_address || "",
-        current_pig: user.current_pig ?? 0,
-        fullname: user.fullname || "",
-        inviter_id: user.inviter_id || "",
-        total_invited: totalInvited,
-        user_type: user.user_type,
-      };
-    }
-
-    const parent = user.parent_id;
-    if (parent) {
-      if (!referralMap[parent]) {
-        referralMap[parent] = [];
-      }
-      referralMap[parent].push(user.id);
-    }
-  });
-
-  const levels: string[][] = [[]]; // Level 0 is skipped in result
-  const queue: { userId: string; level: number }[] = [
-    { userId: targetUser.id, level: 0 },
-  ];
-  const visited: Set<string> = new Set();
-
-  while (queue.length > 0) {
-    const { userId: currentUser, level } = queue.shift()!;
-    if (visited.has(currentUser)) continue;
-    visited.add(currentUser);
-
-    if (level > 0) {
-      if (!levels[level]) levels[level] = [];
-      levels[level].push(currentUser);
-    }
-
-    const referrals = referralMap[currentUser] || [];
-    referrals.forEach((referralId) => {
-      queue.push({ userId: referralId, level: level + 1 });
+  user_id: string,
+  max_depth = 12
+): Promise<ReferralsByLevel[]> => {
+  const { data, error } = await supabase
+    .rpc('get_referral_tree_aggregated', {
+      user_id,
+      max_depth,
     });
-  }
 
-  const result: ReferralLevel[] = [];
-  for (let i = 1; i <= 12; i++) {
-    const idsAtLevel = levels[i] || [];
-    const count = idsAtLevel.length;
-    const total = calculateTotalPossible(i);
-    const users = idsAtLevel
-      .map((id) => {
-        const user = userMap[id];
-        if (user) {
-          return {
-            ...user,
-            total_under: countTotalUnder(referralMap, id),
-          };
-        }
-        return null;
-      })
-      .filter(Boolean) as User[];
-
-    result.push({ count, total, users });
-  }
-
-  return result;
+  if (error) throw error;
+  return data || [];
 };
 
 /**
@@ -303,55 +203,34 @@ export default async function handler(
       .json({ error: "Referrals must be a number between 0 and 12" });
   }
 
-  const { data: userExists, error: userError } = await supabase
+  const { data: user, error: userError } = await supabase
     .from("users")
     .select("id")
     .eq("telegram_id", telegram_id)
     .eq("wallet_address", wallet_address)
     .single();
 
-  if (userError || !userExists) {
+  if (userError || !user) {
     return res.status(404).json({ error: "User not found" });
   }
 
   try {
-    const referralLevels = await countReferralsByLevel(
-      wallet_address
+    const referralsByLevels = await countReferralsByLevel(
+      user.id,
+      referralsNum
     );
 
-    if (referralsNum === 0) {
-      const { data: referral_id, error } = await supabase
-        .from("users")
-        .select("referral_id")
-        .eq("telegram_id", telegram_id);
-
-      if (error || !referral_id) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      return res.status(200).json(referral_id[0] as SelfReferralId);
+    const response: ReferralResponse = {};
+    for (let depth = 1; depth <= referralsNum; depth++) {
+      response[depth] = {};
     }
-
-    let response: ReferralResponse = {};
-    let totalUnder = 0;
 
     // Loop through levels based on referralsNum
-    for (let i = 0; i < referralsNum; i++) {
-      const level = referralLevels[i];
-      response[`level_${i + 1}`] = {
-        count: level.count,
-        total: level.total,
-        users: level.users,
+    for (const referrals of referralsByLevels) {
+      response[referrals.depth] = {
+        ...(response[referrals.depth] ?? {}),
+        [referrals.current_pig]: referrals.users_count,
       };
-      totalUnder += level.count;
-    }
-    if (referrals == "batch") {
-      let users = new Map<Number, User[]>();
-      let counter = 1;
-      Object.entries(response).forEach(([_, value]) => {
-        users.set(counter, value.users);
-        counter += 1;
-      });
-      return res.status(200).json(Object.fromEntries(users));
     }
     return res.status(200).json(response);
   } catch (error) {

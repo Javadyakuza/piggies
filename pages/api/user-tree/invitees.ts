@@ -35,6 +35,7 @@ export default async function handler(
             .from("users")
             .select("id, parent_id, telegram_id, wallet_address, current_pig, fullname, inviter_id")
             .eq("inviter_id", user.id)
+            .gt("current_pig", 0)
             .order('created_at', { ascending: false });
 
         if (inviteesError) throw inviteesError;
