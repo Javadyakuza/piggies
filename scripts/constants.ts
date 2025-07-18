@@ -13,19 +13,19 @@ import { Address } from "@ton/core";
 // };
 
 export const ContractAddresses = {
-  pigShop: Address.parse("EQAhS0Io_Pr8H1UDm8X7nVLsa9ja36WMLnJhgcmhM8ICdDMA"),
+  pigShop: Address.parse("EQBbUzIPNW4oK7ONAOk4G3-D_dUAoRZqZ-zgjGubfHqdWL4G"),
 
-  pigsCollection: Address.parse("EQDEREWPdVKqWF3_P-oWW5n9_FrW8SakeBJDKCt-Zifhg5HU"),
+  pigsCollection: Address.parse("EQBsqQ-T8y81g7I4KfF73rdVurbNQVlIOOb5UUEBwfFmkgJL"),
 };
 
 // Connected to wallet at address: EQBfJH9a8I9C8eU0iu9wRkcWBmNtUZmJzeHGi1IcCTaoHfZr
 // Sent transaction
-// Contract deployed at address EQCmjj7otfwm6WcictB2Mpyzzm-dfvG4NAkzF6QLqte8Ue7V
-// You can view it at https://tonscan.org/address/EQCmjj7otfwm6WcictB2Mpyzzm-dfvG4NAkzF6QLqte8Ue7V
-// PigShop contract deployed successfully at: 0:a68e3ee8b5fc26e9672272d076329cb3ce6f9d7ef1b834093317a40baad7bc51
+// Contract deployed at address EQBbUzIPNW4oK7ONAOk4G3-D_dUAoRZqZ-zgjGubfHqdWL4G
+// You can view it at https://tonscan.org/address/EQBbUzIPNW4oK7ONAOk4G3-D_dUAoRZqZ-zgjGubfHqdWL4G
+// PigShop contract deployed successfully at: 0:5b53320f356e282bb38d00e9381b7f83fdd500a1166a67ece08c6b9b7c7a9d58
 // Sent transaction
-// Contract deployed at address EQA_z9aaZBsDClVLm2R0Rr1KbaybghihievPFp3nCC11oT8p
-// You can view it at https://tonscan.org/address/EQA_z9aaZBsDClVLm2R0Rr1KbaybghihievPFp3nCC11oT8p
-// PigCollection contract deployed successfully at: 0:3fcfd69a641b030a554b9b647446bd4a6dac9b8218a189ebcf169de7082d75a1
+// Contract deployed at address EQBsqQ-T8y81g7I4KfF73rdVurbNQVlIOOb5UUEBwfFmkgJL
+// You can view it at https://tonscan.org/address/EQBsqQ-T8y81g7I4KfF73rdVurbNQVlIOOb5UUEBwfFmkgJL
+// PigCollection contract deployed successfully at: 0:6ca90f93f32f3583b23829f17bdeb755bab6cd41594838e6f9514101c1f16692
 // Sent transaction
 // Pigshop contract updated with collection address successfully

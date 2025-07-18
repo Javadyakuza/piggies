@@ -250,11 +250,6 @@ async function catchPigShopEvents(
             "⁉️ UpgradePig tx initiated check for potential user tree update ..."
           );
 
-          const bh = await findUsersBountyHunters(
-            userAddr,
-            pig_data.new_pig_level
-          );
-
           const tx_id = TxId.create(userAddr, pig_data.new_pig_level);
 
           console.log("🚀 Sending pig approval message");
