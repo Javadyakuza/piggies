@@ -75,9 +75,7 @@ export default function HistoryPage() {
           <>
             {histories.map((history, i) => {
               const targetPig = findPig(history.upgraded_pig_level);
-              const pigClassName = targetPig?.title
-                .replace(" Pig", "")
-                .toLowerCase();
+              const pigClassName = targetPig?.className;
               return (
                 <div className="history-item" key={i}>
                   <div className="details">

@@ -178,9 +178,7 @@ export default function FriendsPage() {
           <div className="invites-container">
             {invitees.map((invite, i) => {
               const targetPig = findPig(invite.current_pig);
-              const pigClassName = targetPig?.title
-                .replace(" Pig", "")
-                .toLowerCase();
+              const pigClassName = targetPig?.className;
               return (
                 <div className="invite-item" key={i}>
                   <div className="details">

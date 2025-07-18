@@ -52,6 +52,7 @@ const usdToTon = (usd: number, tonPrice: number) => (usd / tonPrice).toFixed(2);
 export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop?
   {
     title: t?.("storePage.bronzePig") as string,
+    className: 'bronze',
     code: 1,
     slots: 39,
     level: 3,
@@ -62,6 +63,7 @@ export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop
   },
   {
     title: t?.("storePage.silverPig") as string,
+    className: 'silver',
     code: 2,
     slots: 3279,
     level: 7,
@@ -72,6 +74,7 @@ export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop
   },
   {
     title: t?.("storePage.goldPig") as string,
+    className: 'gold',
     code: 3,
     slots: 88572,
     level: 10,
@@ -82,6 +85,7 @@ export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop
   },
   {
     title: t?.("storePage.diamondPig") as string,
+    className: 'diamond',
     code: 4,
     slots: 797160,
     level: 12,

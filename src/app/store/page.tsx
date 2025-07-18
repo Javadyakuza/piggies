@@ -231,8 +231,7 @@ export default function StorePage() {
   const slides = [
     placeholderSlide,
     ...pigsMap.map((pigData) => {
-      let titleClassName = pigData.title.replace(" Pig", "") as string;
-      titleClassName = titleClassName.toLowerCase();
+      const titleClassName = pigData.className;
       return {
         title: (
           <>
@@ -388,8 +387,7 @@ export default function StorePage() {
   const filteredSuggestionSlides = suggestionSlides.filter(
     (slide) => slide.code > (currentPigCode || 0)
   );
-  let nextPigClassName = (nextPig?.title || "").replace(" Pig", "") as string;
-  nextPigClassName = nextPigClassName.toLowerCase();
+  const nextPigClassName = nextPig?.className || '';
 
   return (
     <>
