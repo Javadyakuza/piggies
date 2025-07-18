@@ -189,12 +189,14 @@ export default function StorePage() {
   // };
 
   useEffect(() => {
+    if (walletAddress !== user?.wallet_address) return;
     fetchPigsData();
+    refetchUserData();
     // fetchTonPrice();
     // fetchUserPigData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress, user?.pig_address]);
+  }, [walletAddress, user?.pig_address, user?.wallet_address]);
 
   useEffect(() => {
     if (!pigsData) return;
@@ -466,7 +468,7 @@ export default function StorePage() {
               </Button>
             </div>
             <PigCard pigInfo={filteredSlides[0]} />
-            <SuggestionSlider slides={filteredSuggestionSlides} />
+            <SuggestionSlider slides={filteredSuggestionSlides} isLoading={currentPigCode === undefined} />
           </div>
         </Page>
       )}

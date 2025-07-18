@@ -36,7 +36,8 @@
       "tonCapacity": "{capacity} TON Capacity",
       "cancel": "Cancel",
       "toUnlock": "to unlock",
-      "locked": "Locked"
+      "locked": "Locked",
+      "loading": "Loading"
     },
     "friendsPage": {
       "title": "Invite Friends!",

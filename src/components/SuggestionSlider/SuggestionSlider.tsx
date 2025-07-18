@@ -23,9 +23,11 @@ type Slide = {
 const SuggestionSlider = ({
   slides,
   locked,
+  isLoading
 }: {
   slides: Slide[];
   locked?: boolean;
+  isLoading?: boolean;
 }) => {
   const t = useTranslations("i18n");
 
@@ -95,12 +97,12 @@ const SuggestionSlider = ({
                   alt="action-img"
                 />
                 <button
-                  disabled={slide.isLocked}
+                  disabled={slide.isLocked || isLoading}
                   onClick={slide.onClick}
                   className="action-btn"
                 >
                   <div>
-                    {slide.isLocked ? t("storePage.locked") : slide.buttonText}
+                    {slide.isLocked ? t("storePage.locked") : isLoading ? t("storePage.loading") : slide.buttonText}
                   </div>
                 </button>
               </div>

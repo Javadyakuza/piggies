@@ -37,7 +37,8 @@
       "tonCapacity": "Вместимость: {capacity} TON",
       "cancel": "Отмена",
       "toUnlock": "чтобы разблокировать",
-      "locked": "Заблокировано"
+      "locked": "Заблокировано",
+      "loading": "Загружается"
     },
     "friendsPage": {
       "title": "Пригласите друзей!",
