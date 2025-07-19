@@ -9,14 +9,10 @@ export type User = {
   user_type: number;
 };
 
-export interface ReferralLevel {
-  count: number;
-  total: number;
-  users: User[];
-}
-
 export interface ReferralResponse {
-  [key: string]: ReferralLevel;
+  [depth: number]: {
+    [pig_level: number]: number;
+  };
 }
 
 export interface SelfReferralId {
@@ -31,6 +27,11 @@ export type SetWalletRequest = {
 export type ReferralRequest = {
   telegram_id: string;
   referrals: string;
+  wallet_address: string
+};
+
+export type InviteeRequest = {
+  telegram_id: string;
   wallet_address: string
 };
 

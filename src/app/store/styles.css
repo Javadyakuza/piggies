@@ -1,4 +1,5 @@
 .shining-image {
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -6,98 +7,99 @@
   display: block;
   animation: spin 3s linear infinite;
 }
-.bank-container .main-container {
-  height: 75vh;
-  overflow: scroll;
+
+.store-container {
+  display: contents;
 }
-.bank-container .main-container .yellow {
+.store-container .yellow {
   color: #ffbe0b;
   font-weight: bold;
   font-size: 20px;
 }
-.bank-container .main-container .thick {
+.store-container .thick {
   font-weight: 200;
   color: #facefd;
 }
-.bank-container .main-container .slide-title {
+.store-container .slide-title {
   font-weight: bold;
   color: #c23970;
   font-size: 32px;
 }
-.bank-container .main-container .slide-title-container {
+.store-container .slide-title-container {
   font-size: 32px;
 }
-.bank-container .main-container .slider-slide > .title {
+.store-container .slider-slide > .title {
   margin-top: 3px;
 }
-.bank-container .main-container .slider-slide > .hint {
+.store-container .slider-slide > .hint {
   margin-bottom: 15px;
 }
-.bank-container .main-container .balance-container {
-  margin-left: 15px;
+.store-container .balance-container {
   text-align: center;
 }
-.bank-container .main-container .balance-container .withdraw-btn {
+.store-container .balance-container .withdraw-btn {
   margin-top: 10px;
   height: 32px;
   color: #691d82;
   border-radius: 34px;
 }
-.bank-container .main-container .balance-container .withdraw-btn.normal {
+.store-container .balance-container .withdraw-btn.normal {
   background-color: #e73d74;
 }
-.bank-container .main-container .balance-container .withdraw-btn.warning {
+.store-container .balance-container .withdraw-btn.warning {
   background-color: #ebb319;
 }
-.bank-container .main-container .balance-container .balance-info {
+.store-container .balance-container .balance-info {
+  margin-left: 15px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.bank-container .main-container .balance-container .ton-icon {
+.store-container .balance-container .ton-icon {
   width: 42px;
 }
-.bank-container .main-container .balance-container .text {
+.store-container .balance-container .text {
   font-size: 26px;
 }
-.bank-container .main-container .balance-container .text h4 {
+.store-container .balance-container .text h4 {
   display: inline;
 }
-.bank-container .main-container .balance-container .text .earning {
+.store-container .balance-container .text .earning {
   color: #ffbe0b;
 }
-.bank-container .main-container .balance-container .text .total {
+.store-container .balance-container .text .total {
   font-weight: 200;
   color: #facefd;
 }
-.bank-container .confirm-modal-container {
-  margin-top: 25px;
+
+.confirm-modal-container {
+  margin: auto 0;
   background-color: rgba(11, 11, 11, 0.3529411765);
   padding: 8px 0;
   border-top: 2px solid #ffbe0b;
   border-bottom: 2px solid #ffbe0b;
 }
-.bank-container .confirm-modal-container .title-container {
+.confirm-modal-container .title-container {
   font-weight: bold;
   font-size: 30px;
   text-align: center;
 }
-.bank-container .confirm-modal-container .title-container .bold {
+.confirm-modal-container .title-container .bold {
   color: #c23970;
 }
-.bank-container .confirm-modal-container .title-container .yellow {
+.confirm-modal-container .title-container .yellow {
   color: #ffbe0b;
 }
-.bank-container .confirm-modal-container .title-container .normal {
+.confirm-modal-container .title-container .normal {
   font-size: 24px;
   color: #facefd;
 }
-.bank-container .confirm-modal-container .cover-container {
+.confirm-modal-container .cover-container {
   position: relative;
   width: 100%;
   height: 132px;
 }
-.bank-container .confirm-modal-container .cover-container .pig-image {
+.confirm-modal-container .cover-container .pig-image {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -106,11 +108,11 @@
   height: 100px;
   z-index: 1;
 }
-.bank-container .confirm-modal-container .details-container {
+.confirm-modal-container .details-container {
   z-index: 1;
   position: relative;
 }
-.bank-container .confirm-modal-container .details-container .detail-item {
+.confirm-modal-container .details-container .detail-item {
   margin: auto;
   display: flex;
   align-items: center;
@@ -124,12 +126,10 @@
   margin-bottom: 8px;
   font-size: 18px;
 }
-.bank-container .confirm-modal-container .action-container {
+.confirm-modal-container .action-container {
   width: 100%;
-  position: relative;
-  z-index: 1;
 }
-.bank-container .confirm-modal-container .action-container .btns .action-btn {
+.confirm-modal-container .action-container .btns .action-btn {
   margin: auto;
   margin-top: 18px;
   border: 0;
@@ -141,57 +141,22 @@
   display: flex;
   align-items: center;
 }
-.bank-container .confirm-modal-container .action-container .btns .purchase-btn {
+.confirm-modal-container .action-container .btns .purchase-btn {
   background-color: #2cc48f;
 }
-.bank-container
-  .confirm-modal-container
-  .action-container
-  .btns
-  .purchase-btn
-  div {
+.confirm-modal-container .action-container .btns .purchase-btn div {
   font-weight: 200;
 }
-.bank-container
-  .confirm-modal-container
-  .action-container
-  .btns
-  .purchase-btn
-  div
-  .price {
+.confirm-modal-container .action-container .btns .purchase-btn div .price {
   font-weight: 600;
 }
-.bank-container .confirm-modal-container .action-container .btns .close-btn {
+.confirm-modal-container .action-container .btns .close-btn {
   border: 2px solid #bbbcbb;
   color: #bbbcbb;
-  background: rgba(0, 0, 0, 0);
+  background: transparent;
   margin-top: 6px;
   font-size: 14px;
   padding: 3px 10px;
-}
-.loader-container {
-  text-align: center;
-  padding: 20px;
-}
-
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #000000;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-  margin: 0 50%;
-
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes spin {

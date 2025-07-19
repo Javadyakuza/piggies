@@ -18,6 +18,14 @@ body {
   background-size: cover;
 }
 
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+}
+
 body {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
@@ -65,8 +73,13 @@ body {
   overflow: hidden;
 }
 .page-content {
-  /* overflow: scroll;
-  height: calc(100vh - 78px); */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  width: 100%;
+  overflow: auto;
 }
 
 .s-enter-active > div > div:first-child {

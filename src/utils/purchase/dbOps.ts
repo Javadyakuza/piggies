@@ -7,39 +7,23 @@ import {
 import { supabase } from "../supabase";
 import { txHistory, TxId } from "@/models/history";
 import { PigLevel } from "@/models/pigs";
-import { Address, Dictionary, fromNano } from "@ton/core";
+import { Address, fromNano } from "@ton/core";
+import { BigIntMath } from "@/utils/BigIntMath";
 
 // update the db based on the user purchase on the following fields
 export const updateBountyHuntersBalances = async (
   bounty_hunters: bountyHuntersResponse
 ) => {
-  let bh = bounty_hunters;
-  let dic: Dictionary<Address, bigint> = Dictionary.empty<Address, bigint>();
+  const bh = bounty_hunters;
   //----------------------------------------------------
   // Step 1: updating user balances to update the db
   //----------------------------------------------------
-  const { data: users, error: fetchUsersError } = await supabase
-    .from("users")
-    .select("wallet_address, piggy_bank_balance")
-    .in(
-      "wallet_address",
-      bh.users.keys().map((userAddr) => userAddr.toRawString())
-    );
-  if (fetchUsersError) throw fetchUsersError;
-
-  users.forEach((user) =>
-    dic.set(
-      Address.parse(user.wallet_address),
-      BigInt(user.piggy_bank_balance ?? 0) +
-        bh.users.get(Address.parse(user.wallet_address))!
-    )
-  );
-
   await Promise.all(bh.users.keys().map(async (userAddr) => {
     const { error } = await supabase
-      .from("users")
-      .update({ piggy_bank_balance: Number(dic.get(userAddr)) })
-      .eq("wallet_address", userAddr.toRawString());
+      .rpc("increment_piggy_bank_balance", {
+        wallet_address_in: userAddr.toRawString(),
+        amount_in: Number(bh.users.get(userAddr)),
+      });
 
     if (error) {
       console.error(`Failed to update user ${userAddr.toRawString()}:`, error);
@@ -51,31 +35,12 @@ export const updateBountyHuntersBalances = async (
   //----------------------------------------------------
   // Step 2: updating admins balances to update the db
   //----------------------------------------------------
-  dic = Dictionary.empty<Address, bigint>();
-
-  const { data: admins, error: fetchAdminsError } = await supabase
-    .from("users")
-    .select("wallet_address, piggy_bank_balance")
-    .in(
-      "wallet_address",
-      bh.admins.keys().map((adminAddr) => adminAddr.toRawString())
-    );
-
-  if (fetchAdminsError) throw fetchAdminsError;
-
-  admins.forEach((admin) =>
-    dic.set(
-      Address.parse(admin.wallet_address),
-      BigInt(admin.piggy_bank_balance ?? 0) +
-        bh.admins.get(Address.parse(admin.wallet_address))!
-    )
-  );
-
   await Promise.all(bh.admins.keys().map(async (adminAddr) => {
     const { error } = await supabase
-      .from("users")
-      .update({ piggy_bank_balance: Number(dic.get(adminAddr)) })
-      .eq("wallet_address", adminAddr.toRawString());
+      .rpc("increment_piggy_bank_balance", {
+        wallet_address_in: adminAddr.toRawString(),
+        amount_in: Number(bh.admins.get(adminAddr)),
+      });
 
     if (error) {
       console.error(
@@ -87,34 +52,15 @@ export const updateBountyHuntersBalances = async (
       );
     }
   }));
-
   //----------------------------------------------------
   // Step 3: updating referrer balances to update the db
   //----------------------------------------------------
-  dic = Dictionary.empty<Address, bigint>();
-  const { data: referrer, error: fetchReferrerError } = await supabase
-    .from("users")
-    .select("wallet_address, piggy_bank_balance")
-    .in(
-      "wallet_address",
-      bh.referrer.keys().map((referrerAddr) => referrerAddr.toRawString())
-    );
-
-  if (fetchReferrerError) throw fetchReferrerError;
-
-  referrer.forEach((referrer) =>
-    dic.set(
-      Address.parse(referrer.wallet_address),
-      BigInt(referrer.piggy_bank_balance ?? 0) +
-        bh.referrer.get(Address.parse(referrer.wallet_address))!
-    )
-  );
-
   await Promise.all(bh.referrer.keys().map(async (referrerAddr) => {
     const { error } = await supabase
-      .from("users")
-      .update({ piggy_bank_balance: Number(dic.get(referrerAddr)) })
-      .eq("wallet_address", referrerAddr.toRawString());
+      .rpc("increment_piggy_bank_balance", {
+        wallet_address_in: referrerAddr.toRawString(),
+        amount_in: Number(bh.referrer.get(referrerAddr)),
+      });
 
     if (error) {
       console.error(
@@ -369,7 +315,7 @@ export async function getGenesisUser() {
   const { data: genesisUser } = await supabase
     .from("users")
     .select("id")
-    .eq("telegram_id", "@genesis")
+    .eq("user_type", 0)
     .single();
 
   return genesisUser;
@@ -393,8 +339,10 @@ export async function attachUserToTree(p_user_id: number, p_inviter_id: number) 
 export async function updateUserPiggyBankBalance(
   userAddress: string,
   pigAddress: string,
-  amount: bigint
+  amount: bigint,
+  tx_hash: string
 ) {
+  amount = BigIntMath.round(amount);
   // fetch te user first to see if it exists and if its pig address is the same
   const { data: user, error: userError } = await supabase
     .from("users")
@@ -421,10 +369,33 @@ export async function updateUserPiggyBankBalance(
     );
   }
 
+  const delta = BigIntMath.min(BigInt(user.piggy_bank_balance), amount);
+
+  if (delta > BigInt(0)) {
+    const {error: insertError} = await supabase
+        .from("rewards_history")
+        .insert({
+          wallet_address: userAddress,
+          reward: -Number(delta),
+          referral: userAddress,
+          related_tx: tx_hash,
+        })
+        .select()
+        .single();
+
+    if (insertError) {
+      console.error("Insert withdraw transaction error:", insertError);
+    } else {
+      console.log(
+          `Inserted transaction of ${userAddress} to withdraw ${fromNano(delta)} TON`
+      );
+    }
+  }
+
   const { error: updateError } = await supabase
     .from("users")
     .update({
-      piggy_bank_balance: 0,
+      piggy_bank_balance: Math.max(0, user.piggy_bank_balance - Number(amount)),
     })
     .eq("wallet_address", userAddress);
 

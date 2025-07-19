@@ -36,7 +36,8 @@
       "tonCapacity": "{capacity} TON Capacity",
       "cancel": "Cancel",
       "toUnlock": "to unlock",
-      "locked": "Locked"
+      "locked": "Locked",
+      "loading": "Loading"
     },
     "friendsPage": {
       "title": "Invite Friends!",
@@ -55,6 +56,7 @@
       "noHistories": "No history yet...",
       "level": "Level {level}",
       "got": "Got",
+      "emptied": "Emptied",
       "balance": "Balance",
       "reachedEnd": "You’ve reached the end.",
       "you": "You"

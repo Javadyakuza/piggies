@@ -8,9 +8,9 @@ import axios, { AxiosResponse } from "axios";
 import { pigsMapV2 } from "@/utils/pigs_map";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import { generateRefLink } from "@/utils/reflink";
-import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { useWallet } from "@/app/context/WalletProvider";
 import { useAccount } from "@/app/context/AccountProvider";
+import { ReferralResponse } from "@/models/userTree";
 
 type PigData = {
   pig_level: number;
@@ -30,38 +30,14 @@ type DataPerLevel = Record<
   }
 >;
 
-type ReferralLevelResponse = {
-  [key: string]: {
-    count: number;
-    total: number;
-    users: {
-      telegram_id: string;
-      wallet_address: string;
-      current_pig: number;
-      fullname: string;
-      inviter_id: number;
-      total_invited: number;
-      user_type: number;
-      total_under: number;
-    }[];
-  };
-};
-
-export type BatchReferrals = {
-  [level: string]: {
-    id: number;
-    telegram_id: string;
-    inviter_id: number;
-    parent_id: number;
-    created_at: string;
-    referral_id: string;
-    wallet_address: string;
-    current_pig: number;
-    fullname: string;
-    piggy_bank_balance: number;
-    user_type: number;
-    pig_address: string;
-  }[];
+export type Invitee = {
+  id: number;
+  telegram_id: string;
+  inviter_id: number;
+  parent_id: number;
+  wallet_address: string;
+  current_pig: number;
+  fullname: string;
 };
 
 export default function FriendsPage() {
@@ -74,7 +50,7 @@ export default function FriendsPage() {
   >();
   const [pigsData, setPigsData] = useState<PigData>();
   const [pigsDataPerLevel, setPigsDataPerLevel] = useState<DataPerLevel>({});
-  const [batchReferrals, setBatchReferrals] = useState<BatchReferrals>({});
+  const [invitees, setInvitees] = useState<Invitee[]>([]);
 
   const userTelegramId = useMemo(() => initDataState?.user?.id, [initDataState]);
 
@@ -108,25 +84,24 @@ export default function FriendsPage() {
     if (!walletAddress || !pig) return;
     const pigsDataToSet: DataPerLevel = {};
 
-    const response: AxiosResponse<ReferralLevelResponse> = await axios.get(
+    const response: AxiosResponse<ReferralResponse> = await axios.get(
       `/api/user-tree/referrals?wallet_address=${walletAddress}&telegram_id=${userTelegramId}&referrals=${pig.level}`
     );
 
     const referrals = response.data;
 
     Object.keys(referrals).forEach((key) => {
-      const referral = referrals[key];
-      const getPigsNumber = (pigLevel: number) =>
-        referral.users.filter((user) => user.current_pig === pigLevel).length;
+      const referralsDepthInfo = referrals[key as unknown as keyof typeof referrals];
+      const usedSlots = Object.values(referralsDepthInfo).reduce((s, v) => s + v, 0);
 
       pigsDataToSet[key] = {
-        totalSlots: referral.total,
-        slots: referral.count,
+        totalSlots: 3 ** +key,
+        slots: usedSlots,
         pig: pig.code,
-        bronze: getPigsNumber(1),
-        silver: getPigsNumber(2),
-        gold: getPigsNumber(3),
-        diamond: getPigsNumber(4),
+        bronze: referralsDepthInfo[1] || 0,
+        silver: referralsDepthInfo[2] || 0,
+        gold: referralsDepthInfo[3] || 0,
+        diamond: referralsDepthInfo[4] || 0,
       };
     });
 
@@ -144,18 +119,18 @@ export default function FriendsPage() {
   useEffect(() => {
     if (!walletAddress) return;
 
-    const fetchBatchReferrals = async () => {
+    const fetchInvitees = async () => {
       try {
-        const response: AxiosResponse<BatchReferrals> = await axios.get(
-          `/api/user-tree/referrals?wallet_address=${walletAddress}&referrals=batch&telegram_id=${userTelegramId}`
+        const response: AxiosResponse<Invitee[]> = await axios.get(
+          `/api/user-tree/invitees?wallet_address=${walletAddress}&telegram_id=${userTelegramId}`
         );
         const referrals = response.data;
-        setBatchReferrals(referrals);
+        setInvitees(referrals);
       } catch (err) {
         throw new Error(`Error fetching referrals data: ${err}`);
       }
     };
-    fetchBatchReferrals().catch(e => console.error(e));
+    fetchInvitees().catch(e => console.error(e));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletAddress]);
   const pigsMap = pigsMapV2(t);
@@ -196,35 +171,19 @@ export default function FriendsPage() {
     return pigsMap.find((item) => item.code === code);
   };
 
-  const formattedReferrals = Object.entries(batchReferrals).flatMap((entry) => {
-    const [key, value] = entry;
-    return value.flatMap((v) => ({ ...v, level: key }));
-  });
-
   const RefAccordionContent = () => {
     return (
       <div className="ref-accordion-content">
-        {formattedReferrals.length ? (
+        {invitees.length ? (
           <div className="invites-container">
-            {formattedReferrals.map((invite, i) => {
+            {invitees.map((invite, i) => {
               const targetPig = findPig(invite.current_pig);
-              const pigClassName = targetPig?.title
-                .replace(" Pig", "")
-                .toLowerCase();
+              const pigClassName = targetPig?.className;
               return (
                 <div className="invite-item" key={i}>
                   <div className="details">
                     <div className="head">
-                      <h2>
-                        {invite.fullname}{" "}
-                        <span className="level">
-                          (
-                          {t("friendsPage.levelReferrals", {
-                            level: invite.level,
-                          })}
-                          )
-                        </span>
-                      </h2>
+                      <h2>{invite.fullname}</h2>
                     </div>
                     <div className="footer">
                       <h5 className={pigClassName}>{targetPig?.title}</h5>
@@ -248,7 +207,7 @@ export default function FriendsPage() {
   };
 
   const LevelAccordionContent = (level: number) => {
-    const targetLevel = pigsDataPerLevel[`level_${level}`];
+    const targetLevel = pigsDataPerLevel[level];
     return (
       <div className="level-accordion-content">
         <h3 className="slots">
@@ -312,7 +271,7 @@ export default function FriendsPage() {
             <div
               className={`arrow ${openedAccordion === "ref" ? "--open" : ""}`}
             >
-              <img src="/imgs/icons/arrow-right.png" alt="arrow-icon" />
+              <img src="/imgs/icons/arrow-right.png" alt=">" />
             </div>
           </div>
           {openedAccordion === "ref" && <RefAccordionContent />}
@@ -338,23 +297,25 @@ export default function FriendsPage() {
               </>
             );
           })}
-          <div className="accordion level locked">
-            <div className="locked-title">
-              <h2 className="title ">
-                {t("friendsPage.levelReferrals", {
-                  level: lockedLevels.join(" - "),
-                })}
-              </h2>
-              <img
-                className="locked-img"
-                src="/imgs/icons/locked.png"
-                alt="locked"
-              />
+          {!!nextPig?.level && (
+            <div className="accordion level locked">
+              <div className="locked-title">
+                <h2 className="title ">
+                  {t("friendsPage.levelReferrals", {
+                    level: lockedLevels.join(" - "),
+                  })}
+                </h2>
+                <img
+                    className="locked-img"
+                    src="/imgs/icons/locked.png"
+                    alt="locked"
+                />
+              </div>
+              <div className="arrow">
+                <img src="/imgs/icons/arrow-right-bright.png" alt="arrow-icon" />
+              </div>
             </div>
-            <div className="arrow">
-              <img src="/imgs/icons/arrow-right-bright.png" alt="arrow-icon" />
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </Page>

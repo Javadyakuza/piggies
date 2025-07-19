@@ -130,28 +130,20 @@ contract Pig with NftItem {
         // we can safely withdraw the entire balance
         require(sender() == self.owner, "Only owner can withdraw");
         let amount = myBalance();
-        require(amount - ton("0.05") > 0, "Insufficient balance");
+        require(amount >= ton("0.02"), "Insufficient balance");
         nativeReserve(ton("0.01"), 0);
-        
 
         send(SendParameters {
             to: self.pigshop!!,
-            value: ton("0.035"),
+            value: 0,
             bounce: false,
-            mode: SendDefaultMode,
+            mode: SendRemainingBalance,
             body: WithdrawFromPig {
                 nft: myAddress(),
                 amount: amount,
                 owner: self.owner,
                 nftIndex: self.itemIndex,
             }.toCell(),
-        });
-
-        send(SendParameters {
-            to: self.owner,
-            value: 0,
-            mode: SendRemainingBalance,
-            bounce: false
         });
     }
 }

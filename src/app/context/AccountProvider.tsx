@@ -39,6 +39,10 @@ export const AccountContextProvider = ({ children }: AccountContextProviderProps
   );
 
   useEffect(() => {
+    setIsRegisterRequestSent(false);
+  }, [walletAddress]);
+
+  useEffect(() => {
     if (walletAddress && userTelegramId && !isRegisterRequestSent) {
       const handleRegister = async () => {
         try {

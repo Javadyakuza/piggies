@@ -317,13 +317,17 @@ describe("PigCreation Event Test", () => {
 
     const withdrawResult = await pigNft1.send(
       user1.getSender(),
-      { value: toNano("0.1") },
+      { value: toNano("0.01") },
       { $$type: "WithdrawFromNftPig" }
     );
     console.log("user balance after", await user1.getBalance());
 
+      const nftBalanceAfter = (await blockchain.getContract(nftAddress1))
+          .balance;
+      console.log("NFT Balance after withdrawal:", nftBalanceAfter);
+
     expect(withdrawResult.transactions).toHaveTransaction({
-      from: nftAddress1,
+      from: pigShop.address,
       to: user1.address,
       success: true,
     });
@@ -399,7 +403,7 @@ describe("PigCreation Event Test", () => {
     expect(destAfter).toBeGreaterThan(destBefore - toNano("2"));
   });
 
-  it("should upgrade the user 1 nft pig to level 2", async () => {
+  it("should upgrade the user 1 nft pig to max level", async () => {
     let rs = await pigShop.send(
       deployer.getSender(),
       { value: toNano("1") },
@@ -424,28 +428,118 @@ describe("PigCreation Event Test", () => {
         .beginParse()
         .loadStringTail()
     ).toEqual("1.json");
-    let rs2 = await pigShop.send(
-      deployer.getSender(),
-      { value: toNano("1") },
-      {
-        $$type: "PigApproval",
-        pig: nftAddress,
-        userAddress: user1.address,
-        referrerNftAddress: admin1.address,
-        referrerAmount: toNano("0.01"),
-        userBountyHunters: Dictionary.empty<Address, bigint>(),
-        adminsShares: Dictionary.empty<Address, bigint>().set(
-          admin1.address,
-          toNano("0.02")
-        ),
-      }
-    );
 
-    expect(
-      (await pigNft1.getGetNftData()).individualContent
-        .beginParse()
-        .loadStringTail()
-    ).toEqual("2.json");
+    for (let i = 2; i <= 4; i++) {
+        console.log(`Upgrading pig to level ${i}...`);
+        await pigShop.send(
+            deployer.getSender(),
+            { value: toNano("1") },
+            {
+                $$type: "PigApproval",
+                pig: nftAddress,
+                userAddress: user1.address,
+                referrerNftAddress: admin1.address,
+                referrerAmount: toNano("0.01"),
+                userBountyHunters: Dictionary.empty<Address, bigint>(),
+                adminsShares: Dictionary.empty<Address, bigint>().set(
+                    admin1.address,
+                    toNano("0.02")
+                ),
+            }
+        );
+
+        expect(
+            (await pigNft1.getGetNftData()).individualContent
+                .beginParse()
+                .loadStringTail()
+        ).toEqual(`${i}.json`);
+    }
+  });
+
+  it("should mint and upgrade 13 NFTs", async () => {
+    const users = await Promise.all([...new Array(13)]
+      .map(async (_v, i) =>
+        await blockchain.treasury(`inviter_${i}`)
+      )
+    );
+    for (let i = 0; i < users.length; i++) {
+      console.log(`Minting NFT for user ${i + 1}...`);
+      const userBountyHunters = Dictionary.empty<Address, bigint>();
+      for (let j = 1; j <= i; j++) {
+        userBountyHunters.set(
+          await pigCollection.getGetNftAddressByIndex(BigInt(j)),
+          toNano("0.05")
+        );
+      }
+      const adminsShares = Dictionary.empty<Address, bigint>().set(
+        admin1.address,
+        toNano("0.02")
+      );
+      await pigShop.send(
+        users[i].getSender(),
+        { value: toNano("0.05") * BigInt(i) + toNano("0.02") + toNano("0.01")  + toNano("0.02") },
+        'UpgradePig'
+      );
+      const approvalResult = await pigShop.send(
+        deployer.getSender(),
+        { value: toNano("0.175") },
+        {
+          $$type: "PigApproval",
+          pig: null,
+          userAddress: users[i].address,
+          referrerNftAddress: i === 0 ? admin1.address : await pigCollection.getGetNftAddressByIndex(BigInt(i)),
+          referrerAmount: toNano("0.01"),
+          userBountyHunters,
+          adminsShares,
+        }
+      );
+
+      console.log(`Approved for user ${i + 1}`);
+
+      const nftAddress = await pigCollection.getGetNftAddressByIndex(BigInt(i + 1));
+      console.log(`NFT address for user ${i + 1}: ${nftAddress.toRawString()}`);
+      let pigCreationEventFound = false;
+
+      approvalResult.externals.forEach((ext) => {
+        try {
+          const pigCreation = loadPigCreationEvent(ext.body.asSlice());
+          expect(pigCreation.nft).toEqualAddress(nftAddress);
+          pigCreationEventFound = true;
+        } catch (e) {}
+      });
+      expect(pigCreationEventFound).toBeTruthy();
+
+      for (let j = 2; j <= 4; j++) {
+        await pigShop.send(
+          users[i].getSender(),
+          { value: toNano("0.05") * BigInt(i) + toNano("0.02") + toNano("0.01")  + toNano("0.02") },
+          'UpgradePig'
+        );
+        const nftAddress = await pigCollection.getGetNftAddressByIndex(BigInt(i + 1));
+        const upgradeApprovalResult = await pigShop.send(
+          deployer.getSender(),
+          { value: toNano("0.175") },
+          {
+            $$type: "PigApproval",
+            pig: nftAddress,
+            userAddress: users[i].address,
+            referrerNftAddress: i === 0 ? admin1.address : await pigCollection.getGetNftAddressByIndex(BigInt(i)),
+            referrerAmount: toNano("0.01"),
+            userBountyHunters,
+            adminsShares,
+          }
+        );
+
+        const pigNft = blockchain.openContract(Pig.fromAddress(nftAddress));
+        expect(
+          (await pigNft.getGetNftData()).individualContent
+            .beginParse()
+            .loadStringTail()
+        ).toEqual(`${j}.json`);
+
+        console.log(`Upgraded pig of user ${i + 1} to level ${j}`);
+      }
+    }
   });
 
   it("should withdraw leftovers", async () => {

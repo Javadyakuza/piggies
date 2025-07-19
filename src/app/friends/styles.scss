@@ -1,7 +1,5 @@
 .friends-container {
-  height: 78vh;
-  overflow: scroll;
-
+  display: contents;
   .invite-container {
     width: 360px;
     margin: auto;
@@ -31,6 +29,13 @@
         border: none;
         background: transparent;
         width: 24px;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
+        &:active {
+          opacity: 0.5;
+        }
         img {
           width: 24px;
         }
@@ -44,7 +49,8 @@
     }
   }
   .accordion-container {
-    margin-top: 10px;
+    flex: 1;
+    margin: 10px 0;
     .accordion {
       padding: 5px 12px;
       display: flex;
@@ -80,17 +86,16 @@
       }
 
       .arrow {
-        width: 32px;
+        display: flex;
         img {
           height: 26px;
+          width: 26px;
+          object-fit: contain;
         }
         transition: transform 0.3s ease-in-out; /* Add this to smoothly animate transform */
 
         &.--open {
           transform: rotate(90deg);
-          margin-bottom: -14px;
-          margin-left: -5px;
-          margin-right: 9px;
         }
       }
     }

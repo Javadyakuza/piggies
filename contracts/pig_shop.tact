@@ -146,19 +146,29 @@ contract PigShop {
         amount: msg.amount
       }.toCell()
     );
+    send(SendParameters {
+      to: msg.owner,
+      value: 0,
+      mode: SendRemainingValue,
+      bounce: false,
+    });
   }
 
   receive(msg: PigApproval){
     require(sender() == self.owner, "Only owner can approve a pig purchase");
     let totalAmount = ton("0");
     foreach (k, v in msg.userBountyHunters) {
-      totalAmount += v + ton("0.05"); // gas per send
+      totalAmount += v + ton("0.005"); // gas per send
     }
-    totalAmount += msg.referrerAmount + ton("0.05"); // referrer + gas
+    totalAmount += msg.referrerAmount + ton("0.005"); // referrer + gas
     foreach (k, v in msg.adminsShares) {
-      totalAmount += v + ton("0.05"); // admin shares + gas
+      totalAmount += v + ton("0.005"); // admin shares + gas
     }
-    totalAmount += ton("0.1"); // NFT operation cost
+    if (msg.pig == null) {
+      totalAmount += ton("0.135"); // MintNFT operation cost
+    } else {
+      totalAmount += ton("0.02"); // UpgradeNftPig operation cost
+    }
 
     nativeReserve(totalAmount, ReserveAllExcept);
     // shouldn't be here because of the first ever transaction
@@ -205,7 +215,7 @@ contract PigShop {
     if (msg.pig == null) {
       send(SendParameters{
           to: self.collection!!,
-          value: ton("0.15"),
+          value: ton("0.125"),
           mode: SendPayGasSeparately,
           bounce: false,
           body: MintNFT{
@@ -220,7 +230,7 @@ contract PigShop {
     } else {
       send(SendParameters{
           to: msg.pig!!,
-          value: ton("0.1"),
+          value: ton("0.02"),
           mode: SendPayGasSeparately,
           bounce: false,
           body: UpgradeNftPig{}.toCell()

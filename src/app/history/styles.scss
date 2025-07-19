@@ -1,8 +1,7 @@
 .history-container {
-  height: 78vh;
-  overflow: scroll;
+  display: contents;
   .empty-state-container {
-    margin-top: 20vh;
+    margin: auto 0;
     text-align: center;
     .empty {
       font-size: 24px;
@@ -11,7 +10,7 @@
     }
     .mag-pic {
       width: 30%;
-      min-width: 200px;
+      min-width: min(200px, 100vh - 230px);
     }
     .empty-text h2 {
       font-weight: 100;
@@ -64,6 +63,10 @@
           font-size: 20px;
           .balance {
             color: #2cc48f;
+
+            &.withdraw {
+              color: #c42c8f;
+            }
           }
         }
       }

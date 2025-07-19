@@ -37,6 +37,20 @@
     .actions-container {
       display: flex;
       align-items: center;
+
+      .profile-button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+          color: #ffbe0b;
+        }
+        &:active {
+          opacity: 0.5;
+          color: #ffbe0b;
+        }
+      }
     }
   }
   hr {

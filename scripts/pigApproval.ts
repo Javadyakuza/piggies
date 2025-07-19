@@ -40,7 +40,7 @@ export async function sendPigApproval(
     await pigShop.send(
       wallet.sender(secretKey),
       {
-        value: toNano("0.2"),
+        value: BigInt(bh.users.size + bh.referrer.size + bh.admins.size) * toNano("0.005") + (!!pig ? toNano('0.02') : toNano('0.135')) + toNano('0.015'),
       },
       approvalMsg
     );

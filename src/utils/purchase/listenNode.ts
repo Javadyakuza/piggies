@@ -250,11 +250,6 @@ async function catchPigShopEvents(
             "⁉️ UpgradePig tx initiated check for potential user tree update ..."
           );
 
-          const bh = await findUsersBountyHunters(
-            userAddr,
-            pig_data.new_pig_level
-          );
-
           const tx_id = TxId.create(userAddr, pig_data.new_pig_level);
 
           console.log("🚀 Sending pig approval message");
@@ -381,13 +376,14 @@ async function catchPigShopEvents(
         console.log("🏧 Handling WithdrawFromPigEvent");
         fileSystemLogger.log("🏧 Handling WithdrawFromPigEvent");
         //-----------------------------------------
-        // update the user piggy bank balance (piggy_bank_balance on the users table)
+        // update the user piggy bank balance (piggy_bank_balance on the users table and rewards_history table)
         //-----------------------------------------
 
         await updateUserPiggyBankBalance(
           userAddr,
           event.nft.toRawString(),
-          event.amount
+          event.amount,
+          event.tx_hash
         );
         console.log("💰 User piggy bank balance updated");
         fileSystemLogger.log("💰 User piggy bank balance updated");
