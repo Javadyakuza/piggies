@@ -23,7 +23,9 @@ const PigCard = ({
 }) => {
   return (
       <div className="pig-card">
-        <h4 className="hint"> {pigInfo?.hint || <></>}</h4>
+        {pigInfo?.hint && (
+          <h4 className="hint">{pigInfo.hint}</h4>
+        )}
         <h2 className="title">{pigInfo?.title}</h2>
         <Image
             width={500}
@@ -33,7 +35,9 @@ const PigCard = ({
             className="pig-image"
             draggable={false}
         />
-        <h3 className="caption">{pigInfo?.caption || <></>}</h3>
+        {pigInfo?.caption && (
+          <h3 className="caption">{pigInfo.caption}</h3>
+        )}
       </div>
   );
 };

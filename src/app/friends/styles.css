@@ -2,13 +2,14 @@
   display: contents;
 }
 .friends-container .invite-container {
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   margin: auto;
 }
 .friends-container .invite-container .title {
   font-weight: 600;
   text-align: center;
-  font-size: 32px;
+  font-size: clamp(1rem, 3vh, 32px);
   margin-bottom: 12px;
 }
 .friends-container .invite-container .invite-link {
@@ -44,7 +45,7 @@
   margin-top: 8px;
   text-align: center;
   color: #facefd;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 2vh, 16px);
 }
 .friends-container .accordion-container {
   flex: 1;
@@ -99,7 +100,7 @@
   text-align: center;
 }
 .friends-container .accordion-container .ref-accordion-content .empty-container .empty {
-  font-size: 24px;
+  font-size: clamp(0.9rem, 2vh, 24px);
   font-weight: 200;
   color: #facefd;
 }

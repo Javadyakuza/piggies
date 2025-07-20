@@ -34,8 +34,8 @@
     gap: 0.5rem;
 
     .dot {
-      width: 12px;
-      height: 12px;
+      width: clamp(0.25rem, 1vh, 12px);
+      height: clamp(0.25rem, 1vh, 12px);
       border-radius: 50%;
       background-color: transparent;
       border: 2px solid #ffbe0b;
@@ -82,6 +82,7 @@
     border-top: 2px solid #ffbe0b;
     border-bottom: 2px solid #ffbe0b;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     .text {
       flex: 1;
@@ -94,7 +95,7 @@
       h3 {
         margin: 0;
         margin-bottom: 4px;
-        font-size: 26px;
+        font-size: clamp(1rem, 3vh, 26px);
         font-weight: 200;
 
         &.bold {
@@ -103,11 +104,11 @@
         }
 
         &.small {
-          font-size: 16px;
+          font-size: clamp(0.75rem, 3vh, 16px);
         }
       }
       h3 {
-        font-size: 20px;
+        font-size: clamp(1rem, 3vh, 20px);
       }
     }
 
@@ -117,12 +118,12 @@
       gap: 12px;
       align-items: center;
       .action-img {
-        width: 74px;
+        width: clamp(3.75rem, 7.5vh, 74px);
       }
       .action-btn {
         border: 0;
         padding: 8px 14px;
-        max-width: 160px;
+        max-width: clamp(110px, 16vh, 160px);
         text-wrap: wrap;
         height: auto;
         min-height: 35px;
@@ -131,12 +132,19 @@
         background-color: #2cc48f;
         color: #fff;
         border-radius: 34px;
-        font-size: 24px;
+        font-size: clamp(1rem, 2vh, 24px);
         display: flex;
         align-items: center;
         &:disabled {
           background-color: #2cc48f8d;
           color: #ffffff6a;
+        }
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
+        &:active {
+          opacity: 0.5;
         }
         div {
           font-weight: 600;

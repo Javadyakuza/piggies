@@ -8,13 +8,33 @@
   overflow: hidden;
   text-align: center;
 
+  .title {
+    margin: 0;
+    flex: 0.25;
+    align-content: center;
+    max-height: 72px;
+  }
+
+  .hint {
+    margin: 0;
+    flex: 0.25;
+    align-content: center;
+    max-height: 72px;
+  }
+
   .pig-image {
     flex: 1;
     min-width: 0;
     min-height: 32px;
     width: auto;
-    height: auto;
     object-fit: contain;
     pointer-events: none;
+  }
+
+  .caption {
+    margin: 0;
+    flex: 0.25;
+    align-content: center;
+    max-height: 60px;
   }
 }
