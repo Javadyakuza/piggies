@@ -14,7 +14,7 @@
 .store-container .yellow {
   color: #ffbe0b;
   font-weight: bold;
-  font-size: 20px;
+  font-size: clamp(1rem, 2vh, 20px);
 }
 .store-container .thick {
   font-weight: 200;
@@ -23,25 +23,22 @@
 .store-container .slide-title {
   font-weight: bold;
   color: #c23970;
-  font-size: 32px;
 }
 .store-container .slide-title-container {
-  font-size: 32px;
-}
-.store-container .slider-slide > .title {
-  margin-top: 3px;
-}
-.store-container .slider-slide > .hint {
-  margin-bottom: 15px;
+  font-size: clamp(1rem, 2.5vh, 32px);
 }
 .store-container .balance-container {
   text-align: center;
 }
 .store-container .balance-container .withdraw-btn {
-  margin-top: 10px;
   height: 32px;
   color: #691d82;
   border-radius: 34px;
+}
+@media (min-height: 700px) {
+  .store-container .balance-container .withdraw-btn {
+    margin-top: 10px;
+  }
 }
 .store-container .balance-container .withdraw-btn.normal {
   background-color: #e73d74;
@@ -53,13 +50,13 @@
   margin-left: 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(0.5rem, 1vh, 10px);
 }
 .store-container .balance-container .ton-icon {
-  width: 42px;
+  width: clamp(2rem, 4vh, 42px);
 }
 .store-container .balance-container .text {
-  font-size: 26px;
+  font-size: clamp(1rem, 2.25vh, 26px);
 }
 .store-container .balance-container .text h4 {
   display: inline;
@@ -140,6 +137,13 @@
   font-size: 24px;
   display: flex;
   align-items: center;
+  cursor: pointer;
+}
+.confirm-modal-container .action-container .btns .action-btn:hover {
+  opacity: 0.7;
+}
+.confirm-modal-container .action-container .btns .action-btn:active {
+  opacity: 0.5;
 }
 .confirm-modal-container .action-container .btns .purchase-btn {
   background-color: #2cc48f;

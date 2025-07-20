@@ -2,7 +2,8 @@
   display: contents;
 }
 .profile-container .wallet-address-container {
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   margin: auto;
   text-align: center;
 }

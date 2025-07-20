@@ -12,7 +12,7 @@
   .yellow {
     color: #ffbe0b;
     font-weight: bold;
-    font-size: 20px;
+    font-size: clamp(1rem, 2vh, 20px);
   }
   .thick {
     font-weight: 200;
@@ -21,23 +21,18 @@
   .slide-title {
     font-weight: bold;
     color: #c23970;
-    font-size: 32px;
   }
   .slide-title-container {
-    font-size: 32px;
-  }
-  .slider-slide > .title {
-    margin-top: 3px;
-  }
-  .slider-slide > .hint {
-    margin-bottom: 15px;
+    font-size: clamp(1rem, 2.5vh, 32px);
   }
 
   .balance-container {
     text-align: center;
 
     .withdraw-btn {
-      margin-top: 10px;
+      @media (min-height: 700px) {
+        margin-top: 10px;
+      }
       height: 32px;
       color: #691d82;
       border-radius: 34px;
@@ -52,13 +47,13 @@
       margin-left: 15px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: clamp(0.5rem, 1vh, 10px);
     }
     .ton-icon {
-      width: 42px;
+      width: clamp(2rem, 4vh, 42px);
     }
     .text {
-      font-size: 26px;
+      font-size: clamp(1rem, 2.25vh, 26px);
       h4 {
         display: inline;
       }
@@ -152,6 +147,13 @@
         font-size: 24px;
         display: flex;
         align-items: center;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
+        &:active {
+          opacity: 0.5;
+        }
       }
 
       .purchase-btn {
