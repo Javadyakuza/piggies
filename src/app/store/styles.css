@@ -40,10 +40,11 @@
     margin-top: 10px;
   }
 }
-.store-container .balance-container .withdraw-btn.normal {
+.store-container .balance-container .withdraw-btn:disabled {
   background-color: #e73d74;
+  opacity: 1;
 }
-.store-container .balance-container .withdraw-btn.warning {
+.store-container .balance-container .withdraw-btn:enabled {
   background-color: #ebb319;
 }
 .store-container .balance-container .balance-info {
@@ -67,6 +68,22 @@
 .store-container .balance-container .text .total {
   font-weight: 200;
   color: #facefd;
+}
+.store-container .balance-container .fullness-warning {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 10px;
+  color: #facefd;
+  font-weight: bold;
+  font-size: clamp(0.75rem, 1.75vh, 20px);
+  line-height: 1;
+}
+.store-container .balance-container .fullness-warning .warning-icon {
+  width: auto;
+  height: clamp(1rem, 2vh, 24px);
+  object-fit: contain;
 }
 
 .confirm-modal-container {
