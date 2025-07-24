@@ -68,18 +68,6 @@ const SuggestionSlider = ({
       onTouchStart={(e) => handleStart(e.touches[0].clientX)}
       onTouchEnd={(e) => handleEnd(e.changedTouches[0].clientX)}
     >
-      {!locked && (
-        <div className="slider-dots">
-          {slides.map((_, index) => (
-            <span
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`dot ${currentIndex === index ? "active" : ""}`}
-            ></span>
-          ))}
-        </div>
-      )}
-
       <div className="slider-wrapper">
         <div
           className="slider-track"
@@ -110,6 +98,17 @@ const SuggestionSlider = ({
           ))}
         </div>
       </div>
+      {!locked && (
+          <div className="slider-dots">
+            {slides.map((_, index) => (
+                <span
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`dot ${currentIndex === index ? "active" : ""}`}
+                ></span>
+            ))}
+          </div>
+      )}
     </div>
   );
 };
