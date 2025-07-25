@@ -391,6 +391,8 @@ export default function StorePage() {
   );
   const nextPigClassName = nextPig?.className || '';
 
+  const fullnessPercent = Number.EPSILON + (+fromNano(user?.piggy_bank_balance ?? 0) / +(currentPig?.capacityInTon ?? 0) || 0);
+
   return (
     <>
       {isConfirmModalOpen ? (
@@ -463,9 +465,30 @@ export default function StorePage() {
                   <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
                 </span>
               </div>
-              <Button className="withdraw-btn normal" onClick={handleWithdrawal}>
+              <Button
+                  className="withdraw-btn"
+                  disabled={fullnessPercent <= Number.EPSILON}
+                  onClick={handleWithdrawal}
+              >
                 {t("storePage.withdraw")}
               </Button>
+              {fullnessPercent >= 0.75 && (
+                  <div className="fullness-warning">
+                    <img src={
+                      fullnessPercent >= 0.9999 ?
+                      "/imgs/icons/error.png" :
+                      "/imgs/icons/warning.png"
+                    } alt="Warning" className="warning-icon" />
+                    <span>
+                      {
+                        fullnessPercent >= 0.9999 ? !nextPig ?
+                            t("storePage.capacityFullMessage") :
+                            t("storePage.capacityFullUpgradeMessage") :
+                          t("storePage.capacityWarningMessage")
+                      }
+                    </span>
+                  </div>
+              )}
             </div>
             <PigCard pigInfo={filteredSlides[0]} />
             <SuggestionSlider slides={filteredSuggestionSlides} isLoading={currentPigCode === undefined} />

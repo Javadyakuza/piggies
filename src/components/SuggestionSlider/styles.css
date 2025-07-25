@@ -81,6 +81,7 @@
   height: auto;
   min-height: 35px;
   hyphens: auto;
+  line-break: anywhere;
 }
 .suggestion-slider-container .suggestion-slide .text h2,
 .suggestion-slider-container .suggestion-slide .text h3 {
@@ -118,6 +119,7 @@
   height: auto;
   min-height: 35px;
   hyphens: auto;
+  line-break: anywhere;
   line-height: 0.75;
   background-color: #2cc48f;
   color: #fff;

@@ -36,10 +36,11 @@
       height: 32px;
       color: #691d82;
       border-radius: 34px;
-      &.normal {
+      &:disabled {
         background-color: #e73d74;
+        opacity: 1;
       }
-      &.warning {
+      &:enabled {
         background-color: #ebb319;
       }
     }
@@ -63,6 +64,23 @@
       .total {
         font-weight: 200;
         color: #facefd;
+      }
+    }
+    .fullness-warning {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 10px;
+      color: #facefd;
+      font-weight: bold;
+      font-size: clamp(0.75rem, 1.75vh, 20px);
+      line-height: 1;
+
+      .warning-icon {
+        width: auto;
+        height: clamp(1rem, 2vh, 24px);
+        object-fit: contain;
       }
     }
   }

@@ -130,11 +130,6 @@ export default function HistoryPage() {
                 </div>
               );
             })}
-
-            <h4 className="reached-end">{t("historiesPage.reachedEnd")}</h4>
-            <br />
-            <br />
-            <br />
           </>
         ) : (
           emptyState

@@ -29,7 +29,7 @@ This project contains the following scripts:
 - `dev`. Runs the application in development mode.
 - `dev:https`. Runs the application in development mode using self-signed SSL
   certificate.
-- `build`. Builds the application for production.
+- `all:build`. Builds the application for production.
 - `start`. Starts the Next.js server in production mode.
 - `lint`. Runs [eslint](https://eslint.org/) to ensure the code quality meets
   the required
@@ -99,6 +99,12 @@ To run the application in the development mode, use the `dev` script:
 
 ```bash
 pnpm run dev
+```
+
+To run the application in the production mode, use the `start` script:
+
+```bash
+pnpm run start
 ```
 
 After this, you will see a similar message in your terminal:

@@ -14,7 +14,8 @@
     "bp:start": "blueprint run",
     "bp:build": "blueprint build",
     "bp:deploy": "blueprint run deploy",
-    "bp:test": "jest --verbose"
+    "bp:test": "jest --verbose",
+    "all:build": "blueprint build --all && next build"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
