@@ -30,7 +30,7 @@ type PigData = {
 
 export default function ProfilePage() {
   const t = useTranslations("i18n");
-  const { tonConnectUI, walletAddress } = useWallet();
+  const { tonConnectUI, userFriendlyWalletAddress } = useWallet();
 
   const [isDisconnectConfirmVisible, setIsDisconnectConfirmVisible] =
     useState(false);
@@ -54,7 +54,7 @@ export default function ProfilePage() {
   };
 
   const handleCopyAddress = () => {
-    copyToClipboard(walletAddress);
+    copyToClipboard(userFriendlyWalletAddress);
   };
 
   return (
@@ -64,7 +64,7 @@ export default function ProfilePage() {
           <h3 className="title">{t("profilePage.connectedWallet")}</h3>
           <div className="wallet-address">
             <div></div>
-            <h3 className="address">{truncate(walletAddress, 25)}</h3>
+            <h3 className="address">{truncate(userFriendlyWalletAddress, 25)}</h3>
             <button className="copy-btn">
               <img
                 src="/imgs/icons/copy.png"

@@ -3,7 +3,7 @@
 import { Select } from '@telegram-apps/telegram-ui';
 import { useLocale } from 'next-intl';
 import { FC } from 'react';
-
+import "./styles.css";
 import { localesMap } from '@/core/i18n/config';
 import { setLocale } from '@/core/i18n/locale';
 import { Locale } from '@/core/i18n/types';
@@ -17,9 +17,9 @@ export const LocaleSwitcher: FC = () => {
   };
 
   return (
-    <Select value={locale} onChange={({ target }) => onChange(target.value)}>
+    <Select className="locale-switcher" value={locale} onChange={({ target }) => onChange(target.value)}>
       {localesMap.map((locale) => (
-        <option key={locale.key} value={locale.key}>{locale.title}</option>
+        <option key={locale.key} value={locale.key} title={locale.title}>{locale.shortTitle}</option>
       ))}
     </Select>
   );

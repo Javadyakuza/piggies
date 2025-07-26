@@ -44,6 +44,7 @@ export default function FriendsPage() {
   const t = useTranslations("i18n");
   const { walletAddress } = useWallet();
   const { user, initDataState } = useAccount();
+  const [isCopied, setIsCopied] = useState(false);
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [openedAccordion, setOpenedAccordion] = useState<
     "ref" | number | undefined
@@ -144,10 +145,12 @@ export default function FriendsPage() {
     currentPigCode || currentPigCode === 0
       ? pigsMap.find((item) => item.code === currentPigCode + 1)
       : undefined;
-  const refLink = !currentPigCode || currentPigCode === 0 ? "buy a pig first 🐷" : generateRefLink(referralId);    
+  const refLink = !currentPigCode || currentPigCode === 0 ? t("friendsPage.buyPig") : isCopied ? t("friendsPage.copied") : generateRefLink(referralId);
 
   const handleCopyAddress = () => {
     copyToClipboard(refLink);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2500);
   };
   const toggleRefAccordion = () => {
     setOpenedAccordion(openedAccordion === "ref" ? undefined : "ref");
@@ -207,7 +210,7 @@ export default function FriendsPage() {
   };
 
   const LevelAccordionContent = (level: number) => {
-    const targetLevel = pigsDataPerLevel[level];
+    const targetLevel = pigsDataPerLevel[level] ?? {};
     return (
       <div className="level-accordion-content">
         <h3 className="slots">
@@ -255,7 +258,7 @@ export default function FriendsPage() {
           <h3 className="title">{t("friendsPage.title")}</h3>
           <div className="invite-link">
             <h3 className="link">{truncate(refLink, 25)}</h3>
-            <button className="copy-btn">
+            <button className="copy-btn" disabled={!currentPigCode || currentPigCode === 0 || isCopied}>
               <img
                 src="/imgs/icons/copy.png"
                 alt="copy-icon"

@@ -26,7 +26,9 @@ const PigCard = ({
         {pigInfo?.hint && (
           <h4 className="hint">{pigInfo.hint}</h4>
         )}
-        <h2 className="title">{pigInfo?.title}</h2>
+        {pigInfo?.title && (
+          <h2 className="title">{pigInfo.title}</h2>
+        )}
         <Image
             width={500}
             height={500}

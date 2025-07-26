@@ -14,7 +14,8 @@
     "footerContent": {
       "bank": "Bank",
       "friends": "Friends",
-      "history": "History"
+      "history": "History",
+      "collection": "Collection"
     },
     "storePage": {
       "buyThe": "Buy the",
@@ -22,21 +23,23 @@
       "upgradeTo": "Upgrade to",
       "purchase": "Purchase",
       "upgrade": "Upgrade",
-      "startEarning": "to start earning",
+      "startEarning": "to start earning TON",
       "earnMore": "to earn more",
-      "bronzePig": "Bronze Pig",
-      "silverPig": "Silver Pig",
-      "goldPig": "Gold Pig",
-      "diamondPig": "Diamond Pig",
+      "bronzePig": "Bronze PIG",
+      "silverPig": "Silver PIG",
+      "goldPig": "Golden PIG",
+      "diamondPig": "Diamond PIG",
       "capacityWarningMessage": "Almost full, consider upgrading",
-      "capacityFullUpgradeMessage": "Bank is full. Upgrade the pig!",
+      "capacityFullUpgradeMessage": "Bank is full. Upgrade the PIG!",
       "capacityFullMessage": "Bank is full!",
-      "beginJourneyMessage": "Begin journey towards the Dream",
-      "numberOfLevels": "{level} Levels",
-      "numberOfSlots": "{slots} Slots",
+      "beginJourneyMessage": "Collect the BIG PIG NFT collection",
+      "levelsCount": "{count} levels",
+      "slotsCount": "{count} slots",
+      "numberOfLevels": "levels_count: {level}",
+      "numberOfSlots": "slots_count: {slots}",
       "withdraw": "Withdraw",
       "transactionInProgress": "Transaction in progress ...",
-      "tonCapacity": "{capacity} TON Capacity",
+      "tonCapacity": "max_balance: {capacity} TON",
       "cancel": "Cancel",
       "toUnlock": "to unlock",
       "locked": "Locked",
@@ -44,16 +47,18 @@
     },
     "friendsPage": {
       "title": "Invite Friends!",
-      "hint": "Earn from Pigs your referrals Buy & Upgrade,  and get a share from people they refer",
-      "yourReferrals": "Your Referrals",
+      "buyPig": "buy a PIG first \uD83D\uDC37",
+      "copied": "Copied!",
+      "hint": "Get Bonuses for your friends' NFT BIG PIG purchases!",
+      "yourReferrals": "Your Friends",
       "levelReferrals": "Level {level}",
       "slots": "{current}/{total} Slots",
-      "bronzePigs": "Bronze Pigs: {number}",
-      "silverPigs": "Silver Pigs: {number}",
-      "goldPigs": "Gold Pigs: {number}",
-      "diamondPigs": "Diamond Pigs: {number}",
+      "bronzePigs": "Bronze PIG: {number}",
+      "silverPigs": "Silver PIG: {number}",
+      "goldPigs": "Golden PIG: {number}",
+      "diamondPigs": "Diamond PIG: {number}",
       "yourRefs": "{number} your refs",
-      "invitationSomeone": "You should invite someone"
+      "invitationSomeone": "You need to invite friends!"
     },
     "historiesPage": {
       "noHistories": "No history yet...",
@@ -67,6 +72,10 @@
     "profilePage": {
       "connectedWallet": "Connected Wallet"
     },
+    "collectionPage": {
+      "oink": "Oink!",
+      "underDevelopment": "Section under development"
+    },
     "balance": "Balance",
     "earnings": "Earnings",
     "earningsAmount": "{amount} / {currentPigPrice} $",
@@ -75,7 +84,7 @@
     "levelNumber": "Levels: {level}",
     "purchase": "Purchase",
     "upgradeSilver": "Upgrade to Silver",
-    "upgradeGold": "Upgrade to Gold",
+    "upgradeGold": "Upgrade to Golden",
     "upgradeDiamond": "Upgrade to Diamond",
     "refLinkCopied": "Reflink copied!",
     "wallet": "Wallet",
@@ -96,7 +105,7 @@
     "walletAddressChangedDescription": "Your wallet address has been changed since last time you connected, the wallet address automatically changes when you connect to a new wallet.",
     "understood": "Understood",
     "usersTree": "Users tree: {totalUnder}",
-    "currentPig": "Current Pig",
-    "firstPurchaseToUnlockLevels": "Purchase your first pig to unlock levels!"
+    "currentPig": "Current PIG",
+    "firstPurchaseToUnlockLevels": "Purchase your first PIG to unlock levels!"
   }
 }

@@ -216,12 +216,7 @@ export default function StorePage() {
       : undefined;
 
   const placeholderSlide = {
-    title: (
-      <span className="slide-title-container">
-        <span className="thick">{t("storePage.buyThe")} </span>{" "}
-        <span className="slide-title bronze">{t("storePage.bronzePig")}</span>
-      </span>
-    ),
+    title: undefined,
     hint: (
       <>
         <span className="yellow">{t("storePage.beginJourneyMessage")}</span>
@@ -245,14 +240,14 @@ export default function StorePage() {
         caption: (
           <>
             <span className="normal-bold">
-              {t("storePage.numberOfLevels", {
-                level: pigData.level,
+              {t("storePage.levelsCount", {
+                count: pigData.level,
               })}
             </span>{" "}
             <span className="thick">
               (
-              {t("storePage.numberOfSlots", {
-                slots: pigData.slots,
+              {t("storePage.slotsCount", {
+                count: pigData.slots,
               })}
               )
             </span>
@@ -322,7 +317,7 @@ export default function StorePage() {
           </div>
         </>
       ),
-      buttonText: t("storePage.upgrade"),
+      buttonText: t("storePage.purchase"),
       cover: "/imgs/pigs/silver.png",
       onClick: toggleConfirmModal,
       isLocked: currentPigCode !== 1,
@@ -350,7 +345,7 @@ export default function StorePage() {
           </div>
         </>
       ),
-      buttonText: t("storePage.upgrade"),
+      buttonText: t("storePage.purchase"),
       cover: "/imgs/pigs/gold.png",
       onClick: toggleConfirmModal,
       isLocked: currentPigCode !== 2,
@@ -378,7 +373,7 @@ export default function StorePage() {
           </div>
         </>
       ),
-      buttonText: t("storePage.upgrade"),
+      buttonText: t("storePage.purchase"),
       cover: "/imgs/pigs/diamond.png",
       onClick: toggleConfirmModal,
       isLocked: currentPigCode !== 3,
@@ -464,14 +459,14 @@ export default function StorePage() {
                   <h4 className="earning">{+parseFloat(fromNano(user?.piggy_bank_balance ?? 0)).toFixed(3)}</h4>{" "}
                   <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
                 </span>
+                <Button
+                    className="withdraw-btn"
+                    disabled={fullnessPercent <= Number.EPSILON}
+                    onClick={handleWithdrawal}
+                >
+                  {t("storePage.withdraw")}
+                </Button>
               </div>
-              <Button
-                  className="withdraw-btn"
-                  disabled={fullnessPercent <= Number.EPSILON}
-                  onClick={handleWithdrawal}
-              >
-                {t("storePage.withdraw")}
-              </Button>
               {fullnessPercent >= 0.75 && (
                   <div className="fullness-warning">
                     <img src={

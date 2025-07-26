@@ -37,6 +37,7 @@
 .main-header .profile-container .actions-container {
   display: flex;
   align-items: center;
+  gap: 1rem;
 }
 .main-header .profile-container .actions-container .profile-button {
   border: none;
