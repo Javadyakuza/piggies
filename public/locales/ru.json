@@ -14,30 +14,32 @@
     "footerContent": {
       "bank": "Банк",
       "friends": "Друзья",
-      "history": "История"
+      "history": "История",
+      "collection": "Коллекция"
     },
     "storePage": {
-      "buyThing": "Купить свинку",
       "buyThe":"Купить",
       "buy": "Купите",
       "upgradeTo": "Улучшить до",
       "purchase": "Купить",
       "upgrade": "Улучшить",
-      "startEarning": "чтобы начать зарабатывать",
+      "startEarning": "чтобы начать копить TON",
       "earnMore": "чтобы зарабатывать больше",
-      "bronzePig": "Бронзовая свинка",
-      "silverPig": "Серебряная свинка",
-      "goldPig": "Золотая свинка",
-      "diamondPig": "Алмазная свинка",
+      "bronzePig": "Bronze PIG",
+      "silverPig": "Silver PIG",
+      "goldPig": "Golden PIG",
+      "diamondPig": "Diamond PIG",
       "capacityWarningMessage": "Почти заполнена, подумайте об улучшении",
-      "capacityFullUpgradeMessage": "Копилка заполнена. Улучшите свинку!",
+      "capacityFullUpgradeMessage": "Копилка заполнена. Улучшите PIG!",
       "capacityFullMessage": "Копилка заполнена!",
-      "beginJourneyMessage": "Начните путешествие к Мечте",
-      "numberOfLevels": "{level} уровней",
-      "numberOfSlots": "{slots} слотов",
-      "withdraw": "Вывод",
+      "beginJourneyMessage": "Собери коллекцию NFT BIG PIG",
+      "levelsCount": "{count, plural, one {# линия} few {# линии} other {# линий}}",
+      "slotsCount": "{count, plural, one {# слот} few {# слота} other {# слотов}}",
+      "numberOfLevels": "levels_count: {level}",
+      "numberOfSlots": "slots_count: {slots}",
+      "withdraw": "Собрать",
       "transactionInProgress": "Транзакция выполняется ...",
-      "tonCapacity": "Вместимость: {capacity} TON",
+      "tonCapacity": "max_balance: {capacity} TON",
       "cancel": "Отмена",
       "toUnlock": "чтобы разблокировать",
       "locked": "Заблокировано",
@@ -45,16 +47,18 @@
     },
     "friendsPage": {
       "title": "Пригласите друзей!",
-      "hint": "Зарабатывайте с покупок и улучшений свинок вашими рефералами,  а также получайте долю с их приглашений",
-      "yourReferrals": "Ваши рефералы",
+      "buyPig": "сначала купите PIG \uD83D\uDC37",
+      "copied": "Скопировано!",
+      "hint": "Получайте Бонусы с покупок NFT BIG PIG ваших друзей!",
+      "yourReferrals": "Ваши Друзья",
       "levelReferrals": "Уровень {level}",
       "slots": "{current}/{total} Слотов",
-      "bronzePigs": "Бронзовые свинки: {number}",
-      "silverPigs": "Серебряные свинки: {number}",
-      "goldPigs": "Золотые свинки: {number}",
-      "diamondPigs": "Алмазные свинки: {number}",
+      "bronzePigs": "Bronze PIG: {number}",
+      "silverPigs": "Silver PIG: {number}",
+      "goldPigs": "Golden PIG: {number}",
+      "diamondPigs": "Diamond PIG: {number}",
       "yourRefs": "{number} ваших рефералов",
-      "invitationSomeone": "Вы должны пригласить кого-то"
+      "invitationSomeone": "Необходимо пригласить друзей!"
     },
     "historiesPage": {
       "noHistories": "История пока пуста...",
@@ -68,6 +72,10 @@
     "profilePage": {
       "connectedWallet": "Подключенный кошелек"
     },
+    "collectionPage": {
+      "oink": "Хрю!",
+      "underDevelopment": "Раздел в разработке"
+    },
     "balance": "Баланс",
     "earnings": "Доходы",
     "earningsAmount": "{amount} / {currentPigPrice} $",
@@ -75,9 +83,9 @@
     "withdraw": "Вывод",
     "levelNumber": "Уровни: {level}",
     "purchase": "Купить",
-    "upgradeSilver": "Улучшить до Серебряной",
-    "upgradeGold": "Улучшить до Золотой",
-    "upgradeDiamond": "Улучшить до Алмазной",
+    "upgradeSilver": "Улучшить до Silver",
+    "upgradeGold": "Улучшить до Golden",
+    "upgradeDiamond": "Улучшить до Diamond",
     "refLinkCopied": "Ссылка скопирована!",
     "wallet": "Кошелек",
     "pleaseConnectWallet": "Пожалуйста, подключите свой кошелек",
@@ -97,7 +105,7 @@
     "walletAddressChangedDescription": "Адрес кошелька изменен с момента последнего подключения, адрес кошелька автоматически меняется при подключении к новому кошельку.",
     "understood": "Понятно",
     "usersTree": "Дерево пользователей: {totalUnder}",
-    "currentPig": "Текущая свинка",
-    "firstPurchaseToUnlockLevels": "Купите первую свинку, чтобы разблокировать уровни!"
+    "currentPig": "Текущий PIG",
+    "firstPurchaseToUnlockLevels": "Купите первый PIG, чтобы разблокировать уровни!"
   }
 }

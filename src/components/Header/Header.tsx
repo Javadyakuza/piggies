@@ -18,6 +18,7 @@ import "./styles.css";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
 import Image from "next/image";
 import { useAccount } from "@/app/context/AccountProvider";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher/LocaleSwitcher";
 
 export default function Header() {
   const t = useTranslations("i18n");
@@ -66,9 +67,10 @@ export default function Header() {
           <h4 className="full-name">
             {userData?.firstName} {userData?.lastName}
           </h4>
-          <span style={{ fontSize: "1rem" }}> v3.1.2-tst </span>
+          <span style={{ fontSize: "1rem" }}> v3.1.3-tst </span>
         </div>
         <div className="actions-container">
+          <LocaleSwitcher />
           <button
               className="profile-button"
               onClick={handleNavigateProfile}

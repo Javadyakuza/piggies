@@ -90,7 +90,7 @@ const SuggestionSlider = ({
                   className="action-btn"
                 >
                   <div>
-                    {slide.isLocked ? t("storePage.locked") : isLoading ? t("storePage.loading") : slide.buttonText}
+                    {slide.buttonText}
                   </div>
                 </button>
               </div>

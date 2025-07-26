@@ -9,6 +9,7 @@ type WalletContextType = {
   isConnected: boolean;
   wallet: ReturnType<typeof useTonWallet>;
   walletAddress: string;
+  userFriendlyWalletAddress: string;
   sender: Sender | null;
   tonApi: TonApiClient | null;
   tonClient: TonClient | null;
@@ -27,6 +28,7 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps) 
   const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
   const walletAddress = useTonAddress(false);
+  const userFriendlyWalletAddress = useTonAddress(true);
   const [isConnected, setIsConnected] = useState(false);
   const [sender, setSender] = useState<Sender | null>(null);
   const [tonApi, setTonApi] = useState<TonApiClient | null>(null);
@@ -78,6 +80,7 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps) 
         isConnected,
         wallet,
         walletAddress,
+        userFriendlyWalletAddress,
         sender,
         tonApi,
         tonClient,

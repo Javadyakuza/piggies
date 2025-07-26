@@ -30,6 +30,12 @@ export function Footer() {
       link: "/",
       key: "/history",
     },
+    {
+      title: t("footerContent.collection"),
+      icon: "/imgs/icons/collection.png",
+      link: "/",
+      key: "/collection",
+    },
   ];
 
   const handlePageChange = (page: string) => {
@@ -50,8 +56,7 @@ export function Footer() {
           }`}
           key={i}
         >
-          <Image src={item.icon} alt={item.title} width={24} height={24} />
-          <h4>{item.title}</h4>
+          <Image src={item.icon} alt={item.title} width={64} height={64} />
         </button>
       ))}
     </div>
