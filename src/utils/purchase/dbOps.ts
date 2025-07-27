@@ -188,6 +188,7 @@ export async function updateReferralsRewardsHistory(
         reward: Number(reward),
         referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
+        reward_type: 'S',
       })
       .select()
       .single();
@@ -210,6 +211,7 @@ export async function updateReferralsRewardsHistory(
         reward: Number(reward),
         referral: event_data.userAddress.toRawString(),
         related_tx: event_data.tx_hash,
+        reward_type: 'A',
       })
       .select()
       .single();
@@ -233,6 +235,7 @@ export async function updateReferralsRewardsHistory(
           reward: Number(reward),
           referral: event_data.userAddress.toRawString(),
           related_tx: event_data.tx_hash,
+          reward_type: 'R',
         })
         .select()
         .single();
@@ -379,6 +382,7 @@ export async function updateUserPiggyBankBalance(
           reward: -Number(delta),
           referral: userAddress,
           related_tx: tx_hash,
+          reward_type: 'W',
         })
         .select()
         .single();

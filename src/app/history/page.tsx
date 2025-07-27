@@ -17,6 +17,7 @@ type Reward = {
   upgraded_pig_level: number;
   self_balance_change: number;
   referral_depth: number;
+  reward_type?: string;
 };
 export default function HistoryPage() {
   const t = useTranslations("i18n");
@@ -103,7 +104,7 @@ export default function HistoryPage() {
                         </span>{" "}
                         <span>{
                           history.self_balance_change >= 0 ?
-                            t("historiesPage.got") :
+                            (history.reward_type ? `${history.reward_type} ${t("historiesPage.bonusForNFT")}` : t("historiesPage.got")) :
                             t("historiesPage.emptied")
                         }</span>{" "}
                         <span className={`pig-title ${pigClassName}`}>
