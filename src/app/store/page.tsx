@@ -80,11 +80,16 @@ export default function StorePage() {
 
       setIsPurchaseInProgress(true);
 
-      await axios.post(`/api/pigs/upgradePig`, {
+      const response = await axios.post<PurchasePigResponse>(`/api/pigs/upgradePig`, {
         wallet_address: walletAddress,
         telegram_id: userTelegramId,
       });
 
+      alert(
+          typeof response.data === 'string' ? response.data : 'upgraded_pig_level' in response.data.message ?
+          t('storePage.purchaseCongratulations', { pig: pigsMap.find(pig => pig.code === response.data.message.upgraded_pig_level)?.title ?? 'PIG' }) :
+              t('storePage.purchaseCongratulations', { pig: pigsMap.find(pig => pig.code === ((currentPigCode ?? 0) + 1))?.title ?? 'PIG' })
+      );
       // show the rest to the user
     } catch (error) {
       console.error("Transaction failed or was rejected:", error);
@@ -386,7 +391,7 @@ export default function StorePage() {
   );
   const nextPigClassName = nextPig?.className || '';
 
-  const fullnessPercent = Number.EPSILON + (+fromNano(user?.piggy_bank_balance ?? 0) / +(currentPig?.capacityInTon ?? 0) || 0);
+  const fullnessPercent = Number.EPSILON + (+fromNano(user?.piggy_bank_balance ?? 0) / +(currentPig?.capacityInTon ?? Number.POSITIVE_INFINITY) || 0);
 
   return (
     <>

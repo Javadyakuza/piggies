@@ -49,6 +49,7 @@ export async function prepareUserHistoryObj(tx: any): Promise<any> {
         tx.related_tx
       ).catch(() => user.current_pig)) as PigLevel,
       self_balance_change: tx.reward,
+      reward_type: tx.reward_type,
       //referral_depth: 0, //TODO: check referral or bounty hunter
     };
   } else {

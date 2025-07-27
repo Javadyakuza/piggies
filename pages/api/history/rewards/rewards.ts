@@ -139,7 +139,7 @@ export default async function handler(
     }
     const { data: rewards, error } = await supabase
       .from("rewards_history")
-      .select("wallet_address, reward, referral, related_tx")
+      .select("wallet_address, reward, referral, related_tx, reward_type")
       .eq("wallet_address", wallet_address);
 
     const userData = rewards || [];
