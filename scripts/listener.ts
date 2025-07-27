@@ -1,5 +1,7 @@
 #!/usr/bin/env ts-node
 
+import "./instrument";
+import * as Sentry from "@sentry/node";
 import { listenPigShopForever } from "../src/utils/purchase/listenNode";
 import { fileSystemLogger } from "../src/utils/fsLogger";
 
@@ -21,6 +23,7 @@ process.on('SIGTERM', () => {
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
+  Sentry.captureException(error);
   console.error('💥 Uncaught Exception:', error);
   fileSystemLogger.error('💥 Uncaught Exception:', error);
   // Don't exit, let the restart logic handle it
@@ -51,6 +54,7 @@ async function runListenerWithRestart() {
       break;
       
     } catch (error) {
+      Sentry.captureException(error);
       restartCount++;
       console.error(`💥 Listener crashed (attempt ${restartCount}):`, error);
       fileSystemLogger.error(`💥 Listener crashed (attempt ${restartCount}):`, error);
@@ -72,6 +76,7 @@ async function runListenerWithRestart() {
 
 // Start the listener with auto-restart
 runListenerWithRestart().catch((error) => {
+  Sentry.captureException(error);
   console.error('💥 Fatal error in listener runner:', error);
   fileSystemLogger.error('💥 Fatal error in listener runner:', error);
   process.exit(1);

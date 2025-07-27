@@ -20,7 +20,8 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "@sentry/nextjs": "^9.27.0",
+    "@sentry/nextjs": "^9.42.0",
+    "@sentry/node": "^9.42.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "@telegram-apps/sdk-react": "^2.0.22",
