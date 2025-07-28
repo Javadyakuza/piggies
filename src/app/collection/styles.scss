@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   margin: auto;
+  text-align: center;
 
   .title,
   .description {
@@ -11,13 +12,12 @@
   }
 
   .title {
-    margin-top: 1.5rem;
-    margin-bottom: 0.8rem;
+    margin: 1.5rem 1rem 0.8rem;
     font-size: 32px;
   }
 
   .description {
-    margin-bottom: 2rem;
+    margin: 0 1rem 2rem;
     font-size: 24px;
     font-weight: 300;
   }

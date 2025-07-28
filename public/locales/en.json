@@ -24,7 +24,7 @@
       "purchase": "Purchase",
       "upgrade": "Upgrade",
       "startEarning": "to start earning TON",
-      "earnMore": "to earn more",
+      "earnMore": "to earn TON",
       "bronzePig": "Bronze PIG",
       "silverPig": "Silver PIG",
       "goldPig": "Golden PIG",
@@ -35,12 +35,12 @@
       "beginJourneyMessage": "Collect the BIG PIG NFT collection",
       "levelsCount": "{count} levels",
       "slotsCount": "{count} slots",
-      "numberOfLevels": "levels_count: {level}",
-      "numberOfSlots": "slots_count: {slots}",
+      "numberOfLevels": "levels count: {level}",
+      "numberOfSlots": "slots count: {slots}",
       "withdraw": "Withdraw",
       "transactionInProgress": "Transaction in progress ...",
       "purchaseCongratulations": "Congratulations, you have purchased {pig}",
-      "tonCapacity": "max_balance: {capacity} TON",
+      "tonCapacity": "max balance: {capacity} TON",
       "cancel": "Cancel",
       "toUnlock": "to unlock",
       "locked": "Locked",
@@ -75,8 +75,8 @@
       "connectedWallet": "Connected Wallet"
     },
     "collectionPage": {
-      "oink": "Oink!",
-      "underDevelopment": "Section under development"
+      "title": "Section under development",
+      "description": "Your NFT collection will be here"
     },
     "balance": "Balance",
     "earnings": "Earnings",

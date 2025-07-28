@@ -18,8 +18,8 @@ export default function CollectionPage() {
                 height={200}
                 className="collection-image"
             />
-            <h2 className="title">{t("collectionPage.oink")}</h2>
-            <h4 className="description">{t("collectionPage.underDevelopment")}</h4>
+            <h2 className="title">{t("collectionPage.title")}</h2>
+            <h4 className="description">{t("collectionPage.description")}</h4>
         </div>
     </Page>
   );

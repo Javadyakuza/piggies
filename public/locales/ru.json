@@ -24,7 +24,7 @@
       "purchase": "Купить",
       "upgrade": "Улучшить",
       "startEarning": "чтобы начать копить TON",
-      "earnMore": "чтобы зарабатывать больше",
+      "earnMore": "чтобы копить TON",
       "bronzePig": "Bronze PIG",
       "silverPig": "Silver PIG",
       "goldPig": "Golden PIG",
@@ -35,12 +35,12 @@
       "beginJourneyMessage": "Собери коллекцию NFT BIG PIG",
       "levelsCount": "{count, plural, one {# линия} few {# линии} other {# линий}}",
       "slotsCount": "{count, plural, one {# слот} few {# слота} other {# слотов}}",
-      "numberOfLevels": "levels_count: {level}",
-      "numberOfSlots": "slots_count: {slots}",
+      "numberOfLevels": "levels count: {level}",
+      "numberOfSlots": "slots count: {slots}",
       "withdraw": "Собрать",
       "transactionInProgress": "Транзакция выполняется ...",
       "purchaseCongratulations": "Поздравляем, Вы купили {pig}",
-      "tonCapacity": "max_balance: {capacity} TON",
+      "tonCapacity": "max balance: {capacity} TON",
       "cancel": "Отмена",
       "toUnlock": "чтобы разблокировать",
       "locked": "Заблокировано",
@@ -75,8 +75,8 @@
       "connectedWallet": "Подключенный кошелек"
     },
     "collectionPage": {
-      "oink": "Хрю!",
-      "underDevelopment": "Раздел в разработке"
+      "title": "Раздел в разработке",
+      "description": "Здесь будет ваша коллекция NFT"
     },
     "balance": "Баланс",
     "earnings": "Доходы",
