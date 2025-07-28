@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supabase";
 import { PurchasePigResponse } from "@/models/purchase";
 import { UserHistory } from "@/models/history";
 import { prepareUserHistoryObj } from "@/utils/helpers";
+import { PigLevel } from "@/models/pigs";
 
 /**
  * @swagger
@@ -144,20 +145,20 @@ export default async function handler(
         .json({ success: false, message: "Wallet is not connected !" });
     }
 
-    const { data: tx, error: txError } = await supabase
-      .from("tx_history")
-      .select(
-        "tx_id, tx_hash, wallet_address, request_status, upgraded_pig_level, created_at"
-      )
-      .eq("wallet_address", wallet_address.wallet_address);
+    const [
+        { data: userTxs, error: txError },
+        { data: userRewards, error: RewardsError }
+    ] = await Promise.all([
+        supabase
+            .from("tx_history")
+            .select("tx_id, tx_hash, wallet_address, request_status, upgraded_pig_level, created_at")
+            .eq("wallet_address", wallet_address.wallet_address),
+        supabase
+            .from("rewards_history")
+            .select("wallet_address, reward, referral, related_tx, created_at, reward_type")
+            .eq("wallet_address", wallet_address.wallet_address)
+    ]);
 
-    const userTxs = tx || [];
-
-    const { data: rewards, error: RewardsError } = await supabase
-      .from("rewards_history")
-      .select("wallet_address, reward, referral, related_tx, created_at, reward_type")
-      .eq("wallet_address", wallet_address.wallet_address);
-    const userRewards = rewards || [];
     if (txError) {
       throw new Error(txError.message);
     }
@@ -166,60 +167,37 @@ export default async function handler(
       throw new Error(RewardsError.message);
     }
 
-    if (!userTxs || !userRewards) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Failed to fetch txs or rewards !" });
-    }
-    let histories: UserHistory[] = [];
+    const histories: UserHistory[] = [];
 
-    if (userTxs.length === 1) {
-      console.log("userTxs.length == 1");
-      histories.push(await prepareUserHistoryObj(userTxs[0]));
+    for (const tx of userTxs) {
+      histories.push(await prepareUserHistoryObj(tx));
     }
 
-    if (userRewards.length === 1) {
-      console.log("userRewards.length == 1");
-      histories.push(await prepareUserHistoryObj(userRewards[0]));
+    for (const reward of userRewards) {
+      histories.push(await prepareUserHistoryObj(reward));
     }
 
-    if (userTxs.length > 1) {
-      console.log("userTxs.length > 1");
-      // sorting the arrays
-      userTxs.sort(
+    histories.sort(
         (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
-      // crating the histories array
-      for (const tx of userTxs) {
-        histories.push(await prepareUserHistoryObj(tx));
+    let pigLevel = userTxs?.length ? userTxs.reduce<PigLevel>((m, v) =>
+        Math.max(m, v.upgraded_pig_level) as PigLevel,
+        0 as PigLevel
+    ) : 0;
+
+    for (const history of histories) {
+      if (history.self_balance_change < 0) {
+        history.upgraded_pig_level = pigLevel;
+      } else if (history.self_balance_change === 0) {
+        pigLevel = history.upgraded_pig_level - 1;
       }
-
-      histories.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
     }
-    if (userRewards.length > 1) {
-      console.log("userRewards.length > 1");
-      userRewards.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
 
-      for (const reward of userRewards) {
-        histories.push(await prepareUserHistoryObj(reward));
-      }
-
-      histories.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    }
     return res.status(200).json({ success: true, message: histories });
   } catch (error) {
-    console.error("(Error fetching user(history/user)):", error);
+    console.error("Error fetching user history:", error);
     return res.status(500).json({ success: false, message: String(error) });
   }
 }
