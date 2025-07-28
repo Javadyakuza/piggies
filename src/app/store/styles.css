@@ -32,7 +32,8 @@
 }
 .store-container .balance-container .withdraw-btn {
   margin-left: auto;
-  height: 32px;
+  min-height: 32px;
+  height: auto;
   color: #691d82;
   border-radius: 34px;
 }
@@ -40,6 +41,9 @@
   .store-container .balance-container .withdraw-btn {
     margin-top: 10px;
   }
+}
+.store-container .balance-container .withdraw-btn > * {
+  text-wrap: auto;
 }
 .store-container .balance-container .withdraw-btn:disabled {
   background-color: #e73d74;

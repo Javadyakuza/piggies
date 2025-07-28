@@ -98,7 +98,7 @@ const SuggestionSlider = ({
           ))}
         </div>
       </div>
-      {!locked && (
+      {!locked && slides.length > 1 && (
           <div className="slider-dots">
             {slides.map((_, index) => (
                 <span

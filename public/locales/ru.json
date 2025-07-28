@@ -37,7 +37,7 @@
       "slotsCount": "{count, plural, one {# слот} few {# слота} other {# слотов}}",
       "numberOfLevels": "levels count: {level}",
       "numberOfSlots": "slots count: {slots}",
-      "withdraw": "Собрать",
+      "withdraw": "Опустошить копилку",
       "transactionInProgress": "Транзакция выполняется ...",
       "purchaseCongratulations": "Поздравляем, Вы купили {pig}",
       "tonCapacity": "max balance: {capacity} TON",
