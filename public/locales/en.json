@@ -37,7 +37,7 @@
       "slotsCount": "{count} slots",
       "numberOfLevels": "levels count: {level}",
       "numberOfSlots": "slots count: {slots}",
-      "withdraw": "Withdraw",
+      "withdraw": "Empty the piggy bank",
       "transactionInProgress": "Transaction in progress ...",
       "purchaseCongratulations": "Congratulations, you have purchased {pig}",
       "tonCapacity": "max balance: {capacity} TON",

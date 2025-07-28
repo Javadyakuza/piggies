@@ -34,9 +34,13 @@
       @media (min-height: 700px) {
         margin-top: 10px;
       }
-      height: 32px;
+      min-height: 32px;
+      height: auto;
       color: #691d82;
       border-radius: 34px;
+      & > * {
+        text-wrap: auto;
+      }
       &:disabled {
         background-color: #e73d74;
         opacity: 1;
