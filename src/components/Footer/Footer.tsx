@@ -32,7 +32,7 @@ export function Footer() {
     },
     {
       title: t("footerContent.collection"),
-      icon: "/imgs/icons/collection.png",
+      icon: "/imgs/icons/pigs.png",
       link: "/",
       key: "/collection",
     },
