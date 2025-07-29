@@ -258,6 +258,9 @@ export default function FriendsPage() {
           <h3 className="title">{t("friendsPage.title")}</h3>
           <div className="invite-link">
             <h3 className="link">{truncate(refLink, 25)}</h3>
+            {(!currentPigCode || currentPigCode === 0) && (
+                <img className="pig-icon" src="/imgs/icons/bank.png" alt="PIG" />
+            )}
             <button className="copy-btn" disabled={!currentPigCode || currentPigCode === 0 || isCopied}>
               <img
                 src="/imgs/icons/copy.png"

@@ -26,6 +26,12 @@
   color: #facefd;
   font-size: 20px;
 }
+.friends-container .invite-container .invite-link .pig-icon {
+  display: inline;
+  height: 32px;
+  margin-left: 8px;
+  margin-right: auto;
+}
 .friends-container .invite-container .invite-link .copy-btn {
   border: none;
   background: transparent;
