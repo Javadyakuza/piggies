@@ -3,7 +3,6 @@
 import { type PropsWithChildren, useEffect, useMemo } from "react";
 import {
   initData,
-  miniApp,
   useLaunchParams,
   useSignal,
 } from "@telegram-apps/sdk-react";
@@ -55,7 +54,6 @@ function RootInner({ children }: PropsWithChildren) {
     init(debug);
   });
 
-  const isDark = useSignal(miniApp.isDark);
   const initDataUser = useSignal(initData.user);
 
   // Set the user locale.
@@ -64,12 +62,7 @@ function RootInner({ children }: PropsWithChildren) {
   }, [initDataUser]);
 
   return (
-    <AppRoot
-      appearance={isDark ? "dark" : "light"}
-      // platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
-      platform={"ios"}
-      className={"main-content"}
-    >
+    <AppRoot className={"main-content"}>
       <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Javadyakuza/piggies/refs/heads/feat/development/public/tonconnect-manifest.json">
         <WalletContextProvider>
           <AccountContextProvider>
@@ -91,7 +84,6 @@ export function Root(props: PropsWithChildren) {
   }
 
   const didMount = useDidMount();
-  const isDark = useSignal(miniApp.isDark);
 
   return didMount ? (
     <ErrorBoundary fallback={ErrorPage}>
@@ -99,11 +91,7 @@ export function Root(props: PropsWithChildren) {
     </ErrorBoundary>
   ) : (
     <div className="root__loading">
-      <AppRoot
-        appearance={isDark ? "dark" : "light"}
-        // platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
-        platform={"ios"}
-      >
+      <AppRoot>
         <Spinner size="l" />
       </AppRoot>
     </div>
