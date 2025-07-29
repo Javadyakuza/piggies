@@ -25,10 +25,10 @@ export function WalletGuard({ children }: { children: React.ReactNode }) {
 
   const [initialized, setInitialized] = useState(false);
 
-  const refId = useMemo(() => initDataState?.startParam?.startsWith("register_")
-      ? initDataState.startParam.split("_")[1]
+  const refId = useMemo(() => initDataState?.start_param?.startsWith("register_")
+      ? initDataState.start_param.split("_")[1]
       : null,
-    [initDataState?.startParam]
+    [initDataState?.start_param]
   );
 
   useEffect(() => {

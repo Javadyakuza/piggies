@@ -65,9 +65,9 @@ export default function Header() {
             <FontAwesomeIcon icon={faUser} size="lg" />
           </div>
           <h4 className="full-name">
-            {userData?.firstName} {userData?.lastName}
+            {userData?.first_name} {userData?.last_name}
           </h4>
-          <span style={{ fontSize: "1rem" }}> v3.1.3-tst </span>
+          <span style={{ fontSize: "1rem" }}> v3.2.1-tst </span>
         </div>
         <div className="actions-container">
           <LocaleSwitcher />

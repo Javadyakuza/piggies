@@ -11,7 +11,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Accordion, Button, IconButton } from "@telegram-apps/telegram-ui";
-import { DisplayData } from "@/components/DisplayData/DisplayData";
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { AccordionContent } from "@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent";

@@ -24,16 +24,16 @@ export const AccountContextProvider = ({ children }: AccountContextProviderProps
   const [user, setUser] = useState<User | null>(null);
   const [isRegisterRequestSent, setIsRegisterRequestSent] = useState(false);
 
-  const refId = useMemo(() => initDataState?.startParam?.startsWith("register_")
-    ? initDataState.startParam.split("_")[1]
+  const refId = useMemo(() => initDataState?.start_param?.startsWith("register_")
+    ? initDataState.start_param.split("_")[1]
     : null,
-    [initDataState?.startParam]
+    [initDataState?.start_param]
   );
 
   const userTelegramId = useMemo(() => initDataState?.user?.id, [initDataState?.user]);
-  const userTelegramFullName = useMemo(() => String(initDataState?.user?.firstName || initDataState?.user?.lastName
-    ? `${initDataState?.user?.firstName || ""} 
-    ${initDataState?.user?.lastName || ""}`
+  const userTelegramFullName = useMemo(() => String(initDataState?.user?.first_name || initDataState?.user?.last_name
+    ? `${initDataState?.user?.first_name || ""} 
+    ${initDataState?.user?.last_name || ""}`
     : initDataState?.user?.username || initDataState?.user?.id).replace(/\n/g, " "),
     [initDataState?.user]
   );
