@@ -30,7 +30,7 @@ const isDev =
 function RootInner({ children }: PropsWithChildren) {
   const router = useRouter();
   const query = useSearchParams();
-  const lp = useLaunchParams();
+  const lp = useLaunchParams(true);
 
   const startApp = useMemo(() => query?.get("startapp"), [query]);
 
@@ -40,12 +40,6 @@ function RootInner({ children }: PropsWithChildren) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startApp]);
-
-  // Mock Telegram environment in development mode if needed.
-  if (isDev) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useTelegramMock();
-  }
 
   const debug = useMemo(() => isDev || lp.startParam === "debug", [lp]);
 
@@ -58,7 +52,7 @@ function RootInner({ children }: PropsWithChildren) {
 
   // Set the user locale.
   useEffect(() => {
-    initDataUser && setLocale(initDataUser.languageCode);
+    initDataUser && setLocale(initDataUser.language_code);
   }, [initDataUser]);
 
   return (

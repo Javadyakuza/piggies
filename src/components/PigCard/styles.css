@@ -18,6 +18,7 @@
   margin: 0;
   flex: 0.25;
   align-content: center;
+  min-height: clamp(2rem, 4vh, 48px);
   max-height: 72px;
 }
 .pig-card .pig-image {
