@@ -224,7 +224,8 @@ export default function StorePage() {
     title: undefined,
     hint: (
       <>
-        <span className="yellow">{t("storePage.beginJourneyMessage")}</span>
+        <span className="yellow">{t("storePage.collectNFT")}</span>
+        <strong className="yellow">{t("storePage.collectionName")}</strong>
       </>
     ),
     cover: "/imgs/pigs/placeholder.png",

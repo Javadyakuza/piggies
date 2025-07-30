@@ -67,7 +67,7 @@ export default function Header() {
           <h4 className="full-name">
             {userData?.first_name} {userData?.last_name}
           </h4>
-          <span style={{ fontSize: "1rem" }}> v3.2.1-tst </span>
+          <span style={{ fontSize: "1rem" }}> v3.2.2-tst </span>
         </div>
         <div className="actions-container">
           <LocaleSwitcher />
