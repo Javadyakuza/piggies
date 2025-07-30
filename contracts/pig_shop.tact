@@ -3,6 +3,7 @@ import "./messages.tact";
 import "./NFT.tact";
 message UpgradePig {
   userAddress: Address;
+  amount: Int as coins;
 }
 message ChangeCollection {
   newCollection: Address;
@@ -126,7 +127,8 @@ contract PigShop {
   }
 
   receive("UpgradePig"){
-    emit(UpgradePig{userAddress: sender()}.toCell());
+    let ctx:Context  = context();
+    emit(UpgradePig{userAddress: sender(), amount: ctx.value}.toCell());
   }
 
   receive(msg: PigCreation){

@@ -49,17 +49,14 @@ export const pigsMap = (t: any) => [
 
 const usdToTon = (usd: number, tonPrice: number) => (usd / tonPrice).toFixed(2);
 
-export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop?
+export const pigsMapV2 = (t: any) => [
   {
     title: t?.("storePage.bronzePig") as string,
     className: 'bronze',
     code: 1,
     slots: 39,
     level: 3,
-    price: process.env.NEXT_PUBLIC_TESTNET ? 0.1 : 4,
-    rawPriceInTon: process.env.NEXT_PUBLIC_TESTNET ? 0.1 : 4,
     cover: "/imgs/pigs/bronze.png",
-    capacityInTon: "0.1",
   },
   {
     title: t?.("storePage.silverPig") as string,
@@ -67,10 +64,7 @@ export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop
     code: 2,
     slots: 3279,
     level: 7,
-    price: process.env.NEXT_PUBLIC_TESTNET ? 0.2 : 40,
-    rawPriceInTon: process.env.NEXT_PUBLIC_TESTNET ? 0.2 : 40,
     cover: "/imgs/pigs/silver.png",
-    capacityInTon: "0.25",
   },
   {
     title: t?.("storePage.goldPig") as string,
@@ -78,10 +72,7 @@ export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop
     code: 3,
     slots: 88572,
     level: 10,
-    price:  process.env.NEXT_PUBLIC_TESTNET ? 0.3 : 400,
-    rawPriceInTon: process.env.NEXT_PUBLIC_TESTNET ? 0.3 : 400,
     cover: "/imgs/pigs/gold.png",
-    capacityInTon: "0.5",
   },
   {
     title: t?.("storePage.diamondPig") as string,
@@ -89,9 +80,6 @@ export const pigsMapV2 = (t: any) => [ //TODO: fetch capacityInTon from pig_shop
     code: 4,
     slots: 797160,
     level: 12,
-    price: process.env.NEXT_PUBLIC_TESTNET ? 0.4 : 4000,
-    rawPriceInTon: process.env.NEXT_PUBLIC_TESTNET ? 0.4 : 4000,
     cover: "/imgs/pigs/diamond.png",
-    capacityInTon: "0.75",
   },
 ];

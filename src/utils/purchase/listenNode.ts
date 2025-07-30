@@ -34,7 +34,7 @@ import { get } from "http";
 import { sendPigApproval } from "../../../scripts/pigApproval";
 import {
   attachUserToTree,
-  getGenesisUser,
+  getGenesisUser, getPigPrice,
   getPigs, getUsersByPigAddresses,
   initTxHistory,
   isDuplicatePurchase,
@@ -235,43 +235,51 @@ async function catchPigShopEvents(
         console.log("🛠️ Handling UpgradePig event");
         fileSystemLogger.log("🛠️ Handling UpgradePig event");
 
-        const isDup = await isDuplicatePurchase(
-          userAddr,
-          pig_data.new_pig_level
-        );
-        console.log("🔁 Is duplicate purchase?", isDup);
-        fileSystemLogger.log("🔁 Is duplicate purchase?", isDup);
+        const minPrice = BigInt(await getPigPrice(pig_data.new_pig_level));
+        const amount = event.amount;
 
-        if (!isDup) {
-          console.log(
-            "⁉️ UpgradePig tx initiated check for potential user tree update ..."
+        console.log("💸 New pig price:", minPrice.toString(), "user sent:", amount.toString());
+        fileSystemLogger.log("💸 New pig price:", minPrice.toString(), "user sent:", amount.toString());
+
+        if (amount >= minPrice) {
+          const isDup = await isDuplicatePurchase(
+              userAddr,
+              pig_data.new_pig_level
           );
-          fileSystemLogger.log(
-            "⁉️ UpgradePig tx initiated check for potential user tree update ..."
-          );
+          console.log("🔁 Is duplicate purchase?", isDup);
+          fileSystemLogger.log("🔁 Is duplicate purchase?", isDup);
 
-          const tx_id = TxId.create(userAddr, pig_data.new_pig_level);
+          if (!isDup) {
+            console.log(
+                "⁉️ UpgradePig tx initiated check for potential user tree update ..."
+            );
+            fileSystemLogger.log(
+                "⁉️ UpgradePig tx initiated check for potential user tree update ..."
+            );
 
-          console.log("🚀 Sending pig approval message");
-          fileSystemLogger.log("🚀 Sending pig approval message");
-          await sendPigApproval(
-            await BountyHuntersForPigApproval(bh),
-            adminWallet,
-            PigShopContract,
-            pig_data.address,
-            userAddr
-          );
+            const tx_id = TxId.create(userAddr, pig_data.new_pig_level);
 
-          await initTxHistory({
-            tx_id,
-            tx_hash: event.tx_hash,
-            wallet_address: userAddr,
-            request_status: "PigUpgradePending",
-            upgraded_pig_level: pig_data.new_pig_level,
-          });
+            console.log("🚀 Sending pig approval message");
+            fileSystemLogger.log("🚀 Sending pig approval message");
+            await sendPigApproval(
+                await BountyHuntersForPigApproval(bh),
+                adminWallet,
+                PigShopContract,
+                pig_data.address,
+                userAddr
+            );
 
-          console.log("📜 Tx history initialized for UpgradePig");
-          fileSystemLogger.log("📜 Tx history initialized for UpgradePig");
+            await initTxHistory({
+              tx_id,
+              tx_hash: event.tx_hash,
+              wallet_address: userAddr,
+              request_status: "PigUpgradePending",
+              upgraded_pig_level: pig_data.new_pig_level,
+            });
+
+            console.log("📜 Tx history initialized for UpgradePig");
+            fileSystemLogger.log("📜 Tx history initialized for UpgradePig");
+          }
         }
       }
 
