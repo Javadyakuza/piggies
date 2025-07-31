@@ -5,6 +5,7 @@ import { Address, Dictionary, toNano } from "@ton/core";
 import { PigLevel } from "@/models/pigs";
 import { pigsMapV2 } from "../pigs_map";
 import { Pig } from "../../../wrappers/Pig";
+import { getPigPrice } from "@/utils/purchase/dbOps";
 
 export async function findUsersBountyHunters(
   walletAddress: string,
@@ -134,8 +135,7 @@ export async function findUsersBountyHunters(
     let usersDic = Dictionary.empty<Address, bigint>();
     let adminsDic = Dictionary.empty<Address, bigint>();
     let referrerDic = Dictionary.empty<Address, bigint>();
-    const pigCostInTon = pigsMapV2(undefined)[upgradedPigLevel - 1]
-      .rawPriceInTon;
+    const pigCostInTon = await getPigPrice(upgradedPigLevel);
 
     upperUsers.map((user) => {
       return usersDic.set(

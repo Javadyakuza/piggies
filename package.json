@@ -10,6 +10,7 @@
     "lint": "next lint",
     "listener": "ts-node -r tsconfig-paths/register -r dotenv/config scripts/listener.ts",
     "withdraw": "ts-node -r tsconfig-paths/register -r dotenv/config scripts/withdraw.ts",
+    "setPriceAndLimits": "ts-node -r tsconfig-paths/register -r dotenv/config scripts/setPriceAndLimits.ts",
     "bp:bp": "blueprint",
     "bp:start": "blueprint run",
     "bp:build": "blueprint build",

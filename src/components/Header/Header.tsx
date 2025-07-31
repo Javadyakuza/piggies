@@ -12,7 +12,6 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import axios, { AxiosResponse } from "axios";
 import { generateRefLink } from "@/utils/reflink";
 import "./styles.css";
 import { copyToClipboard } from "@/utils/copy-to-clipboard";
@@ -67,7 +66,7 @@ export default function Header() {
           <h4 className="full-name">
             {userData?.first_name} {userData?.last_name}
           </h4>
-          <span style={{ fontSize: "1rem" }}> v3.2.2-tst </span>
+          <span style={{ fontSize: "1rem" }}> v3.3.1-tst </span>
         </div>
         <div className="actions-container">
           <LocaleSwitcher />

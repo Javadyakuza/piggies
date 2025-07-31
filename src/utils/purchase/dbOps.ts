@@ -279,6 +279,26 @@ export async function isDuplicatePurchase(
   return false;
 }
 
+export async function getPigsInfos() {
+  const { data, error: fetchError } = await supabase
+      .from("pig_levels")
+      .select("level, price, balance_limit");
+
+  if (fetchError) throw fetchError;
+  return data;
+}
+
+export async function getPigPrice(pigLevel: PigLevel) {
+  const { data, error: fetchError } = await supabase
+      .from("pig_levels")
+      .select("price")
+      .eq("level", pigLevel)
+      .single();
+
+  if (fetchError) throw fetchError;
+  return data.price;
+}
+
 export async function UpdateUSerInTree(
   wallet_address: string,
   parent_id: string

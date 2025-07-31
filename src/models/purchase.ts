@@ -16,6 +16,20 @@ export type PurchasePigRequest = {
   wallet_address: string;
 };
 
+export type PigInfo = {
+  level: PigLevel;
+  price: number;
+  balance_limit: number;
+};
+
+export type PigInfosResponse = {
+  success: true;
+  pigs: PigInfo[];
+} | {
+  success: false;
+  message: string;
+};
+
 export type PurchasePigResponse = {
   success: boolean;
   message: txHistory | UpgradePigParams | UserHistory[] | string | any;

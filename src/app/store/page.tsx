@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 import "./styles.css";
 import { Button } from "@telegram-apps/telegram-ui";
 import React from "react";
-import { useTonConnectUI } from "@tonconnect/ui-react";
 import { pigsMapV2 } from "@/utils/pigs_map";
 import axios, { AxiosResponse } from "axios";
 import PigCard from "@/components/PigCard/PigCard";
@@ -14,16 +13,14 @@ import SuggestionSlider from "@/components/SuggestionSlider/SuggestionSlider";
 import { logger } from "../../../logger";
 import { fromNano, Sender, SenderArguments, toNano } from "@ton/ton";
 import { PigShop } from "../../../wrappers/PigShop";
-import { WithdrawFromNftPig } from "../../../wrappers/Pig";
-import { getTonCenterClient } from "@/utils/tonClients";
 import { Address } from "@ton/core";
 import {
+  PigInfo,
   PurchasePigResponse,
   UpgradePigParams,
   WithdrawPigParams,
 } from "@/models/purchase";
 
-import { useSignal, initData } from "@telegram-apps/sdk-react";
 import { Pig } from "../../../wrappers/Pig";
 import { ContractAddresses } from "../../../scripts/constants";
 import { useWallet } from "@/app/context/WalletProvider";
@@ -41,6 +38,7 @@ export default function StorePage() {
   //const [piggyBankBalance, setPiggyBankBalance] = useState(BigInt(0));
   const [currentPigCode, setCurrentPigCode] = useState<number | undefined>();
   const [pigsData, setPigsData] = useState<PigData>();
+  const [pigsInfo, setPigsInfo] = useState<PigInfo[]>();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   //const [tonPrice, setTonPrice] = useState(0);
   const [isPurchaseInProgress, setIsPurchaseInProgress] = useState(false);
@@ -178,6 +176,17 @@ export default function StorePage() {
     const pigsDataToSet = response?.data || undefined;
     setPigsData(pigsDataToSet);
   };
+
+  const fetchPigsInfo = async () => {
+    await axios.get(`/api/pigs/info`).then(
+      response => setPigsInfo(prevData => response?.data?.pigs ?? prevData),
+      (err) => console.error(err),
+    );
+  };
+
+  useEffect(() => {
+    fetchPigsInfo();
+  }, []);
 
   // const fetchUserPigData = async () => {
   //   if (!walletAddress || !tonClient || !user?.pig_address) return;
@@ -392,7 +401,7 @@ export default function StorePage() {
   );
   const nextPigClassName = nextPig?.className || '';
 
-  const fullnessPercent = Number.EPSILON + (+fromNano(user?.piggy_bank_balance ?? 0) / +(currentPig?.capacityInTon ?? Number.POSITIVE_INFINITY) || 0);
+  const fullnessPercent = Number.EPSILON + (+fromNano(user?.piggy_bank_balance ?? 0) / (+fromNano(pigsInfo?.find(pig => pig.level === (currentPigCode ?? 0))?.balance_limit ?? 0) || Number.POSITIVE_INFINITY) || 0);
 
   return (
     <>
@@ -425,7 +434,7 @@ export default function StorePage() {
               </div>
               <div className="detail-item">
           <span>
-            {t("storePage.tonCapacity", { capacity: nextPig?.capacityInTon })}
+            {t("storePage.tonCapacity", { capacity: fromNano(pigsInfo?.find(pig => pig.level === (currentPigCode ?? 0) + 1)?.balance_limit ?? 0) })}
           </span>
               </div>
             </div>
@@ -442,7 +451,7 @@ export default function StorePage() {
                         className="action-btn purchase-btn"
                     >
                       <div>
-                        <span className="price">{nextPig?.rawPriceInTon}</span> TON
+                        <span className="price">{fromNano(pigsInfo?.find(pig => pig.level === (currentPigCode ?? 0) + 1)?.price ?? 0)}</span> TON
                       </div>
                     </button>
                     <button
@@ -463,7 +472,7 @@ export default function StorePage() {
                 <img src="/imgs/icons/ton.png" alt="ton-icon" className="ton-icon" />
                 <span className="text">
                   <h4 className="earning">{+parseFloat(fromNano(user?.piggy_bank_balance ?? 0)).toFixed(3)}</h4>{" "}
-                  <h4 className="total">/ {currentPig?.capacityInTon || 0} TON</h4>
+                  <h4 className="total">/ {fromNano(pigsInfo?.find(pig => pig.level === (currentPigCode ?? 0))?.balance_limit ?? 0)} TON</h4>
                 </span>
                 <Button
                     className="withdraw-btn"
